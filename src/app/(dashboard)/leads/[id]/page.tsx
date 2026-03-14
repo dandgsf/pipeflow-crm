@@ -6,12 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LeadProfile } from "@/components/leads/lead-profile";
 import { ActivityTimeline } from "@/components/activities/activity-timeline";
 import { NewActivityDialog } from "@/components/activities/new-activity-dialog";
-import {
-  getLeadById,
-  getActivitiesByLeadId,
-  getDealsByLeadId,
-} from "@/lib/mock-data";
-import { ArrowLeft } from "lucide-react";
+import { useLeadDetail } from "@/hooks/use-lead-detail";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LeadDetailPage({
@@ -19,15 +15,28 @@ export default function LeadDetailPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = params;
-  const lead = getLeadById(id);
+  const { lead, deals, activities, loading, error, createActivity } = useLeadDetail(params.id);
 
-  if (!lead) {
-    notFound();
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
-  const activities = getActivitiesByLeadId(id);
-  const deals = getDealsByLeadId(id);
+  if (error || !lead) {
+    if (error?.includes("não encontrado")) notFound();
+    return <p className="p-6 text-sm text-destructive">{error}</p>;
+  }
+
+  // Cast to LeadWithCounts for LeadProfile (counts not available from API, use 0)
+  const leadWithCounts = {
+    ...lead,
+    deals_count: deals.length,
+    activities_count: activities.length,
+    total_deal_value: deals.reduce((s, d) => s + d.value, 0),
+  };
 
   return (
     <div className="space-y-6 p-6">
@@ -41,16 +50,14 @@ export default function LeadDetailPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
-        {/* Left column: Profile */}
-        <LeadProfile lead={lead} deals={deals} />
+        <LeadProfile lead={leadWithCounts} deals={deals} />
 
-        {/* Right column: Activities */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">
               Atividades ({activities.length})
             </CardTitle>
-            <NewActivityDialog />
+            <NewActivityDialog onCreated={createActivity} />
           </CardHeader>
           <CardContent>
             <ActivityTimeline activities={activities} />

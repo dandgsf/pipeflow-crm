@@ -16,11 +16,12 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { KanbanColumn } from "@/components/pipeline/kanban-column";
 import { DealCard } from "@/components/pipeline/deal-card";
 import { NewDealDialog } from "@/components/pipeline/new-deal-dialog";
-import { MOCK_DEALS, MOCK_LEADS } from "@/lib/mock-data";
+import { useDeals } from "@/hooks/use-deals";
 import { DealStage, DEAL_STAGE_ORDER, DealWithLead } from "@/types/database";
+import { Loader2 } from "lucide-react";
 
 export default function PipelinePage() {
-  const [deals, setDeals] = useState<DealWithLead[]>(MOCK_DEALS);
+  const { deals, setDeals, loading, moveStage, createDeal } = useDeals();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
 
@@ -42,7 +43,7 @@ export default function PipelinePage() {
     setOverId(over?.id as string ?? null);
   }
 
-  function handleDragEnd({ active, over }: DragEndEvent) {
+  async function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveId(null);
     setOverId(null);
 
@@ -58,9 +59,7 @@ export default function PipelinePage() {
     if (DEAL_STAGE_ORDER.includes(overId as DealStage)) {
       const newStage = overId as DealStage;
       if (activeDeal.stage !== newStage) {
-        setDeals((prev) =>
-          prev.map((d) => (d.id === activeId ? { ...d, stage: newStage } : d))
-        );
+        await moveStage(activeId, newStage);
       }
       return;
     }
@@ -70,14 +69,8 @@ export default function PipelinePage() {
     if (!overDeal) return;
 
     if (activeDeal.stage !== overDeal.stage) {
-      // Move to different stage
-      setDeals((prev) =>
-        prev.map((d) =>
-          d.id === activeId ? { ...d, stage: overDeal.stage } : d
-        )
-      );
+      await moveStage(activeId, overDeal.stage);
     } else {
-      // Reorder within same stage
       const stageDeals = deals.filter((d) => d.stage === activeDeal.stage);
       const activeIdx = stageDeals.findIndex((d) => d.id === activeId);
       const overIdx = stageDeals.findIndex((d) => d.id === overId);
@@ -89,7 +82,7 @@ export default function PipelinePage() {
     }
   }
 
-  function handleNewDeal(data: {
+  async function handleNewDeal(data: {
     title: string;
     value: number;
     leadId: string;
@@ -97,26 +90,14 @@ export default function PipelinePage() {
     assignedTo: string;
     closeDate: string;
   }) {
-    const lead = MOCK_LEADS.find((l) => l.id === data.leadId);
-    if (!lead) return;
-
-    const newDeal: DealWithLead = {
-      id: `deal-${Date.now()}`,
-      workspace_id: "ws-1",
-      lead_id: data.leadId,
+    await createDeal({
       title: data.title,
       value: data.value,
-      stage: (data.stage || "new_lead") as DealStage,
-      assigned_to: data.assignedTo || null,
-      expected_close_date: data.closeDate ? `${data.closeDate}T00:00:00Z` : null,
-      closed_at: null,
-      position: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      lead: { id: lead.id, name: lead.name, company: lead.company },
-    };
-
-    setDeals((prev) => [newDeal, ...prev]);
+      lead_id: data.leadId,
+      stage: data.stage || "new_lead",
+      assigned_to: data.assignedTo || undefined,
+      expected_close_date: data.closeDate || undefined,
+    });
   }
 
   return (
@@ -126,28 +107,34 @@ export default function PipelinePage() {
         <NewDealDialog onCreated={handleNewDeal} />
       </div>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex gap-4 overflow-x-auto p-6">
-          {DEAL_STAGE_ORDER.map((stage) => (
-            <KanbanColumn
-              key={stage}
-              stage={stage}
-              deals={getDealsByStage(stage)}
-              isOver={overId === stage}
-            />
-          ))}
+      {loading ? (
+        <div className="flex flex-1 items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCorners}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex gap-4 overflow-x-auto p-6">
+            {DEAL_STAGE_ORDER.map((stage) => (
+              <KanbanColumn
+                key={stage}
+                stage={stage}
+                deals={getDealsByStage(stage)}
+                isOver={overId === stage}
+              />
+            ))}
+          </div>
 
-        <DragOverlay>
-          {activeDeal ? <DealCard deal={activeDeal} /> : null}
-        </DragOverlay>
-      </DndContext>
+          <DragOverlay>
+            {activeDeal ? <DealCard deal={activeDeal} /> : null}
+          </DragOverlay>
+        </DndContext>
+      )}
     </div>
   );
 }
