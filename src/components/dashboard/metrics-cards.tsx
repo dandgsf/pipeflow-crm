@@ -15,46 +15,44 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
       label: "Total de Leads",
       value: metrics.total_leads.toString(),
       icon: Users,
-      color: "text-blue-500",
-      bg: "bg-blue-50",
+      color: "text-pf-cool",
+      bg: "bg-pf-cool/10",
     },
     {
       label: "Negócios Abertos",
       value: metrics.open_deals.toString(),
       icon: Briefcase,
-      color: "text-amber-500",
-      bg: "bg-amber-50",
+      color: "text-pf-warm",
+      bg: "bg-pf-warm/10",
     },
     {
       label: "Valor do Pipeline",
       value: formatCurrency(metrics.pipeline_value),
       icon: TrendingUp,
-      color: "text-green-500",
-      bg: "bg-green-50",
+      color: "text-pf-positive",
+      bg: "bg-pf-positive/10",
     },
     {
       label: "Taxa de Conversão",
       value: `${metrics.conversion_rate.toFixed(1)}%`,
       icon: Percent,
-      color: "text-purple-500",
-      bg: "bg-purple-50",
+      color: "text-pf-accent",
+      bg: "bg-pf-accent/10",
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-pf-border rounded-lg sm:divide-x divide-y sm:divide-y-0 divide-pf-border bg-pf-surface">
       {cards.map(({ label, value, icon: Icon, color, bg }) => (
-        <Card key={label}>
-          <CardContent className="flex items-center gap-4 p-5">
-            <div className={`rounded-lg p-2.5 ${bg}`}>
-              <Icon className={`h-5 w-5 ${color}`} />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">{label}</p>
-              <p className="text-xl font-bold">{value}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div key={label} className="flex items-center gap-4 p-5">
+          <div className={`rounded-lg p-2.5 ${bg}`}>
+            <Icon className={`h-5 w-5 ${color}`} />
+          </div>
+          <div>
+            <p className="font-mono text-xs uppercase tracking-wider text-pf-text-muted">{label}</p>
+            <p className="font-display text-xl font-bold text-pf-text">{value}</p>
+          </div>
+        </div>
       ))}
     </div>
   );

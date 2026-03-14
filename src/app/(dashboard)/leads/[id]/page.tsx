@@ -20,14 +20,14 @@ export default function LeadDetailPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-pf-text-muted" />
       </div>
     );
   }
 
   if (error || !lead) {
     if (error?.includes("não encontrado")) notFound();
-    return <p className="p-6 text-sm text-destructive">{error}</p>;
+    return <p className="p-6 text-sm text-pf-negative">{error}</p>;
   }
 
   // Cast to LeadWithCounts for LeadProfile (counts not available from API, use 0)
@@ -42,19 +42,19 @@ export default function LeadDetailPage({
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-4">
         <Link href="/leads">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="text-pf-text-secondary hover:bg-pf-surface-2 hover:text-pf-text">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight">Detalhe do Lead</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-pf-text">Detalhe do Lead</h1>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-[2fr_3fr]">
         <LeadProfile lead={leadWithCounts} deals={deals} />
 
-        <Card>
+        <Card className="bg-pf-surface border-pf-border">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">
+            <CardTitle className="text-base text-pf-text">
               Atividades ({activities.length})
             </CardTitle>
             <NewActivityDialog onCreated={createActivity} />

@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,6 +12,11 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        display: ["Syne", "sans-serif"],
+        body: ["DM Sans", "sans-serif"],
+        mono: ["IBM Plex Mono", "monospace"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -54,6 +58,22 @@ const config: Config = {
           "3": "hsl(var(--chart-3))",
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
+        },
+        // PipeFlow brand colors
+        pf: {
+          bg: "#0C0C0E",
+          surface: "#141416",
+          "surface-2": "#1A1A1E",
+          border: "#2A2A2E",
+          "border-subtle": "#1E1E22",
+          text: "#E8E8E8",
+          "text-secondary": "#8A8A8F",
+          "text-muted": "#555559",
+          accent: "#CAFF33",
+          positive: "#2ED573",
+          negative: "#FF4757",
+          warm: "#FF6B35",
+          cool: "#5B7FFF",
         },
       },
     },

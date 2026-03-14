@@ -12,10 +12,10 @@ const activityIcons = {
 };
 
 const activityColors = {
-  call: "bg-blue-100 text-blue-600",
-  email: "bg-purple-100 text-purple-600",
-  meeting: "bg-amber-100 text-amber-600",
-  note: "bg-gray-100 text-gray-600",
+  call: "bg-pf-cool/20 text-pf-cool",
+  email: "bg-purple-500/20 text-purple-400",
+  meeting: "bg-pf-warm/20 text-pf-warm",
+  note: "bg-pf-text-muted/20 text-pf-text-muted",
 };
 
 interface ActivityTimelineProps {
@@ -25,7 +25,7 @@ interface ActivityTimelineProps {
 export function ActivityTimeline({ activities }: ActivityTimelineProps) {
   if (activities.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground py-8 text-center">
+      <p className="text-sm text-pf-text-muted py-8 text-center">
         Nenhuma atividade registrada.
       </p>
     );
@@ -42,7 +42,7 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
           <div key={activity.id} className="relative flex gap-4 pb-8">
             {/* Vertical line */}
             {!isLast && (
-              <div className="absolute left-5 top-10 h-full w-px bg-border" />
+              <div className="absolute left-5 top-10 h-full w-px bg-pf-border" />
             )}
             {/* Icon */}
             <div
@@ -53,17 +53,17 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
             {/* Content */}
             <div className="flex-1 pt-1">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-pf-text">
                   {ACTIVITY_TYPE_LABELS[activity.type]}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-pf-text-muted">
                   {formatDate(activity.performed_at)}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-pf-text-secondary">
                 {activity.description}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-pf-text-muted">
                 por {activity.author_name}
               </p>
             </div>

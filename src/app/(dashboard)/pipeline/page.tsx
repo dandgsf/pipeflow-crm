@@ -102,8 +102,8 @@ export default function PipelinePage() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b bg-white px-6 py-4">
-        <h2 className="font-semibold text-gray-700">Pipeline de Vendas</h2>
+      <div className="flex items-center justify-between border-b border-pf-border-subtle bg-pf-surface px-6 py-4">
+        <h2 className="font-display font-semibold text-pf-text">Pipeline de Vendas</h2>
         <NewDealDialog onCreated={handleNewDeal} />
       </div>
 

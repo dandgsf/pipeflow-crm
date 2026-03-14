@@ -28,16 +28,16 @@ export function Header({ onMenuClick }: HeaderProps) {
   const title = getPageTitle(pathname);
 
   return (
-    <header className="flex h-16 items-center border-b bg-white px-4 lg:px-6">
+    <header className="flex h-14 items-center border-b border-pf-border-subtle bg-pf-surface px-4 lg:px-6">
       <Button
         variant="ghost"
         size="icon"
-        className="mr-3 lg:hidden"
+        className="mr-3 lg:hidden text-pf-text-muted hover:text-pf-text"
         onClick={onMenuClick}
       >
         <Menu className="h-5 w-5" />
       </Button>
-      <h1 className="text-lg font-semibold">{title}</h1>
+      <h1 className="font-display text-base font-semibold text-pf-text tracking-tight">{title}</h1>
     </header>
   );
 }

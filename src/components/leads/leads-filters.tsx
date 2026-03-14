@@ -32,19 +32,19 @@ export function LeadsFilters({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-pf-text-muted" />
         <Input
           placeholder="Buscar por nome ou empresa..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9"
+          className="pl-9 bg-pf-surface border-pf-border text-pf-text placeholder:text-pf-text-muted focus:border-pf-accent/50 focus:ring-pf-accent/20"
         />
       </div>
       <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px] bg-pf-surface border-pf-border text-pf-text">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-pf-surface border-pf-border">
           <SelectItem value="all">Todos os status</SelectItem>
           {(Object.entries(LEAD_STATUS_LABELS) as [LeadStatus, string][]).map(
             ([value, label]) => (
@@ -56,10 +56,10 @@ export function LeadsFilters({
         </SelectContent>
       </Select>
       <Select value={assignedFilter} onValueChange={onAssignedFilterChange}>
-        <SelectTrigger className="w-full sm:w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px] bg-pf-surface border-pf-border text-pf-text">
           <SelectValue placeholder="Responsável" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-pf-surface border-pf-border">
           <SelectItem value="all">Todos</SelectItem>
           {MOCK_MEMBERS.map((member) => (
             <SelectItem key={member.id} value={member.id}>

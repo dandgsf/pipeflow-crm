@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session (keeps auth alive)
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,9 +32,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes — always accessible
-  const publicRoutes = ["/login", "/signup"];
   const isPublic =
-    publicRoutes.some((r) => pathname.startsWith(r)) ||
+    pathname === "/" ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
     pathname.startsWith("/api/webhooks");
 
   if (isPublic) return supabaseResponse;

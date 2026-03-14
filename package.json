@@ -3,9 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/ensure-next-junction.mjs",
-    "dev": "next dev",
-    "prebuild": "node scripts/ensure-next-junction.mjs",
+    "predev": "node -e \"const{execSync}=require('child_process');try{const r=execSync('netstat -ano',{encoding:'utf8'});const m=r.match(/:3000\\s+.*LISTENING\\s+(\\d+)/);if(m)execSync('taskkill /F /PID '+m[1])}catch{}\"",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

@@ -67,18 +67,18 @@ export function NewActivityDialog({ onCreated }: NewActivityDialogProps) {
           Nova Atividade
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[450px] bg-pf-surface border-pf-border">
         <DialogHeader>
-          <DialogTitle>Nova Atividade</DialogTitle>
+          <DialogTitle className="text-pf-text">Nova Atividade</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Tipo *</Label>
+            <Label className="text-pf-text-secondary">Tipo *</Label>
             <Select value={type} onValueChange={setType} required>
-              <SelectTrigger>
+              <SelectTrigger className="bg-pf-surface-2 border-pf-border text-pf-text">
                 <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-pf-surface border-pf-border">
                 {(Object.entries(ACTIVITY_TYPE_LABELS) as [ActivityType, string][]).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}
@@ -86,21 +86,21 @@ export function NewActivityDialog({ onCreated }: NewActivityDialogProps) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição *</Label>
-            <Textarea id="description" name="description" placeholder="Descreva a atividade..." rows={4} required />
+            <Label htmlFor="description" className="text-pf-text-secondary">Descrição *</Label>
+            <Textarea id="description" name="description" placeholder="Descreva a atividade..." rows={4} required className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="performed_at">Data</Label>
-            <Input id="performed_at" name="performed_at" type="datetime-local" defaultValue={today} />
+            <Label htmlFor="performed_at" className="text-pf-text-secondary">Data</Label>
+            <Input id="performed_at" name="performed_at" type="datetime-local" defaultValue={today} className="bg-pf-surface-2 border-pf-border text-pf-text" />
           </div>
 
           {error && (
-            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+            <p className="rounded-md bg-pf-negative/10 px-3 py-2 text-sm text-pf-negative">{error}</p>
           )}
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="border-pf-border text-pf-text-secondary hover:bg-pf-surface-2">Cancelar</Button>
+            <Button type="submit" disabled={loading} className="bg-pf-accent text-pf-bg hover:bg-pf-accent/90">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Registrar
             </Button>

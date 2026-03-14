@@ -24,21 +24,21 @@ export function KanbanColumn({ stage, deals, isOver }: KanbanColumnProps) {
       {/* Column header */}
       <div
         className={cn(
-          "mb-2 rounded-lg px-3 py-2 transition-colors",
-          isOver ? "ring-2 ring-inset ring-blue-400" : ""
+          "mb-2 rounded-lg px-3 py-2 transition-colors bg-pf-surface-2",
+          isOver ? "ring-2 ring-inset ring-pf-accent/40" : ""
         )}
-        style={{ backgroundColor: `${color}20`, borderLeft: `3px solid ${color}` }}
+        style={{ borderLeft: `3px solid ${color}` }}
       >
         <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold" style={{ color }}>
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider" style={{ color }}>
             {DEAL_STAGE_LABELS[stage]}
           </span>
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-pf-surface border-pf-border text-pf-text-secondary">
             {deals.length}
           </Badge>
         </div>
         {totalValue > 0 && (
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-pf-text-muted">
             {formatCurrency(totalValue)}
           </p>
         )}
@@ -49,7 +49,7 @@ export function KanbanColumn({ stage, deals, isOver }: KanbanColumnProps) {
         ref={setNodeRef}
         className={cn(
           "flex flex-1 flex-col gap-2 rounded-lg p-1 min-h-[120px] transition-colors",
-          isOver && "bg-blue-50"
+          isOver && "bg-pf-surface-2/50"
         )}
       >
         <SortableContext

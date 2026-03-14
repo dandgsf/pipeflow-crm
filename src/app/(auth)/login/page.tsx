@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -37,18 +36,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md shadow-sm">
-        <CardHeader className="space-y-1 pb-4 text-center">
-          <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-            PipeFlow CRM
+    <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2.5 mb-6">
+            <div className="w-10 h-10 bg-pf-accent rounded-lg flex items-center justify-center font-display font-extrabold text-lg text-pf-bg">P</div>
           </div>
-          <p className="text-sm text-muted-foreground">Entrar na sua conta</p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-pf-text mb-1">
+            PipeFlow CRM
+          </h1>
+          <p className="text-sm text-pf-text-muted">Entrar na sua conta</p>
+        </div>
+
+        <div className="bg-pf-surface border border-pf-border rounded-xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email" className="text-sm text-pf-text-secondary">E-mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -57,10 +60,11 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
+                className="bg-pf-bg border-pf-border text-pf-text placeholder:text-pf-text-muted focus:ring-pf-accent focus:border-pf-accent"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password" className="text-sm text-pf-text-secondary">Senha</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -70,12 +74,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="pr-10"
+                  className="bg-pf-bg border-pf-border text-pf-text placeholder:text-pf-text-muted pr-10 focus:ring-pf-accent focus:border-pf-accent"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-pf-text-muted hover:text-pf-text transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -83,25 +87,29 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <p className="rounded-lg bg-pf-negative/10 border border-pf-negative/20 px-3 py-2 text-sm text-pf-negative">
                 {error}
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-pf-accent text-pf-bg hover:bg-pf-accent/90 font-semibold"
+              disabled={loading}
+            >
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Entrar
             </Button>
           </form>
+        </div>
 
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            Não tem uma conta?{" "}
-            <Link href="/signup" className="font-medium text-primary hover:underline">
-              Criar conta
-            </Link>
-          </p>
-        </CardContent>
-      </Card>
+        <p className="mt-6 text-center text-sm text-pf-text-muted">
+          Não tem uma conta?{" "}
+          <Link href="/signup" className="font-medium text-pf-accent hover:underline">
+            Criar conta
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

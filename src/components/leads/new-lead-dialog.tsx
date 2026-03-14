@@ -53,53 +53,53 @@ export function NewLeadDialog({ onCreated }: NewLeadDialogProps) {
           Novo Lead
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-pf-surface border-pf-border">
         <DialogHeader>
-          <DialogTitle>Novo Lead</DialogTitle>
+          <DialogTitle className="text-pf-text">Novo Lead</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome *</Label>
-            <Input id="name" name="name" placeholder="Nome completo" required />
+            <Label htmlFor="name" className="text-pf-text-secondary">Nome *</Label>
+            <Input id="name" name="name" placeholder="Nome completo" required className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input id="email" name="email" type="email" placeholder="email@exemplo.com" />
+              <Label htmlFor="email" className="text-pf-text-secondary">E-mail</Label>
+              <Input id="email" name="email" type="email" placeholder="email@exemplo.com" className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefone</Label>
-              <Input id="phone" name="phone" placeholder="(00) 00000-0000" />
+              <Label htmlFor="phone" className="text-pf-text-secondary">Telefone</Label>
+              <Input id="phone" name="phone" placeholder="(00) 00000-0000" className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="company">Empresa</Label>
-              <Input id="company" name="company" placeholder="Nome da empresa" />
+              <Label htmlFor="company" className="text-pf-text-secondary">Empresa</Label>
+              <Input id="company" name="company" placeholder="Nome da empresa" className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="position">Cargo</Label>
-              <Input id="position" name="position" placeholder="Cargo" />
+              <Label htmlFor="position" className="text-pf-text-secondary">Cargo</Label>
+              <Input id="position" name="position" placeholder="Cargo" className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="source">Origem</Label>
-            <Input id="source" name="source" placeholder="Ex: Website, LinkedIn, Indicação" />
+            <Label htmlFor="source" className="text-pf-text-secondary">Origem</Label>
+            <Input id="source" name="source" placeholder="Ex: Website, LinkedIn, Indicação" className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notas</Label>
-            <Textarea id="notes" name="notes" placeholder="Observações sobre o lead..." rows={3} />
+            <Label htmlFor="notes" className="text-pf-text-secondary">Notas</Label>
+            <Textarea id="notes" name="notes" placeholder="Observações sobre o lead..." rows={3} className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted" />
           </div>
 
           {error && (
-            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
+            <p className="rounded-md bg-pf-negative/10 px-3 py-2 text-sm text-pf-negative">{error}</p>
           )}
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} className="border-pf-border text-pf-text-secondary hover:bg-pf-surface-2">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="bg-pf-accent text-pf-bg hover:bg-pf-accent/90">
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Salvar Lead
             </Button>

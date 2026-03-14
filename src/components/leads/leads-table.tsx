@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { LeadStatusBadge } from "./lead-status-badge";
 import { LeadWithCounts } from "@/types/database";
-import { getMemberName } from "@/lib/mock-data";
 import { formatDate } from "@/lib/utils";
 
 interface LeadsTableProps {
@@ -22,23 +21,23 @@ export function LeadsTable({ leads }: LeadsTableProps) {
   const router = useRouter();
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border border-pf-border bg-pf-surface overflow-x-auto">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Nome</TableHead>
-            <TableHead>E-mail</TableHead>
-            <TableHead>Telefone</TableHead>
-            <TableHead>Empresa</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Responsável</TableHead>
-            <TableHead>Criado em</TableHead>
+          <TableRow className="border-pf-border hover:bg-pf-surface-2">
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Nome</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">E-mail</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Telefone</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Empresa</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Status</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Responsável</TableHead>
+            <TableHead className="font-mono uppercase text-xs text-pf-text-muted tracking-wider">Criado em</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {leads.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+            <TableRow className="border-pf-border">
+              <TableCell colSpan={7} className="h-24 text-center text-pf-text-muted">
                 Nenhum lead encontrado.
               </TableCell>
             </TableRow>
@@ -46,18 +45,18 @@ export function LeadsTable({ leads }: LeadsTableProps) {
             leads.map((lead) => (
               <TableRow
                 key={lead.id}
-                className="cursor-pointer hover:bg-muted/50"
+                className="cursor-pointer border-pf-border hover:bg-pf-surface-2 transition-colors"
                 onClick={() => router.push(`/leads/${lead.id}`)}
               >
-                <TableCell className="font-medium">{lead.name}</TableCell>
-                <TableCell>{lead.email ?? "—"}</TableCell>
-                <TableCell>{lead.phone ?? "—"}</TableCell>
-                <TableCell>{lead.company ?? "—"}</TableCell>
+                <TableCell className="font-medium text-pf-text">{lead.name}</TableCell>
+                <TableCell className="text-pf-text-secondary">{lead.email ?? "—"}</TableCell>
+                <TableCell className="text-pf-text-secondary">{lead.phone ?? "—"}</TableCell>
+                <TableCell className="text-pf-text-secondary">{lead.company ?? "—"}</TableCell>
                 <TableCell>
                   <LeadStatusBadge status={lead.status} />
                 </TableCell>
-                <TableCell>{getMemberName(lead.assigned_to)}</TableCell>
-                <TableCell>{formatDate(lead.created_at)}</TableCell>
+                <TableCell className="text-pf-text-secondary">{lead.assigned_to ? "Responsável" : "—"}</TableCell>
+                <TableCell className="text-pf-text-secondary">{formatDate(lead.created_at)}</TableCell>
               </TableRow>
             ))
           )}

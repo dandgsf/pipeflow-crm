@@ -65,30 +65,31 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
+      <Card className="w-full max-w-md shadow-sm bg-pf-surface border-pf-border">
         <CardHeader className="space-y-1 pb-2 text-center">
-          <div className="mb-1 text-2xl font-bold tracking-tight text-gray-900">
+          <div className="mb-1 font-display text-2xl font-bold tracking-tight text-pf-text">
             Crie seu espaço de trabalho
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-pf-text-secondary">
             Cada empresa ou time tem seu próprio workspace isolado
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="workspace-name">Nome da empresa</Label>
+              <Label htmlFor="workspace-name" className="text-pf-text-secondary">Nome da empresa</Label>
               <Input
                 id="workspace-name"
                 placeholder="Ex: Acme Corp"
                 value={workspaceName}
                 onChange={(e) => handleNameChange(e.target.value)}
                 required
+                className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="slug">Identificador (slug)</Label>
+              <Label htmlFor="slug" className="text-pf-text-secondary">Identificador (slug)</Label>
               <Input
                 id="slug"
                 placeholder="acme-corp"
@@ -96,19 +97,20 @@ export default function OnboardingPage() {
                 onChange={(e) => handleSlugChange(e.target.value)}
                 required
                 pattern="[a-z0-9-]+"
+                className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-pf-text-muted">
                 Apenas letras minúsculas, números e hífens
               </p>
             </div>
 
             {error && (
-              <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <p className="rounded-md bg-pf-negative/10 px-3 py-2 text-sm text-pf-negative">
                 {error}
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading || !workspaceName || !slug}>
+            <Button type="submit" className="w-full bg-pf-accent text-pf-bg hover:bg-pf-accent/90 font-medium" disabled={loading || !workspaceName || !slug}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Criar workspace e começar
             </Button>
