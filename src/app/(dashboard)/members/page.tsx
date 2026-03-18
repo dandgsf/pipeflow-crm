@@ -103,8 +103,8 @@ export default function MembersPage() {
               Limite do plano Free
             </p>
             <p className="mt-0.5 text-sm text-amber-400/70">
-              O plano gratuito permite at&eacute; 2 membros. Para adicionar mais,
-              fa&ccedil;a upgrade para o plano Pro.
+              O plano gratuito permite até 2 membros. Para adicionar mais,
+              faça upgrade para o plano Pro.
             </p>
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function MembersPage() {
                       {getDisplayName(member)}
                       {isSelf && (
                         <span className="ml-2 text-xs text-pf-text-muted">
-                          (voc&ecirc;)
+                          (você)
                         </span>
                       )}
                     </p>
