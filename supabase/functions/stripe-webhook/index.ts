@@ -1,25 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import Stripe from "stripe";
+import Stripe from "npm:stripe@14";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-export const runtime = "nodejs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   apiVersion: "2023-10-16",
 });
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
 
-// POST /api/webhooks/stripe — Stripe webhook handler
-export async function POST(request: NextRequest) {
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+);
+
+Deno.serve(async (req) => {
   try {
-    const body = await request.text();
-    const signature = request.headers.get("stripe-signature");
+    const body = await req.text();
+    const signature = req.headers.get("stripe-signature");
 
     if (!signature) {
-      return NextResponse.json(
-        { error: "Missing stripe-signature header" },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "Missing stripe-signature header" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -29,13 +31,11 @@ export async function POST(request: NextRequest) {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error("[Stripe Webhook] Signature verification failed:", err);
-      return NextResponse.json(
-        { error: "Webhook signature verification failed" },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: "Webhook signature verification failed" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-
-    const supabase = createAdminClient();
 
     switch (event.type) {
       case "checkout.session.completed": {
@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        // Get subscription details from Stripe for period dates
         const stripeSubscription =
           await stripe.subscriptions.retrieve(stripeSubscriptionId);
 
@@ -71,10 +70,7 @@ export async function POST(request: NextRequest) {
           .eq("workspace_id", workspaceId);
 
         if (error) {
-          console.error(
-            "[Stripe Webhook] Error updating subscription:",
-            error
-          );
+          console.error("[Stripe Webhook] Error updating subscription:", error);
         }
         break;
       }
@@ -83,7 +79,6 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription;
         const stripeCustomerId = subscription.customer as string;
 
-        // Map Stripe status to our status
         let status: string;
         switch (subscription.status) {
           case "active":
@@ -153,13 +148,18 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        // Unhandled event type — log and acknowledge
         console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`);
     }
 
-    return NextResponse.json({ received: true }, { status: 200 });
+    return new Response(
+      JSON.stringify({ received: true }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (err) {
-    console.error("[POST /api/webhooks/stripe]", err);
-    return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
+    console.error("[Stripe Webhook] Handler failed:", err);
+    return new Response(
+      JSON.stringify({ error: "Webhook handler failed" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-}
+});

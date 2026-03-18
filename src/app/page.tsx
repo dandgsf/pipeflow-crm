@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { Logo } from "@/components/shared/logo";
+import { WaveSeparator } from "@/components/shared/wave-separator";
+import { AnimateOnScroll } from "@/components/shared/animate-on-scroll";
+import { SuccessCases } from "@/components/landing/success-cases";
 
 const pipelineData = [
   { stage: "novo", color: "#5B7FFF", width: "75%", value: "R$ 32k", count: 12 },
@@ -32,14 +36,17 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 px-6 py-5 bg-pf-bg/90 backdrop-blur-sm border-b border-pf-border-subtle">
         <div className="max-w-[1200px] mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-pf-accent rounded-md flex items-center justify-center font-display font-extrabold text-sm text-pf-bg tracking-tight">P</div>
-            <span className="font-display font-semibold text-lg tracking-tight">PipeFlow <span className="text-pf-text-muted font-normal">CRM</span></span>
+            <Logo size="md" />
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm text-pf-text-secondary hover:text-pf-text transition-colors">Features</a>
+            <a href="#cases" className="text-sm text-pf-text-secondary hover:text-pf-text transition-colors">Resultados</a>
             <a href="#pipeline" className="text-sm text-pf-text-secondary hover:text-pf-text transition-colors">Pipeline</a>
             <a href="#pricing" className="text-sm text-pf-text-secondary hover:text-pf-text transition-colors">Planos</a>
-            <Link href="/signup" className="bg-pf-accent text-pf-bg px-5 py-2 rounded-md text-[13px] font-semibold hover:shadow-[0_0_0_3px_rgba(202,255,51,0.15)] transition-all">
+            <Link href="/login" className="text-sm text-pf-text-secondary hover:text-pf-text transition-colors font-medium">
+              Entrar
+            </Link>
+            <Link href="/signup" className="bg-pf-accent text-pf-bg px-5 py-2 rounded-md text-[13px] font-semibold pf-glow-btn">
               Começar grátis
             </Link>
           </div>
@@ -47,8 +54,12 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="min-h-screen flex items-center pt-20">
-        <div className="max-w-[1200px] mx-auto px-6 w-full">
+      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        {/* Animated orbs */}
+        <div className="pf-orb w-[350px] h-[350px] top-[10%] left-[10%]" style={{ background: "radial-gradient(circle, rgba(202,255,51,0.18), transparent 70%)" }} />
+        <div className="pf-orb w-[300px] h-[300px] bottom-[10%] right-[10%]" style={{ background: "radial-gradient(circle, rgba(91,127,255,0.14), transparent 70%)", animationDelay: "-4s" }} />
+
+        <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div>
               <div className="font-mono text-xs text-pf-accent tracking-[0.15em] uppercase mb-5">
@@ -58,7 +69,7 @@ export default function LandingPage() {
                 Vendas em<br />
                 <span className="text-pf-accent relative">
                   fluxo contínuo
-                  <span className="absolute bottom-1 left-0 right-0 h-[3px] bg-pf-accent/30" />
+                  <span className="absolute bottom-1 left-0 right-0 h-[3px] bg-pf-accent/30 pf-flow-pulse" />
                 </span>.
               </h1>
               <p className="text-[17px] leading-[1.7] text-pf-text-secondary max-w-[460px] mb-10">
@@ -68,7 +79,7 @@ export default function LandingPage() {
               <div className="flex gap-3">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-7 py-3.5 rounded-lg font-semibold text-sm hover:shadow-[0_0_0_4px_rgba(202,255,51,0.15)] hover:-translate-y-0.5 transition-all"
+                  className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-7 py-3.5 rounded-lg font-semibold text-sm pf-glow-btn"
                 >
                   Começar grátis →
                 </Link>
@@ -111,156 +122,179 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+
+        {/* Wave at bottom of hero */}
+        <div className="absolute bottom-0 left-0 w-full">
+          <WaveSeparator />
+        </div>
       </section>
 
       {/* Metrics Bar */}
       <section className="pb-20">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 border border-pf-border rounded-xl overflow-hidden">
-            {[
-              { label: "Leads ativos", value: "47", delta: "↑ 12% vs semana anterior", up: true },
-              { label: "Pipeline total", value: "R$ 131k", delta: "↑ 8% vs mês anterior", up: true },
-              { label: "Taxa de conversão", value: "68%", delta: "↑ 3pp vs trimestre", up: true },
-              { label: "Tempo médio ciclo", value: "14d", delta: "↓ 2 dias vs média", up: false },
-            ].map((m, i) => (
-              <div key={i} className="p-8 border-r border-b lg:border-b-0 border-pf-border-subtle last:border-r-0 [&:nth-child(2)]:max-lg:border-r-0">
-                <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-pf-text-muted mb-2">{m.label}</div>
-                <div className="font-display text-[32px] font-bold tracking-tight">{m.value}</div>
-                <div className={`font-mono text-[11px] mt-1.5 ${m.up ? "text-pf-positive" : "text-pf-negative"}`}>{m.delta}</div>
-              </div>
-            ))}
-          </div>
+          <AnimateOnScroll>
+            <div className="grid grid-cols-2 lg:grid-cols-4 border border-pf-border rounded-xl overflow-hidden">
+              {[
+                { label: "Leads ativos", value: "47", delta: "↑ 12% vs semana anterior", up: true },
+                { label: "Pipeline total", value: "R$ 131k", delta: "↑ 8% vs mês anterior", up: true },
+                { label: "Taxa de conversão", value: "68%", delta: "↑ 3pp vs trimestre", up: true },
+                { label: "Tempo médio ciclo", value: "14d", delta: "↓ 2 dias vs média", up: false },
+              ].map((m, i) => (
+                <div key={i} className="p-8 border-r border-b lg:border-b-0 border-pf-border-subtle last:border-r-0 [&:nth-child(2)]:max-lg:border-r-0 hover:bg-pf-surface/50 transition-colors">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-pf-text-muted mb-2">{m.label}</div>
+                  <div className="font-display text-[32px] font-bold tracking-tight">{m.value}</div>
+                  <div className={`font-mono text-[11px] mt-1.5 ${m.up ? "text-pf-positive" : "text-pf-negative"}`}>{m.delta}</div>
+                </div>
+              ))}
+            </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
-      {/* Separator */}
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="h-px bg-gradient-to-r from-transparent via-pf-border to-transparent my-20" />
-      </div>
+      {/* Wave separator */}
+      <WaveSeparator />
 
       {/* Features */}
       <section id="features" className="py-20">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Funcionalidades</div>
-          <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] leading-[1.15] mb-12">
-            O essencial pra vender mais.<br />Nada que atrapalhe.
-          </h2>
+          <AnimateOnScroll>
+            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Funcionalidades</div>
+            <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] leading-[1.15] mb-12">
+              O essencial pra vender mais.<br />Nada que atrapalhe.
+            </h2>
+          </AnimateOnScroll>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-px">
             {features.map((f, i) => (
-              <div
-                key={i}
-                className={`bg-pf-surface p-9 relative group hover:bg-pf-surface-2 transition-all ${
-                  i === 0 ? "md:rounded-tl-xl" : ""
-                } ${i === 2 ? "md:rounded-tr-xl" : ""} ${
-                  i === 3 ? "md:rounded-bl-xl" : ""
-                } ${i === 5 ? "md:rounded-br-xl" : ""}`}
-              >
-                <div className="absolute top-0 left-0 w-0 h-0.5 bg-pf-accent group-hover:w-full transition-all duration-[400ms]" />
-                <div className="font-mono text-[11px] text-pf-text-muted mb-5">{f.idx}</div>
-                <div className="font-display text-lg font-semibold mb-2.5">{f.name}</div>
-                <div className="text-sm leading-[1.65] text-pf-text-secondary">{f.desc}</div>
-              </div>
+              <AnimateOnScroll key={i} delay={i * 100}>
+                <div
+                  className={`bg-pf-surface p-9 relative group hover:bg-pf-surface-2 transition-all hover:-translate-y-1 ${
+                    i === 0 ? "md:rounded-tl-xl" : ""
+                  } ${i === 2 ? "md:rounded-tr-xl" : ""} ${
+                    i === 3 ? "md:rounded-bl-xl" : ""
+                  } ${i === 5 ? "md:rounded-br-xl" : ""}`}
+                >
+                  <div className="absolute top-0 left-0 w-0 h-0.5 bg-pf-accent group-hover:w-full transition-all duration-[400ms]" />
+                  <div className="font-mono text-[11px] text-pf-text-muted mb-5">{f.idx}</div>
+                  <div className="font-display text-lg font-semibold mb-2.5">{f.name}</div>
+                  <div className="text-sm leading-[1.65] text-pf-text-secondary">{f.desc}</div>
+                </div>
+              </AnimateOnScroll>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Separator */}
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="h-px bg-gradient-to-r from-transparent via-pf-border to-transparent my-20" />
+      {/* Wave separator */}
+      <WaveSeparator />
+
+      {/* Cases de Sucesso */}
+      <div id="cases">
+        <SuccessCases />
       </div>
+
+      {/* Wave separator */}
+      <WaveSeparator />
 
       {/* Pipeline */}
       <section id="pipeline" className="py-20">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Pipeline visual</div>
-          <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] mb-12">Do lead ao fechamento.</h2>
-          <div className="flex overflow-x-auto pb-2">
-            {stages.map((s, i) => (
-              <div key={i} className="flex-1 min-w-[160px] p-7 bg-pf-surface border-r border-pf-border-subtle last:border-r-0 first:rounded-l-xl last:rounded-r-xl hover:bg-pf-surface-2 transition-all relative">
-                <div className="w-2 h-2 rounded-full mb-4" style={{ background: s.color }} />
-                <div className="text-[13px] font-semibold mb-1">{s.name}</div>
-                <div className="font-mono text-[10px] text-pf-text-muted uppercase tracking-[0.1em]">{s.sub}</div>
-                {i < stages.length - 1 && (
-                  <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 z-10 text-[10px] text-pf-text-muted">→</div>
-                )}
-              </div>
-            ))}
-          </div>
+          <AnimateOnScroll>
+            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Pipeline visual</div>
+            <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] mb-12">Do lead ao fechamento.</h2>
+          </AnimateOnScroll>
+          <AnimateOnScroll>
+            <div className="flex overflow-x-auto pb-2">
+              {stages.map((s, i) => (
+                <div key={i} className="flex-1 min-w-[160px] p-7 bg-pf-surface border-r border-pf-border-subtle last:border-r-0 first:rounded-l-xl last:rounded-r-xl hover:bg-pf-surface-2 hover:-translate-y-1 transition-all relative">
+                  <div className="w-2 h-2 rounded-full mb-4" style={{ background: s.color }} />
+                  <div className="text-[13px] font-semibold mb-1">{s.name}</div>
+                  <div className="font-mono text-[10px] text-pf-text-muted uppercase tracking-[0.1em]">{s.sub}</div>
+                  {i < stages.length - 1 && (
+                    <div className="absolute -right-1.5 top-1/2 -translate-y-1/2 z-10 text-[10px] text-pf-text-muted">→</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
-      {/* Separator */}
-      <div className="max-w-[1200px] mx-auto px-6">
-        <div className="h-px bg-gradient-to-r from-transparent via-pf-border to-transparent my-20" />
-      </div>
+      {/* Wave separator */}
+      <WaveSeparator />
 
       {/* Pricing */}
       <section id="pricing" className="py-20">
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Planos</div>
-          <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] mb-12">
-            Comece grátis. Escale quando fizer sentido.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-px rounded-xl overflow-hidden">
-            {/* Free */}
-            <div className="bg-pf-surface p-12">
-              <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-pf-text-muted mb-5">Free</div>
-              <div className="font-display text-5xl font-extrabold tracking-[-2px] mb-1">R$ 0</div>
-              <div className="text-sm text-pf-text-muted mb-8">Para sempre</div>
-              <ul className="space-y-0 mb-10">
-                {["Até 2 colaboradores", "Até 50 leads", "Pipeline completo", "Dashboard de vendas"].map((item) => (
-                  <li key={item} className="text-sm text-pf-text-secondary py-2 border-b border-pf-border-subtle flex items-center gap-2.5">
-                    <span className="font-mono text-xs text-pf-text-muted">→</span> {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/signup" className="inline-block px-7 py-3 rounded-lg font-semibold text-sm border border-pf-border text-pf-text-secondary hover:text-pf-text hover:border-pf-text-muted transition-all">
-                Começar grátis
-              </Link>
+          <AnimateOnScroll>
+            <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-pf-text-muted mb-4">Planos</div>
+            <h2 className="font-display text-[clamp(28px,3.5vw,42px)] font-bold tracking-[-1.5px] mb-12">
+              Comece grátis. Escale quando fizer sentido.
+            </h2>
+          </AnimateOnScroll>
+          <AnimateOnScroll>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px rounded-xl overflow-hidden">
+              {/* Free */}
+              <div className="bg-pf-surface p-12">
+                <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-pf-text-muted mb-5">Free</div>
+                <div className="font-display text-5xl font-extrabold tracking-[-2px] mb-1">R$ 0</div>
+                <div className="text-sm text-pf-text-muted mb-8">Para sempre</div>
+                <ul className="space-y-0 mb-10">
+                  {["Até 2 colaboradores", "Até 50 leads", "Pipeline completo", "Dashboard de vendas"].map((item) => (
+                    <li key={item} className="text-sm text-pf-text-secondary py-2 border-b border-pf-border-subtle flex items-center gap-2.5">
+                      <span className="font-mono text-xs text-pf-text-muted">→</span> {item}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup" className="inline-block px-7 py-3 rounded-lg font-semibold text-sm border border-pf-border text-pf-text-secondary hover:text-pf-text hover:border-pf-text-muted transition-all">
+                  Começar grátis
+                </Link>
+              </div>
+              {/* Pro */}
+              <div className="bg-pf-surface-2 p-12">
+                <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-pf-accent mb-5">Pro — recomendado</div>
+                <div className="font-display text-5xl font-extrabold tracking-[-2px] mb-1">R$ 49</div>
+                <div className="text-sm text-pf-text-muted mb-8">por mês, por workspace</div>
+                <ul className="space-y-0 mb-10">
+                  {["Colaboradores ilimitados", "Leads ilimitados", "Tudo do Free", "Suporte prioritário"].map((item) => (
+                    <li key={item} className="text-sm text-pf-text-secondary py-2 border-b border-pf-border-subtle flex items-center gap-2.5">
+                      <span className="font-mono text-xs text-pf-text-muted">→</span> {item}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup" className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-7 py-3 rounded-lg font-semibold text-sm pf-glow-btn">
+                  Fazer upgrade →
+                </Link>
+              </div>
             </div>
-            {/* Pro */}
-            <div className="bg-pf-surface-2 p-12">
-              <div className="font-mono text-[10px] tracking-[0.15em] uppercase text-pf-accent mb-5">Pro — recomendado</div>
-              <div className="font-display text-5xl font-extrabold tracking-[-2px] mb-1">R$ 49</div>
-              <div className="text-sm text-pf-text-muted mb-8">por mês, por workspace</div>
-              <ul className="space-y-0 mb-10">
-                {["Colaboradores ilimitados", "Leads ilimitados", "Tudo do Free", "Suporte prioritário"].map((item) => (
-                  <li key={item} className="text-sm text-pf-text-secondary py-2 border-b border-pf-border-subtle flex items-center gap-2.5">
-                    <span className="font-mono text-xs text-pf-text-muted">→</span> {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/signup" className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-7 py-3 rounded-lg font-semibold text-sm hover:shadow-[0_0_0_4px_rgba(202,255,51,0.15)] transition-all">
-                Fazer upgrade →
-              </Link>
-            </div>
-          </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="text-center py-28">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <h2 className="font-display text-[clamp(32px,4vw,52px)] font-extrabold tracking-[-2px] mb-5">
-            Pronto pra colocar suas<br />vendas em <span className="text-pf-accent">fluxo</span>?
-          </h2>
-          <p className="text-base text-pf-text-secondary mb-10 max-w-[480px] mx-auto">
-            Crie sua conta, configure seu workspace e comece a gerenciar leads em menos de 2 minutos.
-          </p>
-          <Link href="/signup" className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-9 py-4 rounded-lg font-semibold text-base hover:shadow-[0_0_0_4px_rgba(202,255,51,0.15)] hover:-translate-y-0.5 transition-all">
-            Começar agora — é grátis →
-          </Link>
+      <section className="relative text-center py-28 overflow-hidden">
+        {/* Background orbs */}
+        <div className="pf-orb w-[250px] h-[250px] top-[20%] left-[20%]" style={{ background: "radial-gradient(circle, rgba(202,255,51,0.1), transparent 70%)" }} />
+        <div className="pf-orb w-[200px] h-[200px] bottom-[20%] right-[25%]" style={{ background: "radial-gradient(circle, rgba(91,127,255,0.08), transparent 70%)", animationDelay: "-5s" }} />
+
+        <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+          <AnimateOnScroll>
+            <h2 className="font-display text-[clamp(32px,4vw,52px)] font-extrabold tracking-[-2px] mb-5">
+              Pronto pra colocar suas<br />vendas em <span className="text-pf-accent">fluxo</span>?
+            </h2>
+            <p className="text-base text-pf-text-secondary mb-10 max-w-[480px] mx-auto">
+              Crie sua conta, configure seu workspace e comece a gerenciar leads em menos de 2 minutos.
+            </p>
+            <Link href="/signup" className="inline-flex items-center gap-2 bg-pf-accent text-pf-bg px-9 py-4 rounded-lg font-semibold text-base pf-glow-btn">
+              Começar agora — é grátis →
+            </Link>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-pf-border-subtle py-6 px-6">
         <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 bg-pf-accent rounded flex items-center justify-center font-display font-extrabold text-[11px] text-pf-bg">P</div>
-            <span className="font-display text-sm font-semibold">PipeFlow <span className="text-pf-text-muted font-normal">CRM</span></span>
-          </div>
+          <Logo size="sm" />
           <p className="text-xs text-pf-text-muted">Construído com Claude Code — No Code Start Up © 2026</p>
         </div>
       </footer>

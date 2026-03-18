@@ -15,10 +15,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "lead_id é obrigatório" }, { status: 400 });
     }
 
+    const { data: member } = await supabase
+      .from("members")
+      .select("workspace_id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .single();
+    if (!member) return NextResponse.json({ error: "Workspace não encontrado" }, { status: 404 });
+
+    // Verify lead belongs to user's workspace
+    const { data: lead } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("id", lead_id)
+      .eq("workspace_id", member.workspace_id)
+      .single();
+    if (!lead) return NextResponse.json({ error: "Lead não encontrado" }, { status: 404 });
+
     const { data, error } = await supabase
       .from("activities")
       .select("*")
       .eq("lead_id", lead_id)
+      .eq("workspace_id", member.workspace_id)
       .order("performed_at", { ascending: false });
 
     if (error) throw error;

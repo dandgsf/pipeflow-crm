@@ -41,6 +41,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Only admins can create checkout sessions
+    if (member.role !== "admin") {
+      return NextResponse.json(
+        { error: "Apenas administradores podem gerenciar assinaturas" },
+        { status: 403 }
+      );
+    }
+
     // Get existing subscription
     const { data: subscription, error: subError } = await supabase
       .from("subscriptions")

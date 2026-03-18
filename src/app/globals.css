@@ -77,3 +77,117 @@
 .font-display { font-family: 'Syne', sans-serif; }
 .font-mono { font-family: 'IBM Plex Mono', monospace; }
 .font-body { font-family: 'DM Sans', sans-serif; }
+
+/* ===== PipeFlow Animations ===== */
+
+/* Gradient orbs floating */
+@keyframes pf-orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(25px, -15px) scale(1.05); }
+  66% { transform: translate(-15px, 10px) scale(0.97); }
+}
+.pf-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  animation: pf-orb-float 10s ease-in-out infinite;
+}
+
+/* Wave scroll */
+@keyframes pf-wave-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.pf-wave-scroll {
+  animation: pf-wave-scroll 14s linear infinite;
+}
+
+/* Logo flow pulse */
+@keyframes pf-flow-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+  50% { opacity: 1; transform: scaleX(1); }
+}
+.pf-flow-pulse {
+  animation: pf-flow-pulse 3s ease-in-out infinite;
+}
+
+/* Case card float */
+@keyframes pf-case-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.pf-case-float {
+  animation: pf-case-float 3.5s ease-in-out infinite;
+}
+.pf-case-float-delay-1 { animation-delay: -1.2s; }
+.pf-case-float-delay-2 { animation-delay: -2.4s; }
+
+/* Page enter animation */
+@keyframes pf-page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.pf-page-enter {
+  animation: pf-page-enter 0.35s ease-out forwards;
+}
+
+/* Stagger animation for cards */
+.pf-stagger > * {
+  opacity: 0;
+  animation: pf-page-enter 0.4s ease-out forwards;
+}
+.pf-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.pf-stagger > *:nth-child(2) { animation-delay: 100ms; }
+.pf-stagger > *:nth-child(3) { animation-delay: 200ms; }
+.pf-stagger > *:nth-child(4) { animation-delay: 300ms; }
+.pf-stagger > *:nth-child(5) { animation-delay: 400ms; }
+.pf-stagger > *:nth-child(6) { animation-delay: 500ms; }
+
+/* Glassmorphism card */
+.pf-glass {
+  background: rgba(20, 20, 22, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(202, 255, 51, 0.08);
+  transition: all 0.3s ease;
+}
+.pf-glass:hover {
+  border-color: rgba(202, 255, 51, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(202, 255, 51, 0.06);
+}
+
+/* CTA glow button */
+.pf-glow-btn {
+  transition: all 0.3s ease;
+}
+.pf-glow-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(202, 255, 51, 0.3);
+}
+
+/* Sidebar active gradient */
+.pf-nav-active {
+  background: linear-gradient(90deg, rgba(202, 255, 51, 0.1), transparent);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .pf-orb,
+  .pf-wave-scroll,
+  .pf-flow-pulse,
+  .pf-case-float,
+  .pf-page-enter,
+  .pf-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .pf-glass:hover {
+    transform: none;
+  }
+  .pf-glow-btn:hover {
+    transform: none;
+  }
+}

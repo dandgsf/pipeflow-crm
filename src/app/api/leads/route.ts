@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
 
     if (status) query = query.eq("status", status);
     if (assigned_to) query = query.eq("assigned_to", assigned_to);
-    if (search) query = query.or(`name.ilike.%${search}%,company.ilike.%${search}%`);
+    if (search) {
+      const sanitized = search.replace(/[,().\\]/g, "");
+      query = query.or(`name.ilike.%${sanitized}%,company.ilike.%${sanitized}%`);
+    }
 
     const { data, error } = await query;
     if (error) throw error;

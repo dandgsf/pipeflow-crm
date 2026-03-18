@@ -23,18 +23,27 @@ export async function DELETE(
       return NextResponse.json({ error: "Apenas admins podem remover membros" }, { status: 403 });
     }
 
-    // Prevent self-removal
+    // Verify target member belongs to same workspace and prevent self-removal
     const { data: target } = await supabase
       .from("members")
-      .select("user_id")
+      .select("user_id, workspace_id")
       .eq("id", params.id)
+      .eq("workspace_id", caller.workspace_id)
       .single();
 
-    if (target?.user_id === user.id) {
+    if (!target) {
+      return NextResponse.json({ error: "Membro não encontrado" }, { status: 404 });
+    }
+
+    if (target.user_id === user.id) {
       return NextResponse.json({ error: "Você não pode remover a si mesmo" }, { status: 400 });
     }
 
-    const { error } = await supabase.from("members").delete().eq("id", params.id);
+    const { error } = await supabase
+      .from("members")
+      .delete()
+      .eq("id", params.id)
+      .eq("workspace_id", caller.workspace_id);
     if (error) throw error;
 
     return new NextResponse(null, { status: 204 });

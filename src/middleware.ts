@@ -35,8 +35,7 @@ export async function middleware(request: NextRequest) {
   const isPublic =
     pathname === "/" ||
     pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/api/webhooks");
+    pathname.startsWith("/signup");
 
   if (isPublic) return supabaseResponse;
 

@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PipeFlow CRM — Ferramentas & Tecnologias | NoCode StartUp</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #CAFF33;
+    --accent-dim: rgba(202,255,51,0.15);
+    --accent-glow: rgba(202,255,51,0.08);
+    --bg: #0C0C0E;
+    --surface: #141416;
+    --surface-2: #1A1A1E;
+    --border: #2A2A2E;
+    --border-subtle: #1E1E22;
+    --text: #E8E8E8;
+    --text-sec: #8A8A8F;
+    --text-muted: #555559;
+    --positive: #2ED573;
+    --negative: #FF4757;
+    --cool: #5B7FFF;
+    --warm: #FF6B35;
+    --teal: #00B4D8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .top-bar.scrolled {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .top-bar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    pointer-events: auto;
+  }
+  .top-bar-logo .cc-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .top-bar-logo .cc-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .top-bar-logo .cc-label span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+
+  .hero .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 10s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero .orb-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(202,255,51,0.18), transparent 70%);
+    top: -15%; left: 5%;
+  }
+  .hero .orb-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(91,127,255,0.12), transparent 70%);
+    bottom: -10%; right: 5%;
+    animation-delay: -4s;
+  }
+  .hero .orb-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,180,216,0.08), transparent 70%);
+    top: 40%; right: 20%;
+    animation-delay: -7s;
+  }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(25px,-15px) scale(1.05); }
+    66% { transform: translate(-15px,10px) scale(0.97); }
+  }
+
+  .hero-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid rgba(202,255,51,0.25);
+    border-radius: 100px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 2rem;
+    background: rgba(202,255,51,0.05);
+  }
+
+  .hero-logo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-logo .mark {
+    width: 48px; height: 48px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--bg);
+  }
+  .hero-logo .wordmark {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  .hero-logo .wordmark span { color: var(--text-muted); font-weight: 400; }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    z-index: 2;
+    position: relative;
+    max-width: 700px;
+  }
+  .hero h1 .highlight {
+    color: var(--accent);
+    position: relative;
+  }
+
+  .hero .subtitle {
+    color: var(--text-sec);
+    font-size: 1.1rem;
+    z-index: 2;
+    position: relative;
+    margin-top: 1.2rem;
+    max-width: 550px;
+    line-height: 1.7;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 3rem;
+    z-index: 2;
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat .number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hero-stat .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 0.3rem;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+  .scroll-hint svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-muted);
+  }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(8px); opacity: 1; }
+  }
+
+  /* ===== NAV ===== */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(12,12,14,0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    padding: 1rem 1.2rem;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  .nav a:hover,
+  .nav a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ===== SECTIONS ===== */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+  section {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  .section-header { margin-bottom: 3rem; }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .section-desc {
+    color: var(--text-sec);
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    max-width: 600px;
+  }
+
+  /* ===== FILTER TABS ===== */
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover {
+    border-color: var(--text-sec);
+    color: var(--text-sec);
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ===== TECH CARDS ===== */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .tech-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .tech-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+  }
+  .tech-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+  .tech-card:hover {
+    border-color: rgba(202,255,51,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(202,255,51,0.06);
+  }
+  .tech-card:hover::before { width: 100%; }
+
+  .tech-card .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .tech-card .card-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .tech-card .card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .tech-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .tech-card p {
+    color: var(--text-sec);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .tech-card .tech-details {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tech-card .detail-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Category color coding */
+  .cat-frontend .card-icon { background: rgba(91,127,255,0.15); color: var(--cool); }
+  .cat-frontend .card-tag { color: var(--cool); border-color: rgba(91,127,255,0.3); }
+  .cat-backend .card-icon { background: rgba(202,255,51,0.12); color: var(--accent); }
+  .cat-backend .card-tag { color: var(--accent); border-color: rgba(202,255,51,0.3); }
+  .cat-payments .card-icon { background: rgba(255,107,53,0.15); color: var(--warm); }
+  .cat-payments .card-tag { color: var(--warm); border-color: rgba(255,107,53,0.3); }
+  .cat-email .card-icon { background: rgba(0,180,216,0.15); color: var(--teal); }
+  .cat-email .card-tag { color: var(--teal); border-color: rgba(0,180,216,0.3); }
+  .cat-ui .card-icon { background: rgba(46,213,115,0.12); color: var(--positive); }
+  .cat-ui .card-tag { color: var(--positive); border-color: rgba(46,213,115,0.3); }
+  .cat-devtools .card-icon { background: rgba(138,138,143,0.15); color: var(--text-sec); }
+  .cat-devtools .card-tag { color: var(--text-sec); border-color: rgba(138,138,143,0.3); }
+
+  .tech-card.hidden-card {
+    display: none;
+  }
+
+  /* ===== FEATURES ===== */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .feature-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+  }
+  .feature-card:hover {
+    border-color: rgba(202,255,51,0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .feature-card .feat-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+  }
+  .feature-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .feature-card p {
+    color: var(--text-sec);
+    font-size: 0.83rem;
+    line-height: 1.6;
+  }
+  .feature-card .feat-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.8rem;
+    display: inline-block;
+  }
+
+  /* ===== ARCHITECTURE ===== */
+  .arch-container {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    overflow: hidden;
+  }
+
+  .arch-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .arch-row {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .arch-node {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    text-align: center;
+    min-width: 160px;
+    position: relative;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .arch-node:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(202,255,51,0.1);
+    transform: translateY(-2px);
+  }
+  .arch-node .node-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .arch-node .node-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .arch-node .node-desc {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 0.3rem;
+  }
+
+  .arch-node.node-accent { border-color: rgba(202,255,51,0.3); }
+  .arch-node.node-cool { border-color: rgba(91,127,255,0.3); }
+  .arch-node.node-warm { border-color: rgba(255,107,53,0.3); }
+  .arch-node.node-teal { border-color: rgba(0,180,216,0.3); }
+  .arch-node.node-green { border-color: rgba(46,213,115,0.3); }
+
+  .arch-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .arch-connector .line {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 1px;
+    animation: linePulse 2s ease-in-out infinite;
+  }
+  .arch-connector .line-v {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    animation: linePulse 2s ease-in-out infinite;
+  }
+  @keyframes linePulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  .arch-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    flex-wrap: wrap;
+  }
+  .arch-arrow-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ===== ROADMAP ===== */
+  .roadmap {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--cool), var(--warm), var(--positive));
+    border-radius: 1px;
+  }
+
+  .roadmap-item {
+    position: relative;
+    padding: 0 0 2.5rem 2rem;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  .roadmap-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .roadmap-item:last-child { padding-bottom: 0; }
+
+  .roadmap-item .dot {
+    position: absolute;
+    left: -2.5rem;
+    top: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .roadmap-item .dot .inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .roadmap-item .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.3rem;
+  }
+  .roadmap-item h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .roadmap-item p {
+    color: var(--text-sec);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .roadmap-item .tech-used {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+  }
+  .roadmap-item .tech-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== CLAUDE CODE LOGO ===== */
+  .claude-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    vertical-align: middle;
+  }
+  .claude-logo svg {
+    flex-shrink: 0;
+  }
+  .claude-logo-text {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .hero-powered {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 2rem;
+    z-index: 2;
+    position: relative;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(20,20,22,0.6);
+  }
+  .hero-powered .powered-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .hero-powered .divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+  }
+
+  /* ===== AI TOOLKIT SECTION ===== */
+  .toolkit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .toolkit-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .toolkit-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, box-shadow 0.3s;
+  }
+  .toolkit-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--claude-orange, #E87040);
+    transition: width 0.4s ease;
+  }
+  .toolkit-card:hover {
+    border-color: rgba(232,112,64,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 24px rgba(232,112,64,0.06);
+  }
+  .toolkit-card:hover::before { width: 100%; }
+
+  .toolkit-card .tk-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+  }
+  .toolkit-card .tk-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .toolkit-card .tk-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .toolkit-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .toolkit-card p {
+    color: var(--text-sec);
+    font-size: 0.83rem;
+    line-height: 1.6;
+  }
+
+  .tk-skill .tk-icon { background: rgba(232,112,64,0.12); color: #E87040; }
+  .tk-skill .tk-type { color: #E87040; border-color: rgba(232,112,64,0.3); }
+  .tk-plugin .tk-icon { background: rgba(91,127,255,0.12); color: var(--cool); }
+  .tk-plugin .tk-type { color: var(--cool); border-color: rgba(91,127,255,0.3); }
+  .tk-agent .tk-icon { background: rgba(202,255,51,0.12); color: var(--accent); }
+  .tk-agent .tk-type { color: var(--accent); border-color: rgba(202,255,51,0.3); }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .footer .footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .footer .footer-brand span {
+    color: var(--accent);
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .hero { min-height: auto; padding: 5rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2rem; letter-spacing: -1px; }
+    .hero-stats { gap: 2rem; }
+    .hero-stat .number { font-size: 2rem; }
+    .tech-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .arch-row { flex-direction: column; align-items: center; }
+    .arch-arrows { gap: 2rem; }
+    .container { padding: 0 1.2rem; }
+    section { padding: 3.5rem 0; }
+    .nav a { padding: 0.8rem 1rem; font-size: 0.75rem; }
+    .filters { gap: 0.3rem; }
+    .filter-btn { font-size: 0.6rem; padding: 0.4rem 0.7rem; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-logo .wordmark { font-size: 1.4rem; }
+    .hero-logo .mark { width: 38px; height: 38px; font-size: 1.2rem; }
+    .arch-node { min-width: 130px; padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR (Claude Code Logo) ===== -->
+<div class="top-bar" id="topBar">
+  <div class="top-bar-logo">
+    <svg class="cc-icon" width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Claude Code sparkle logo - white -->
+      <path d="M44.8 20.3c-.35-1.2-1.95-1.2-2.3 0l-2.6 9a1.19 1.19 0 01-.82.82l-9 2.6c-1.2.35-1.2 1.95 0 2.3l9 2.6c.39.11.71.43.82.82l2.6 9c.35 1.2 1.95 1.2 2.3 0l2.6-9c.11-.39.43-.71.82-.82l9-2.6c1.2-.35 1.2-1.95 0-2.3l-9-2.6a1.19 1.19 0 01-.82-.82l-2.6-9z" fill="white"/>
+      <path d="M23.9 6.8c-.26-.9-1.46-.9-1.72 0l-1.95 6.73a.89.89 0 01-.61.61l-6.73 1.95c-.9.26-.9 1.46 0 1.72l6.73 1.95c.29.08.53.32.61.61l1.95 6.73c.26.9 1.46.9 1.72 0l1.95-6.73a.89.89 0 01.61-.61l6.73-1.95c.9-.26.9-1.46 0-1.72l-6.73-1.95a.89.89 0 01-.61-.61L23.9 6.8z" fill="white"/>
+      <path d="M20.6 41.8c-.26-.9-1.46-.9-1.72 0l-1.95 6.73a.89.89 0 01-.61.61l-6.73 1.95c-.9.26-.9 1.46 0 1.72l6.73 1.95c.29.08.53.32.61.61l1.95 6.73c.26.9 1.46.9 1.72 0l1.95-6.73a.89.89 0 01.61-.61l6.73-1.95c.9-.26.9-1.46 0-1.72l-6.73-1.95a.89.89 0 01-.61-.61l-1.95-6.73z" fill="white"/>
+    </svg>
+    <span class="cc-label">Claude Code <span>by Anthropic</span></span>
+  </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-badge">
+    NoCode StartUp &mdash;
+    <span class="claude-logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+        <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+        <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+      </svg>
+      <span class="claude-logo-text">Claude Code</span>
+    </span>
+  </div>
+
+  <div class="hero-logo">
+    <div class="mark">P</div>
+    <div class="wordmark">PipeFlow<span>CRM</span></div>
+  </div>
+
+  <h1>Ferramentas &<br><span class="highlight">Tecnologias</span></h1>
+  <p class="subtitle">Tudo que vamos usar para construir o PipeFlow CRM do zero &mdash; um CRM multi-tenant completo com pipeline visual, pagamentos e deploy em produ&ccedil;&atilde;o.</p>
+
+  <div class="hero-powered">
+    <span class="powered-label">Desenvolvido com</span>
+    <span class="divider"></span>
+    <span class="claude-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+        <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+        <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+      </svg>
+      <span class="claude-logo-text">Claude Code</span>
+    </span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="number" data-count="14">0</div>
+      <div class="label">Tecnologias</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number" data-count="10">0</div>
+      <div class="label">Skills & Plugins</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number" data-count="10">0</div>
+      <div class="label">Features</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number" data-count="8">0</div>
+      <div class="label">M&oacute;dulos</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+  </div>
+</header>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#tech-stack">Tech Stack</a>
+    <a href="#ai-toolkit">Skills & Plugins</a>
+    <a href="#features">Features</a>
+    <a href="#architecture">Arquitetura</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- ===== TECH STACK ===== -->
+<section id="tech-stack">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">01 &mdash; Stack T&eacute;cnica</div>
+      <h2 class="section-title">As ferramentas por tr&aacute;s do projeto</h2>
+      <p class="section-desc">Cada tecnologia foi escolhida com prop&oacute;sito. Sem excesso, sem modismos &mdash; s&oacute; o que resolve.</p>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">Todas</button>
+      <button class="filter-btn" data-filter="frontend">Frontend</button>
+      <button class="filter-btn" data-filter="backend">Backend</button>
+      <button class="filter-btn" data-filter="payments">Pagamentos</button>
+      <button class="filter-btn" data-filter="email">Email</button>
+      <button class="filter-btn" data-filter="ui">UI & Intera&ccedil;&atilde;o</button>
+      <button class="filter-btn" data-filter="devtools">DevTools</button>
+    </div>
+
+    <div class="tech-grid" id="techGrid">
+
+      <!-- FRONTEND -->
+      <div class="tech-card cat-frontend" data-category="frontend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 19.5h20L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">Frontend</span>
+        </div>
+        <h3>Next.js 14</h3>
+        <p>Framework React full-stack com App Router, Server Components e Server Actions. Roteamento baseado em arquivos e SSR autom&aacute;tico.</p>
+        <div class="tech-details">
+          <span class="detail-chip">App Router</span>
+          <span class="detail-chip">Server Components</span>
+          <span class="detail-chip">Server Actions</span>
+          <span class="detail-chip">SSR</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-frontend" data-category="frontend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" stroke-width="1.5"/><ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" stroke-width="1.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" stroke="currentColor" stroke-width="1.5" transform="rotate(-60 12 12)"/></svg>
+          </div>
+          <span class="card-tag">Frontend</span>
+        </div>
+        <h3>React 18</h3>
+        <p>Biblioteca de UI com Hooks, Context API e Suspense. Renderiza&ccedil;&atilde;o eficiente com reconcilia&ccedil;&atilde;o virtual.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Hooks</span>
+          <span class="detail-chip">Context</span>
+          <span class="detail-chip">Suspense</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-frontend" data-category="frontend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 16V8l4 8 4-8v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">Frontend</span>
+        </div>
+        <h3>TypeScript</h3>
+        <p>Superset tipado de JavaScript. Type safety de ponta a ponta, do banco at&eacute; o componente, com autocomplete e refactoring.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Static Types</span>
+          <span class="detail-chip">Generics</span>
+          <span class="detail-chip">End-to-End</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-frontend" data-category="frontend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="card-tag">Frontend</span>
+        </div>
+        <h3>Tailwind CSS</h3>
+        <p>Framework utility-first para estiliza&ccedil;&atilde;o r&aacute;pida e consistente. Classes at&ocirc;micas direto no JSX, sem CSS files separados.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Utility-First</span>
+          <span class="detail-chip">CSS Variables</span>
+          <span class="detail-chip">Responsive</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-frontend" data-category="frontend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="card-tag">Frontend</span>
+        </div>
+        <h3>shadcn/ui</h3>
+        <p>Cole&ccedil;&atilde;o de componentes baseada em Radix UI + Tailwind. C&oacute;digo-fonte copiado para o projeto &mdash; customiz&aacute;vel, acess&iacute;vel e bonito.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Radix UI</span>
+          <span class="detail-chip">Acessibilidade</span>
+          <span class="detail-chip">Theming</span>
+        </div>
+      </div>
+
+      <!-- BACKEND -->
+      <div class="tech-card cat-backend" data-category="backend">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7l8-4 8 4-8 4-8-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 12l8 4 8-4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 17l8 4 8-4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">Backend</span>
+        </div>
+        <h3>Supabase</h3>
+        <p>Plataforma backend completa: PostgreSQL, autentica&ccedil;&atilde;o, Row Level Security, Edge Functions e storage. O backend inteiro em um s&oacute; lugar.</p>
+        <div class="tech-details">
+          <span class="detail-chip">PostgreSQL</span>
+          <span class="detail-chip">Auth</span>
+          <span class="detail-chip">RLS</span>
+          <span class="detail-chip">Edge Functions</span>
+          <span class="detail-chip">Realtime</span>
+        </div>
+      </div>
+
+      <!-- PAYMENTS -->
+      <div class="tech-card cat-payments" data-category="payments">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="2"/><path d="M2 10h20" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="card-tag">Pagamentos</span>
+        </div>
+        <h3>Stripe</h3>
+        <p>Infra de pagamentos para SaaS. Checkout sessions, webhooks para eventos, assinaturas recorrentes e gest&atilde;o de planos.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Checkout</span>
+          <span class="detail-chip">Webhooks</span>
+          <span class="detail-chip">Subscriptions</span>
+          <span class="detail-chip">Customer Portal</span>
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="tech-card cat-email" data-category="email">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">Email</span>
+        </div>
+        <h3>Resend</h3>
+        <p>API moderna de envio de emails transacionais. Templates feitos com React Email &mdash; emails bonitos com JSX, n&atilde;o com HTML arcaico.</p>
+        <div class="tech-details">
+          <span class="detail-chip">React Email</span>
+          <span class="detail-chip">Templates JSX</span>
+          <span class="detail-chip">Transactional</span>
+        </div>
+      </div>
+
+      <!-- UI & INTERACTION -->
+      <div class="tech-card cat-ui" data-category="ui">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="18" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="8" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="card-tag">UI</span>
+        </div>
+        <h3>@dnd-kit</h3>
+        <p>Drag & drop performante e acess&iacute;vel para React. Alimenta o quadro Kanban do pipeline com arrastar entre colunas.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Drag & Drop</span>
+          <span class="detail-chip">Sortable</span>
+          <span class="detail-chip">Kanban</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-ui" data-category="ui">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 20V8l4 4 4-8 4 6 4-3v13H3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">UI</span>
+        </div>
+        <h3>Recharts</h3>
+        <p>Biblioteca de gr&aacute;ficos declarativos para React. Constru&iacute;da sobre D3.js. Dashboard com funil de vendas e trends semanais.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Bar Charts</span>
+          <span class="detail-chip">Area Charts</span>
+          <span class="detail-chip">Responsive</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-ui" data-category="ui">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="card-tag">UI</span>
+        </div>
+        <h3>Lucide React</h3>
+        <p>&Iacute;cones SVG consistentes e leves. +1000 &iacute;cones com API React nativa, tree-shakeable e customiz&aacute;vel.</p>
+        <div class="tech-details">
+          <span class="detail-chip">1000+ Icons</span>
+          <span class="detail-chip">SVG</span>
+          <span class="detail-chip">Tree-shake</span>
+        </div>
+      </div>
+
+      <div class="tech-card cat-ui" data-category="ui">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="card-tag">UI</span>
+        </div>
+        <h3>Radix UI</h3>
+        <p>Primitivos de UI acess&iacute;veis e sem estilo. Base dos componentes shadcn/ui. WAI-ARIA compliant por padr&atilde;o.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Headless</span>
+          <span class="detail-chip">WAI-ARIA</span>
+          <span class="detail-chip">Composable</span>
+        </div>
+      </div>
+
+      <!-- DEVTOOLS -->
+      <div class="tech-card cat-devtools" data-category="devtools">
+        <div class="card-top">
+          <div class="card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M8 3v2M16 3v2M4 8h16M4 8a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 14l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="card-tag">DevTools</span>
+        </div>
+        <h3>ESLint + PostCSS</h3>
+        <p>Linting autom&aacute;tico para qualidade de c&oacute;digo e processamento CSS com plugins do Tailwind. Erros pegos antes do deploy.</p>
+        <div class="tech-details">
+          <span class="detail-chip">Linting</span>
+          <span class="detail-chip">Auto-fix</span>
+          <span class="detail-chip">CSS Processing</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI TOOLKIT ===== -->
+<section id="ai-toolkit">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">02 &mdash; Skills, Agents & Plugins</div>
+      <h2 class="section-title">
+        O toolkit
+        <span class="claude-logo" style="vertical-align: baseline;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span class="claude-logo-text" style="font-size: inherit; font-family: inherit; font-weight: inherit;">Claude Code</span>
+        </span>
+      </h2>
+      <p class="section-desc">Skills, plugins e agentes especializados que turbinaram o desenvolvimento. O Claude Code n&atilde;o trabalha sozinho &mdash; ele usa um ecossistema.</p>
+    </div>
+
+    <div class="toolkit-grid" id="toolkitGrid">
+
+      <!-- SKILLS -->
+      <div class="toolkit-card tk-skill">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="tk-type">Skill</span>
+        </div>
+        <h3>Supabase Postgres Best Practices</h3>
+        <p>40+ regras de otimiza&ccedil;&atilde;o organizadas por impacto: query performance, RLS, connection pooling, schema design e monitoramento.</p>
+      </div>
+
+      <div class="toolkit-card tk-skill">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="tk-type">Skill</span>
+        </div>
+        <h3>Micro SaaS Launcher</h3>
+        <p>Guia para lan&ccedil;ar SaaS r&aacute;pido: MVP scoping, pricing, launch playbooks, stack para solo founder e padr&otilde;es de tra&ccedil;&atilde;o inicial.</p>
+      </div>
+
+      <div class="toolkit-card tk-skill">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="tk-type">Skill</span>
+        </div>
+        <h3>Frontend Design</h3>
+        <p>Cria interfaces distintas e production-grade. Gera c&oacute;digo criativo e polido que foge da est&eacute;tica gen&eacute;rica de IA.</p>
+      </div>
+
+      <div class="toolkit-card tk-skill">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="tk-type">Skill</span>
+        </div>
+        <h3>Security Audit</h3>
+        <p>Auditoria de seguran&ccedil;a com an&aacute;lise de RLS, vulnerabilidades, valida&ccedil;&atilde;o de inputs e boas pr&aacute;ticas OWASP.</p>
+      </div>
+
+      <div class="toolkit-card tk-skill">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+          </div>
+          <span class="tk-type">Skill</span>
+        </div>
+        <h3>Stripe Best Practices</h3>
+        <p>Padr&otilde;es para integra&ccedil;&atilde;o Stripe: checkout flows, webhooks seguros, subscriptions, Connect e idempotency.</p>
+      </div>
+
+      <!-- PLUGINS -->
+      <div class="toolkit-card tk-plugin">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v6M12 16v6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M16 12h6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="tk-type">Plugin</span>
+        </div>
+        <h3>Vercel Plugin</h3>
+        <p>Integra&ccedil;&atilde;o nativa com Vercel: deploy, environment variables, domains, logs e best practices de Next.js autom&aacute;ticos.</p>
+      </div>
+
+      <div class="toolkit-card tk-plugin">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="2"/><path d="M2 10h20" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="tk-type">Plugin</span>
+        </div>
+        <h3>Stripe Plugin</h3>
+        <p>Acesso direto &agrave; API Stripe pelo Claude Code: explica erros, sugere test cards e aplica best practices de pagamento.</p>
+      </div>
+
+      <!-- AGENTS -->
+      <div class="toolkit-card tk-agent">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="2"/><path d="M3 21v-1a7 7 0 0114 0v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 10l3 3 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="tk-type">Agent</span>
+        </div>
+        <h3>Code Review Agent</h3>
+        <p>Agente especializado que revisa c&oacute;digo contra o plano original, padr&otilde;es de qualidade, bugs e vulnerabilidades.</p>
+      </div>
+
+      <div class="toolkit-card tk-agent">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 019-9" stroke="currentColor" stroke-width="2"/></svg>
+          </div>
+          <span class="tk-type">Agent</span>
+        </div>
+        <h3>Explore Agent</h3>
+        <p>Agente r&aacute;pido para explorar codebases: busca arquivos, padr&otilde;es, endpoints e entende a arquitetura do projeto.</p>
+      </div>
+
+      <div class="toolkit-card tk-agent">
+        <div class="tk-header">
+          <div class="tk-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 14l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="tk-type">Agent</span>
+        </div>
+        <h3>Plan Agent</h3>
+        <p>Arquiteto de software que desenha planos de implementa&ccedil;&atilde;o, identifica arquivos cr&iacute;ticos e considera trade-offs.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">03 &mdash; Features</div>
+      <h2 class="section-title">O que vamos construir</h2>
+      <p class="section-desc">Cada feature &eacute; uma pe&ccedil;a funcional do CRM. Sem features decorativas &mdash; tudo resolve um problema real.</p>
+    </div>
+
+    <div class="features-grid" id="featuresGrid">
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(91,127,255,0.12); color: var(--cool);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="18" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="7" width="7" height="14" rx="1" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Pipeline Kanban</h3>
+        <p>Quadro visual com drag & drop entre 6 etapas: Novo Lead, Contactado, Proposta, Negocia&ccedil;&atilde;o, Ganho e Perdido.</p>
+        <span class="feat-tag">@dnd-kit &middot; Supabase</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(202,255,51,0.12); color: var(--accent);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Gest&atilde;o de Leads</h3>
+        <p>CRUD completo com busca, filtros por status, perfil detalhado e timeline de atividades vinculadas.</p>
+        <span class="feat-tag">React &middot; Supabase &middot; TypeScript</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(46,213,115,0.12); color: var(--positive);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 20V8l4 4 4-8 4 6 4-3v13H3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Dashboard & M&eacute;tricas</h3>
+        <p>Painel com taxa de convers&atilde;o, funil de vendas, trends semanais e deals pr&oacute;ximos do fechamento.</p>
+        <span class="feat-tag">Recharts &middot; Server Components</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(255,107,53,0.12); color: var(--warm);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M9 3v18M3 9h18" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Multi-tenant</h3>
+        <p>Workspaces isolados com Row Level Security. Cada equipe v&ecirc; apenas seus dados. Convites por email.</p>
+        <span class="feat-tag">Supabase RLS &middot; Policies</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(255,107,53,0.15); color: var(--warm);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="2"/><path d="M12 12h.01M8 12h.01M16 12h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Planos & Billing</h3>
+        <p>Free (2 membros, 50 leads) e Pro (R$49/m&ecirc;s, ilimitado). Checkout, portal do cliente e webhooks Stripe.</p>
+        <span class="feat-tag">Stripe &middot; Webhooks</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(0,180,216,0.12); color: var(--teal);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Sistema de Atividades</h3>
+        <p>Registro de liga&ccedil;&otilde;es, emails, reuni&otilde;es e notas. Timeline cronol&oacute;gica vinculada a leads e deals.</p>
+        <span class="feat-tag">CRUD &middot; Timeline UI</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(91,127,255,0.12); color: var(--cool);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <h3>Autentica&ccedil;&atilde;o</h3>
+        <p>Login, signup, session management e prote&ccedil;&atilde;o de rotas com middleware. Supabase Auth integrado.</p>
+        <span class="feat-tag">Supabase Auth &middot; Middleware</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(202,255,51,0.12); color: var(--accent);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Row Level Security</h3>
+        <p>Seguran&ccedil;a a n&iacute;vel de linha no PostgreSQL. Policies garantem que nenhum usu&aacute;rio acessa dados de outro workspace.</p>
+        <span class="feat-tag">PostgreSQL &middot; Policies</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(46,213,115,0.12); color: var(--positive);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Onboarding Flow</h3>
+        <p>Fluxo guiado de cria&ccedil;&atilde;o de workspace ap&oacute;s o primeiro login. Nome do time e setup inicial.</p>
+        <span class="feat-tag">UX &middot; Server Actions</span>
+      </div>
+
+      <div class="feature-card">
+        <div class="feat-icon" style="background: rgba(0,180,216,0.12); color: var(--teal);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Landing Page</h3>
+        <p>P&aacute;gina de convers&atilde;o com cases de sucesso, features e CTA. Design editorial com identidade PipeFlow.</p>
+        <span class="feat-tag">Next.js &middot; Tailwind &middot; SSG</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARCHITECTURE ===== -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">04 &mdash; Arquitetura</div>
+      <h2 class="section-title">Como tudo se conecta</h2>
+      <p class="section-desc">Vis&atilde;o macro do sistema. Cada bloco tem uma responsabilidade clara.</p>
+    </div>
+
+    <div class="arch-container reveal">
+      <!-- Layer 1: Client -->
+      <div class="arch-grid">
+        <div class="arch-row">
+          <div class="arch-node node-cool">
+            <div class="node-icon">&#x1F4BB;</div>
+            <div class="node-name">Browser</div>
+            <div class="node-desc">React &middot; shadcn/ui &middot; Tailwind</div>
+          </div>
+        </div>
+
+        <!-- Connector -->
+        <div class="arch-connector">
+          <div class="line-v"></div>
+        </div>
+
+        <!-- Layer 2: App -->
+        <div class="arch-row">
+          <div class="arch-node node-accent">
+            <div class="node-icon">&#x26A1;</div>
+            <div class="node-name">Next.js App Router</div>
+            <div class="node-desc">Server Components &middot; API Routes &middot; Middleware</div>
+          </div>
+        </div>
+
+        <!-- Connector -->
+        <div class="arch-arrows">
+          <div class="arch-arrow-group">
+            <div class="arch-connector"><div class="line-v"></div></div>
+          </div>
+          <div class="arch-arrow-group">
+            <div class="arch-connector"><div class="line-v"></div></div>
+          </div>
+          <div class="arch-arrow-group">
+            <div class="arch-connector"><div class="line-v"></div></div>
+          </div>
+        </div>
+
+        <!-- Layer 3: Services -->
+        <div class="arch-row">
+          <div class="arch-node node-green">
+            <div class="node-icon">&#x1F5C4;&#xFE0F;</div>
+            <div class="node-name">Supabase</div>
+            <div class="node-desc">PostgreSQL &middot; Auth &middot; RLS</div>
+          </div>
+          <div class="arch-node node-warm">
+            <div class="node-icon">&#x1F4B3;</div>
+            <div class="node-name">Stripe</div>
+            <div class="node-desc">Checkout &middot; Webhooks &middot; Billing</div>
+          </div>
+          <div class="arch-node node-teal">
+            <div class="node-icon">&#x2709;&#xFE0F;</div>
+            <div class="node-name">Resend</div>
+            <div class="node-desc">Email &middot; React Templates</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROADMAP ===== -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">05 &mdash; Roadmap</div>
+      <h2 class="section-title">O que voc&ecirc; vai aprender</h2>
+      <p class="section-desc">Cada m&oacute;dulo constr&oacute;i em cima do anterior. Do setup ao deploy em produ&ccedil;&atilde;o.</p>
+    </div>
+
+    <div class="roadmap">
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 01</div>
+        <h3>Setup & Configura&ccedil;&atilde;o</h3>
+        <p>Inicializar o projeto Next.js, configurar Tailwind, shadcn/ui, TypeScript e conex&atilde;o com Supabase.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Next.js</span>
+          <span class="tech-pill">Tailwind</span>
+          <span class="tech-pill">shadcn/ui</span>
+          <span class="tech-pill">Supabase</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 02</div>
+        <h3>Estrutura & Roteamento</h3>
+        <p>App Router, layouts, grupos de rotas (auth vs dashboard), p&aacute;ginas din&acirc;micas e middleware.</p>
+        <div class="tech-used">
+          <span class="tech-pill">App Router</span>
+          <span class="tech-pill">Layouts</span>
+          <span class="tech-pill">Middleware</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 03</div>
+        <h3>Autentica&ccedil;&atilde;o & Multi-tenancy</h3>
+        <p>Login, signup, prote&ccedil;&atilde;o de rotas, workspaces isolados e Row Level Security no banco.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Supabase Auth</span>
+          <span class="tech-pill">RLS</span>
+          <span class="tech-pill">Policies</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 04</div>
+        <h3>CRUD de Leads</h3>
+        <p>Tabela de leads com busca, filtros, cria&ccedil;&atilde;o, edi&ccedil;&atilde;o e p&aacute;gina de detalhes com timeline de atividades.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Server Actions</span>
+          <span class="tech-pill">TypeScript</span>
+          <span class="tech-pill">Supabase</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 05</div>
+        <h3>Pipeline Kanban</h3>
+        <p>Quadro visual com drag & drop, colunas por est&aacute;gio, cards de deals e atualiza&ccedil;&atilde;o em tempo real.</p>
+        <div class="tech-used">
+          <span class="tech-pill">@dnd-kit</span>
+          <span class="tech-pill">React State</span>
+          <span class="tech-pill">Supabase</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 06</div>
+        <h3>Dashboard & M&eacute;tricas</h3>
+        <p>Cards de m&eacute;tricas, gr&aacute;fico de funil, trends semanais e lista de deals pr&oacute;ximos.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Recharts</span>
+          <span class="tech-pill">Server Components</span>
+          <span class="tech-pill">SQL</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 07</div>
+        <h3>Planos & Stripe</h3>
+        <p>Integra&ccedil;&atilde;o com Stripe para checkout, assinaturas, webhooks e portal de gerenciamento do cliente.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Stripe</span>
+          <span class="tech-pill">Webhooks</span>
+          <span class="tech-pill">Edge Functions</span>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="dot"><div class="inner"></div></div>
+        <div class="step-num">M&oacute;dulo 08</div>
+        <h3>Deploy & Produ&ccedil;&atilde;o</h3>
+        <p>Deploy na Vercel, vari&aacute;veis de ambiente, dom&iacute;nio customizado e monitoramento b&aacute;sico.</p>
+        <div class="tech-used">
+          <span class="tech-pill">Vercel</span>
+          <span class="tech-pill">Env Vars</span>
+          <span class="tech-pill">DNS</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="claude-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+        <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+        <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+      </svg>
+      <span class="claude-logo-text" style="font-size: 0.75rem;">Claude Code</span>
+    </span>
+    <p class="footer-brand">
+      Constru&iacute;do com Claude Code &mdash; <span>No Code Start Up</span> &copy; 2026
+    </p>
+  </div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== SCROLL REVEAL =====
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .tech-card, .toolkit-card, .feature-card, .roadmap-item').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ===== STAGGER ANIMATIONS =====
+  const staggerObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var cards = entry.target.querySelectorAll('.tech-card, .toolkit-card, .feature-card, .roadmap-item');
+        cards.forEach(function(card, i) {
+          setTimeout(function() {
+            card.classList.add('visible');
+          }, i * 80);
+        });
+        staggerObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.tech-grid, .toolkit-grid, .features-grid, .roadmap').forEach(function(grid) {
+    staggerObserver.observe(grid);
+  });
+
+  // ===== COUNTER ANIMATION =====
+  var counters = document.querySelectorAll('[data-count]');
+  var counterDone = false;
+  var counterObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !counterDone) {
+        counterDone = true;
+        counters.forEach(function(counter) {
+          var target = parseInt(counter.getAttribute('data-count'));
+          var duration = 1500;
+          var start = 0;
+          var startTime = null;
+
+          function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            counter.textContent = Math.floor(eased * target);
+            if (progress < 1) requestAnimationFrame(animate);
+            else counter.textContent = target;
+          }
+          requestAnimationFrame(animate);
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+
+  if (counters.length > 0) {
+    counterObserver.observe(counters[0].closest('.hero-stats'));
+  }
+
+  // ===== FILTER TABS =====
+  var filterBtns = document.querySelectorAll('.filter-btn');
+  var techCards = document.querySelectorAll('.tech-card');
+
+  filterBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var filter = this.getAttribute('data-filter');
+
+      filterBtns.forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+
+      techCards.forEach(function(card) {
+        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+          card.classList.remove('hidden-card');
+          // Re-trigger animation
+          card.classList.remove('visible');
+          setTimeout(function() { card.classList.add('visible'); }, 50);
+        } else {
+          card.classList.add('hidden-card');
+        }
+      });
+    });
+  });
+
+  // ===== STICKY NAV ACTIVE STATE =====
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav a');
+
+  window.addEventListener('scroll', function() {
+    var scrollPos = window.scrollY + 120;
+    sections.forEach(function(section) {
+      var top = section.offsetTop;
+      var height = section.offsetHeight;
+      var id = section.getAttribute('id');
+
+      if (scrollPos >= top && scrollPos < top + height) {
+        navLinks.forEach(function(link) {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  });
+
+  // ===== TOP BAR HIDE ON SCROLL =====
+  var topBar = document.getElementById('topBar');
+  var heroEl = document.querySelector('.hero');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > heroEl.offsetHeight - 100) {
+      topBar.classList.add('scrolled');
+    } else {
+      topBar.classList.remove('scrolled');
+    }
+  }, { passive: true });
+
+  // ===== SMOOTH SCROLL FOR NAV =====
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        var offset = document.querySelector('.nav').offsetHeight + 20;
+        window.scrollTo({
+          top: target.offsetTop - offset,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

@@ -42,9 +42,9 @@ export function MetricsCards({ metrics }: MetricsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border border-pf-border rounded-lg sm:divide-x divide-y sm:divide-y-0 divide-pf-border bg-pf-surface">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pf-stagger">
       {cards.map(({ label, value, icon: Icon, color, bg }) => (
-        <div key={label} className="flex items-center gap-4 p-5">
+        <div key={label} className="pf-glass rounded-xl flex items-center gap-4 p-5">
           <div className={`rounded-lg p-2.5 ${bg}`}>
             <Icon className={`h-5 w-5 ${color}`} />
           </div>

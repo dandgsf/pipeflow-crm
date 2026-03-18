@@ -1,18 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteId = searchParams.get("invite");
+  const inviteEmail = searchParams.get("email") ?? "";
+
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(inviteEmail);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -57,13 +62,15 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2.5 mb-6">
-            <div className="w-10 h-10 bg-pf-accent rounded-lg flex items-center justify-center font-display font-extrabold text-lg text-pf-bg">P</div>
+          <div className="mb-6">
+            <Logo size="lg" className="justify-center" />
           </div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-pf-text mb-1">
             Criar conta
           </h1>
-          <p className="text-sm text-pf-text-muted">Comece a usar o PipeFlow CRM</p>
+          <p className="text-sm text-pf-text-muted">
+            {inviteId ? "Crie sua conta para aceitar o convite" : "Comece a usar o PipeFlow CRM"}
+          </p>
         </div>
 
         <div className="bg-pf-surface border border-pf-border rounded-xl p-8">
@@ -74,7 +81,7 @@ export default function SignupPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm text-pf-text-secondary">E-mail</Label>
-              <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" className={inputCls} />
+              <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" readOnly={!!inviteEmail} className={`${inputCls} ${inviteEmail ? "opacity-60 cursor-not-allowed" : ""}`} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm text-pf-text-secondary">Senha</Label>
@@ -111,5 +118,17 @@ export default function SignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
+        <Loader2 className="h-6 w-6 animate-spin text-pf-text-muted" />
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }

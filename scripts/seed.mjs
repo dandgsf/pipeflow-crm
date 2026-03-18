@@ -1,7 +1,7 @@
 /**
  * seed.mjs — Popula o Supabase com dados realistas para o PipeFlow CRM.
  *
- * Uso: node scripts/seed.mjs
+ * Uso: node --env-file=.env.local scripts/seed.mjs
  *
  * Cria:
  *  - 1 usuário de teste (via Supabase Auth)
@@ -16,9 +16,13 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 
-const SUPABASE_URL = "https://pkdpeolhwmsxjrqjchat.supabase.co";
-const SERVICE_ROLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrZHBlb2xod21zeGpycWpjaGF0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1Nzk0NTc4OSwiZXhwIjoyMDczNTIxNzg5fQ.Oy1E26dBEgVByxc3e_bh3QAeYcoo8_pc1V-3Sqwkpy0";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  console.error("❌ Defina NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY em .env.local");
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },

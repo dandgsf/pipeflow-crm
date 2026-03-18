@@ -46,3 +46,21 @@ firebase-debug.log
 
 # Claude Code
 .claude/
+
+# Superpowers (AI sessions)
+.superpowers/
+
+# Scaffold / boilerplate backup
+pipeflow-crm-scaffold/
+
+# Supabase local state
+supabase/.temp/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc dev files
+stripe-windows-checksums.txt
+docs/design-scope.html
+docs/pipeflow-identity-v2.html

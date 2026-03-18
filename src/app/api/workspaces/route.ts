@@ -29,6 +29,27 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
+    // Check if user has a pending invite (email-matching, user_id is null)
+    const { data: pendingInvite } = await supabase
+      .from("members")
+      .select("id, workspace_id, workspaces(id, name, slug, created_at)")
+      .eq("email", user.email!)
+      .is("user_id", null)
+      .limit(1)
+      .single();
+
+    if (pendingInvite) {
+      // Accept invite: update member record with real user_id
+      const { error: acceptError } = await supabase
+        .from("members")
+        .update({ user_id: user.id })
+        .eq("id", pendingInvite.id);
+
+      if (acceptError) throw acceptError;
+
+      return NextResponse.json(pendingInvite.workspaces, { status: 200 });
+    }
+
     const body = await request.json();
     if (!body.name?.trim()) return NextResponse.json({ error: "Nome é obrigatório" }, { status: 400 });
     if (!body.slug?.trim()) return NextResponse.json({ error: "Slug é obrigatório" }, { status: 400 });

@@ -40,7 +40,7 @@ export function DealCard({ deal }: DealCardProps) {
       {...attributes}
       {...listeners}
       className={cn(
-        "cursor-grab rounded-lg border border-pf-border-subtle bg-pf-surface p-3 shadow-sm active:cursor-grabbing hover:border-pf-accent/20 transition-colors",
+        "cursor-grab rounded-lg border border-pf-border-subtle bg-pf-surface p-3 shadow-sm active:cursor-grabbing hover:border-pf-accent/20 hover:-translate-y-0.5 hover:shadow-md transition-all",
         isDragging && "opacity-40 shadow-lg"
       )}
     >

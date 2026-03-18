@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,12 +40,9 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2.5 mb-6">
-            <div className="w-10 h-10 bg-pf-accent rounded-lg flex items-center justify-center font-display font-extrabold text-lg text-pf-bg">P</div>
+          <div className="mb-6">
+            <Logo size="lg" className="justify-center" />
           </div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-pf-text mb-1">
-            PipeFlow CRM
-          </h1>
           <p className="text-sm text-pf-text-muted">Entrar na sua conta</p>
         </div>
 

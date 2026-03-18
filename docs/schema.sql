@@ -38,12 +38,21 @@ CREATE TABLE workspaces (
 CREATE TABLE members (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- null para convites pendentes
     role TEXT NOT NULL CHECK (role IN ('admin', 'member')) DEFAULT 'member',
     email TEXT, -- usado para convites pendentes
-    joined_at TIMESTAMPTZ DEFAULT now(),
-    UNIQUE(workspace_id, user_id)
+    joined_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- Unique parcial: apenas quando user_id não é null
+CREATE UNIQUE INDEX members_workspace_user_unique
+    ON members (workspace_id, user_id)
+    WHERE user_id IS NOT NULL;
+
+-- Impedir convites duplicados para o mesmo email no mesmo workspace
+CREATE UNIQUE INDEX members_workspace_email_unique
+    ON members (workspace_id, email)
+    WHERE email IS NOT NULL;
 
 -- ---------- SUBSCRIPTIONS ----------
 -- Controla o plano de cada workspace (free ou pro).
@@ -143,11 +152,22 @@ ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE deals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
 
--- ---------- FUNÇÃO AUXILIAR ----------
+-- ---------- FUNÇÕES AUXILIARES ----------
 -- Retorna os workspace_ids que o usuário logado tem acesso
 CREATE OR REPLACE FUNCTION get_user_workspace_ids()
 RETURNS SETOF UUID AS $$
     SELECT workspace_id FROM members WHERE user_id = auth.uid()
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- Verifica se o usuário é admin de um workspace (SECURITY DEFINER para evitar recursão RLS)
+CREATE OR REPLACE FUNCTION is_workspace_admin(ws_id UUID)
+RETURNS BOOLEAN AS $$
+    SELECT EXISTS (
+        SELECT 1 FROM members
+        WHERE workspace_id = ws_id
+          AND user_id = auth.uid()
+          AND role = 'admin'
+    )
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
 -- ---------- POLICIES: WORKSPACES ----------
@@ -173,17 +193,22 @@ CREATE POLICY "Users can view members of their workspaces"
 
 CREATE POLICY "Admins can insert members"
     ON members FOR INSERT
-    WITH CHECK (workspace_id IN (
-        SELECT workspace_id FROM members
-        WHERE user_id = auth.uid() AND role = 'admin'
-    ) OR user_id = auth.uid()); -- permitir self-insert no onboarding
+    WITH CHECK (
+        is_workspace_admin(workspace_id)
+        OR user_id = auth.uid()  -- permitir self-insert no onboarding
+    );
 
 CREATE POLICY "Admins can delete members"
     ON members FOR DELETE
-    USING (workspace_id IN (
-        SELECT workspace_id FROM members
-        WHERE user_id = auth.uid() AND role = 'admin'
-    ));
+    USING (is_workspace_admin(workspace_id));
+
+CREATE POLICY "Users can accept invites"
+    ON members FOR UPDATE
+    USING (
+        email = (SELECT email FROM auth.users WHERE id = auth.uid())
+        AND user_id IS NULL
+    )
+    WITH CHECK (user_id = auth.uid());
 
 -- ---------- POLICIES: SUBSCRIPTIONS ----------
 CREATE POLICY "Users can view subscription of their workspaces"

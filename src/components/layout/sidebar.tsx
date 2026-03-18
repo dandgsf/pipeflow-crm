@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@/hooks/use-workspace";
+import { Logo } from "@/components/shared/logo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -89,14 +90,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         {/* Header */}
         <div className="flex h-16 items-center justify-between border-b border-pf-border-subtle px-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-pf-accent rounded-md flex items-center justify-center font-display font-extrabold text-sm text-pf-bg tracking-tight">
-              P
-            </div>
-            <span className="font-display font-semibold text-base tracking-tight text-pf-text">
-              PipeFlow <span className="text-pf-text-muted font-normal">CRM</span>
-            </span>
-          </div>
+          <Logo size="md" />
           <button onClick={onClose} className="lg:hidden text-pf-text-muted hover:text-pf-text transition-colors">
             <X className="h-5 w-5" />
           </button>
@@ -164,7 +158,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   active
-                    ? "bg-pf-accent/[0.08] text-pf-accent"
+                    ? "pf-nav-active text-pf-accent"
                     : "text-pf-text-secondary hover:bg-white/[0.03] hover:text-pf-text"
                 )}
               >

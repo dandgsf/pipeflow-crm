@@ -20,7 +20,7 @@ export function KanbanColumn({ stage, deals, isOver }: KanbanColumnProps) {
   const color = DEAL_STAGE_COLORS[stage];
 
   return (
-    <div className="flex w-72 shrink-0 flex-col">
+    <div className="flex w-72 shrink-0 flex-col pf-page-enter">
       {/* Column header */}
       <div
         className={cn(

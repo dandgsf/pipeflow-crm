@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { PLAN_LIMITS } from "@/types/database";
+import { getResend } from "@/lib/resend";
+import { inviteMemberHtml } from "@/components/emails/invite-member";
 
 // POST /api/members/invite
 export async function POST(request: NextRequest) {
@@ -48,12 +50,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Insert pending member (email only — real invite flow requires Supabase invite)
+    // Insert pending member (user_id null until invite is accepted)
     const { data, error } = await supabase
       .from("members")
       .insert({
         workspace_id: caller.workspace_id,
-        user_id: user.id, // placeholder — replaced when user accepts
+        user_id: null,
         role: body.role ?? "member",
         email: body.email.trim().toLowerCase(),
       })
@@ -61,6 +63,31 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) throw error;
+
+    // Send invite email (non-blocking — failure doesn't prevent invite creation)
+    try {
+      const { data: workspace } = await supabase
+        .from("workspaces")
+        .select("name")
+        .eq("id", caller.workspace_id)
+        .single();
+
+      const inviteEmail = body.email.trim().toLowerCase();
+      const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/signup?invite=${data.id}&email=${encodeURIComponent(inviteEmail)}`;
+
+      await getResend().emails.send({
+        from: "PipeFlow CRM <onboarding@resend.dev>",
+        to: [inviteEmail],
+        subject: `Convite para ${workspace?.name ?? "workspace"} no PipeFlow`,
+        html: inviteMemberHtml({
+          workspaceName: workspace?.name ?? "workspace",
+          inviteUrl,
+          role: body.role ?? "member",
+        }),
+      });
+    } catch (emailErr) {
+      console.error("[POST /api/members/invite] Email send failed:", emailErr);
+    }
 
     return NextResponse.json(data, { status: 201 });
   } catch (err) {

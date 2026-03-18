@@ -11,10 +11,19 @@ export async function DELETE(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
 
+    const { data: member } = await supabase
+      .from("members")
+      .select("workspace_id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .single();
+    if (!member) return NextResponse.json({ error: "Workspace não encontrado" }, { status: 404 });
+
     const { error } = await supabase
       .from("activities")
       .delete()
-      .eq("id", params.id);
+      .eq("id", params.id)
+      .eq("workspace_id", member.workspace_id);
 
     if (error) throw error;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +25,34 @@ export default function OnboardingPage() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [acceptingInvite, setAcceptingInvite] = useState(true);
+
+  // On mount: try to accept pending invite via email-matching
+  useEffect(() => {
+    async function checkPendingInvite() {
+      try {
+        const res = await fetch("/api/workspaces", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.id) {
+            // Invite accepted — redirect to dashboard
+            router.push("/dashboard");
+            router.refresh();
+            return;
+          }
+        }
+      } catch {
+        // No pending invite — show workspace creation form
+      }
+      setAcceptingInvite(false);
+    }
+    checkPendingInvite();
+  }, [router]);
 
   function handleNameChange(value: string) {
     setWorkspaceName(value);
@@ -62,6 +90,17 @@ export default function OnboardingPage() {
       setError("Erro de conexão. Tente novamente.");
       setLoading(false);
     }
+  }
+
+  if (acceptingInvite) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-pf-bg p-4">
+        <div className="flex items-center gap-3 text-pf-text-muted">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Verificando convites pendentes...</span>
+        </div>
+      </div>
+    );
   }
 
   return (

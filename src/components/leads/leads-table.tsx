@@ -45,7 +45,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
             leads.map((lead) => (
               <TableRow
                 key={lead.id}
-                className="cursor-pointer border-pf-border hover:bg-pf-surface-2 transition-colors"
+                className="cursor-pointer border-pf-border hover:bg-pf-surface-2 transition-all duration-200"
                 onClick={() => router.push(`/leads/${lead.id}`)}
               >
                 <TableCell className="font-medium text-pf-text">{lead.name}</TableCell>
