@@ -83,30 +83,30 @@ feat: project setup — Next.js 14, shadcn/ui, Tailwind, TypeScript, all depende
 #### Entregas
 
 **Layout & Navegação**
-- [ ] `src/app/(app)/layout.tsx` — layout autenticado com sidebar
-- [ ] `src/components/layout/sidebar.tsx` — sidebar com links: Dashboard, Leads, Pipeline, Configurações
-- [ ] `src/components/layout/navbar.tsx` — topbar com avatar do usuário e menu
-- [ ] `src/components/layout/workspace-switcher.tsx` — dropdown estático com workspaces mockados
-- [ ] Rota `/dashboard` com página placeholder
-- [ ] Rota `/leads` com página placeholder
-- [ ] Rota `/pipeline` com página placeholder
-- [ ] Rota `/settings` com página placeholder
+- [x] `src/app/(app)/layout.tsx` — layout autenticado com sidebar
+- [x] `src/components/layout/sidebar.tsx` — sidebar com links: Dashboard, Leads, Pipeline, Configurações
+- [x] `src/components/layout/navbar.tsx` — topbar com avatar do usuário e menu
+- [x] `src/components/layout/workspace-switcher.tsx` — dropdown estático com workspaces mockados
+- [x] Rota `/dashboard` com página placeholder
+- [x] Rota `/leads` com página placeholder
+- [x] Rota `/pipeline` com página placeholder
+- [x] Rota `/settings` com página placeholder
 
 **Design Tokens & Dark Mode**
-- [ ] Dark mode como padrão no app shell (`class="dark"` no `<html>` do layout autenticado)
-- [ ] Paleta zinc/slate com accent indigo no `globals.css`
-- [ ] Geist Sans e Geist Mono configurados e funcionando
+- [x] Dark mode como padrão no app shell (`class="dark"` no `<html>` via DarkModeEnforcer)
+- [x] Paleta zinc/slate com accent indigo no `globals.css`
+- [x] Geist Sans e Geist Mono configurados e funcionando
 
 **Estados Globais**
-- [ ] Componente `<PageHeader>` reutilizável (título + breadcrumb + ação primária)
-- [ ] Componente `<EmptyState>` (ícone + mensagem + CTA)
-- [ ] Skeleton genérico `<LoadingSkeleton>` para loading states
-- [ ] Página `not-found.tsx` global
+- [x] Componente `<PageHeader>` reutilizável (título + breadcrumb + ação primária)
+- [x] Componente `<EmptyState>` (ícone + mensagem + CTA)
+- [x] Skeleton genérico `<LoadingSkeleton>` para loading states
+- [x] Página `not-found.tsx` global
 
 **Verificação**
-- [ ] Sidebar colapsa em mobile (Sheet)
-- [ ] Navegação entre rotas funciona
-- [ ] Sem erros no console
+- [x] Sidebar colapsa em mobile (Sheet)
+- [x] Navegação entre rotas funciona
+- [x] Sem erros no console
 
 #### Commit Final
 ```
