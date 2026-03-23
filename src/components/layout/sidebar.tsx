@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -92,12 +93,13 @@ function DesktopSidebar() {
   )
 }
 
-// ── Sidebar mobile (Sheet) — @base-ui usa render prop em vez de asChild ───────
+// ── Sidebar mobile (Sheet com estado controlado) ──────────────────────────────
 
 function MobileSidebar() {
+  const [open, setOpen] = useState(false)
+
   return (
-    <Sheet>
-      {/* SheetTrigger renderiza um <button> nativamente — aplicamos estilos via className */}
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         className={cn(
           buttonVariants({ variant: 'ghost', size: 'icon' }),
@@ -113,7 +115,8 @@ function MobileSidebar() {
         className="w-60 gap-0 p-0 bg-sidebar border-r border-border"
         showCloseButton={false}
       >
-        <NavContent />
+        {/* onLinkClick fecha o Sheet após navegação */}
+        <NavContent onLinkClick={() => setOpen(false)} />
       </SheetContent>
     </Sheet>
   )

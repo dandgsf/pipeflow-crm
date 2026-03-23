@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, ChevronsUpDown, Plus, Building2 } from 'lucide-react'
+import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,7 +60,7 @@ export function WorkspaceSwitcher() {
       <DropdownMenuContent
         className="w-64"
         align="start"
-        side="right"
+        side="top"
         sideOffset={8}
       >
         <DropdownMenuLabel className="text-xs text-muted-foreground">

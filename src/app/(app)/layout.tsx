@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Navbar } from '@/components/layout/navbar'
+import { DarkModeEnforcer } from '@/components/layout/dark-mode-enforcer'
 
 export const metadata: Metadata = {
   title: {
@@ -16,6 +17,9 @@ export default function AppLayout({
 }) {
   return (
     <div className="dark flex h-screen overflow-hidden bg-background text-foreground">
+      {/* Garante dark mode em portais (@base-ui renderiza fora do wrapper) */}
+      <DarkModeEnforcer />
+
       {/* Sidebar fixa — visível em md+, vira Sheet no mobile */}
       <Sidebar />
 
