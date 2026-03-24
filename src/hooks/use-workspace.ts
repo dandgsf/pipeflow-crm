@@ -16,7 +16,7 @@ export function useWorkspace() {
     const match = document.cookie
       .split('; ')
       .find((row) => row.startsWith(`${ACTIVE_WORKSPACE_COOKIE}=`))
-    setWorkspaceId(match ? match.split('=')[1] : null)
+    setWorkspaceId(match ? match.split('=')[1] : null) // eslint-disable-line react-hooks/set-state-in-effect
   }, [])
 
   return { workspaceId }
