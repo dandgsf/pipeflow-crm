@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -82,7 +82,8 @@ export function KanbanBoard({
   const [internalDeals, setInternalDeals] = useState<Deal[]>(deals)
 
   // Sincroniza internalDeals quando o pai atualiza deals (CRUD, etc.)
-  useMemo(() => {
+  // useEffect é correto aqui — useMemo não pode ter side effects
+  useEffect(() => {
     setInternalDeals(deals)
   }, [deals])
 

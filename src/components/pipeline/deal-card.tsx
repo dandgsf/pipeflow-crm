@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { format } from 'date-fns'
@@ -49,8 +49,12 @@ interface DealCardContentProps {
 }
 
 export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
-  const isOverdue =
-    deal.due_date != null && new Date(deal.due_date) < new Date()
+  // isOverdue calculado apenas no cliente para evitar hydration mismatch
+  // (new Date() difere entre SSR e cliente)
+  const [isOverdue, setIsOverdue] = useState(false)
+  useEffect(() => {
+    setIsOverdue(deal.due_date != null && new Date(deal.due_date) < new Date())
+  }, [deal.due_date])
 
   return (
     <div className="space-y-2.5">
