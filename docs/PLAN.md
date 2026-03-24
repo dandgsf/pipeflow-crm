@@ -199,52 +199,61 @@ feat(leads): leads list with search/filters, lead detail page, create/edit/delet
 
 ---
 
-### M4 — Pipeline Kanban (UI)
+### M4 — Pipeline Kanban (UI) ✅
 
-**Branch:** `feat/pipeline-ui`
+**Branch:** `feat/pipeline-ui` → mergeado em `main` (PR #4)
 **Objetivo:** Kanban visual com drag-and-drop funcional, usando dados mockados.
 
 #### Mock Data
-- [ ] `src/lib/mock/deals.ts` — deals distribuídos pelas 6 colunas do pipeline
+- [x] `src/lib/mock/deals.ts` — 16 deals distribuídos pelas 6 colunas do pipeline
 
 #### Board Kanban (`/pipeline`)
-- [ ] `src/app/(app)/pipeline/page.tsx` — layout horizontal com scroll
-- [ ] 6 colunas fixas com header (nome da etapa + contador + valor total)
-- [ ] Scroll horizontal no board, scroll vertical por coluna
-- [ ] Botão "Novo Negócio" no header da página
+- [x] `src/app/(app)/pipeline/page.tsx` — layout horizontal com scroll
+- [x] 6 colunas fixas com header (nome da etapa + contador + valor total)
+- [x] Scroll horizontal no board, scroll vertical por coluna
+- [x] Botão "Novo Negócio" no header da página
 
 **Componentes**
-- [ ] `src/components/pipeline/kanban-board.tsx` — container DndContext
-- [ ] `src/components/pipeline/kanban-column.tsx` — SortableContext por coluna
-- [ ] `src/components/pipeline/deal-card.tsx` — card arrastável
+- [x] `src/components/pipeline/kanban-board.tsx` — container DndContext
+- [x] `src/components/pipeline/kanban-column.tsx` — SortableContext por coluna
+- [x] `src/components/pipeline/deal-card.tsx` — card arrastável
 
 **Deal Card**
-- [ ] Título do negócio
-- [ ] Avatar + nome do lead vinculado
-- [ ] Valor estimado (R$) em destaque
-- [ ] Nome do responsável
-- [ ] Prazo com cor de alerta se vencido
-- [ ] Menu de ações (⋮): editar, mover para, excluir
+- [x] Título do negócio
+- [x] Avatar + nome do lead vinculado (avatar colorido com cor da etapa)
+- [x] Valor estimado (R$) em IBM Plex Mono, cor da etapa
+- [x] Nome do responsável
+- [x] Prazo com cor de alerta se vencido (vermelho #FF4757 + badge "Vencido")
+- [x] Menu de ações (⋮): editar, mover para, excluir
 
 **Drag & Drop (@dnd-kit)**
-- [ ] Arrastar card entre colunas — estado local atualiza visualmente
-- [ ] Overlay animado durante o drag
-- [ ] Indicador visual na coluna de destino
-- [ ] Touch support (mobile)
+- [x] Arrastar card entre colunas — estado local atualiza visualmente
+- [x] Overlay animado durante o drag (rotate 1.5deg + scale 1.04, accent top-line)
+- [x] Indicador visual na coluna de destino (borda chartreuse #CAFF33)
+- [x] Touch support (mobile) via TouchSensor
 
 **Formulário de Negócio**
-- [ ] `src/components/pipeline/deal-form-dialog.tsx`
-- [ ] Campos: título*, lead vinculado (select)*, valor estimado, responsável, prazo, observações
-- [ ] Pré-seleciona a coluna quando "Novo Negócio" é clicado em uma coluna específica
+- [x] `src/components/pipeline/deal-form-dialog.tsx`
+- [x] Campos: título*, lead vinculado (select)*, valor estimado, responsável, prazo, observações
+- [x] Pré-seleciona a coluna quando "Novo Negócio" é clicado em uma coluna específica
+
+**Brand Identity v2 aplicada**
+- [x] Fontes: Syne (display) + DM Sans (body) + IBM Plex Mono (dados)
+- [x] Accent chartreuse #CAFF33 como primary em dark mode
+- [x] Sidebar: logo mark quadrado chartreuse com "P", item ativo em chartreuse
+- [x] Cards: accent line no topo via inset box-shadow (sem glassmorphism)
+- [x] Stage colors atualizados: cool blue, cyan, chartreuse, orange, green, red
+- [x] Noise texture SVG no body (opacity 0.03)
 
 **Verificação**
-- [ ] Drag entre todas as 6 colunas funciona
-- [ ] Estado persiste enquanto página está aberta
-- [ ] Funciona em mobile
+- [x] Drag entre todas as 6 colunas funciona
+- [x] Estado persiste enquanto página está aberta
+- [x] Touch support mobile
+- [x] `npx tsc --noEmit` zero erros
 
 #### Commit Final
 ```
-feat(pipeline): kanban board with 6 stages, drag-and-drop between columns, deal cards — mock data
+feat(pipeline): kanban board with 6 stages, drag-and-drop, deal cards + brand identity v2
 ```
 
 ---
