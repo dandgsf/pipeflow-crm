@@ -123,24 +123,24 @@ feat(shell): app layout with sidebar, navbar, workspace switcher, dark mode desi
 #### Entregas
 
 **Telas de Auth** (`src/app/(auth)/`)
-- [ ] `login/page.tsx` — formulário email + senha, link para registro, light mode
-- [ ] `register/page.tsx` — formulário nome + email + senha + confirmar senha
-- [ ] Layout `(auth)/layout.tsx` — centralizado, logo PipeFlow, light mode
+- [x] `login/page.tsx` — formulário email + senha, link para registro, light mode
+- [x] `register/page.tsx` — formulário nome + email + senha + confirmar senha
+- [x] Layout `(auth)/layout.tsx` — centralizado, logo PipeFlow, light mode
 
-**Onboarding** (`src/app/(app)/onboarding/`)
-- [ ] `page.tsx` — passo único: criar primeiro workspace (nome + avatar opcional)
-- [ ] Redirecionamento para `/dashboard` após submit (mock)
+**Onboarding** (`src/app/(onboarding)/onboarding/`)
+- [x] `page.tsx` — passo único: criar primeiro workspace (nome)
+- [x] Redirecionamento para `/dashboard` após submit (mock)
 
 **Componentes**
-- [ ] `src/components/auth/login-form.tsx` — formulário com validação Zod (react-hook-form)
-- [ ] `src/components/auth/register-form.tsx` — formulário com validação
-- [ ] `src/components/auth/workspace-form.tsx` — formulário de criação de workspace
+- [x] `src/components/auth/login-form.tsx` — formulário com validação Zod (react-hook-form)
+- [x] `src/components/auth/register-form.tsx` — formulário com validação
+- [x] `src/components/auth/workspace-form.tsx` — formulário de criação de workspace
 
 **UX**
-- [ ] Estados de loading nos botões (spinner durante submit)
-- [ ] Mensagens de erro inline nos campos
-- [ ] Link "Esqueceu a senha?" (tela placeholder)
-- [ ] Validação client-side com zod schemas
+- [x] Estados de loading nos botões (spinner durante submit)
+- [x] Mensagens de erro inline nos campos
+- [x] Link "Esqueceu a senha?" (tela placeholder)
+- [x] Validação client-side com zod schemas
 
 #### Commit Final
 ```
