@@ -5,12 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Geist fonts — referencia as variáveis injetadas pelo next/font no <html> */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  /* ── Font families ── */
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-syne);
+  /* Geist fallback se não carregou */
+  --font-heading: var(--font-syne);
 
-  /* Cores mapeadas para as variáveis CSS do tema */
+  /* ── Design tokens mapeados para CSS vars shadcn ── */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -43,6 +45,21 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* ── PipeFlow brand tokens (disponíveis como Tailwind utilities) ── */
+  --color-pf-bg: #0C0C0E;
+  --color-pf-surface: #141416;
+  --color-pf-surface-2: #1A1A1E;
+  --color-pf-border: #2A2A2E;
+  --color-pf-border-subtle: #1E1E22;
+  --color-pf-text: #E8E8E8;
+  --color-pf-text-secondary: #8A8A8F;
+  --color-pf-text-muted: #555559;
+  --color-pf-accent: #CAFF33;
+  --color-pf-positive: #2ED573;
+  --color-pf-negative: #FF4757;
+  --color-pf-warm: #FF6B35;
+  --color-pf-cool: #5B7FFF;
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -60,7 +77,6 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* Indigo accent como primary */
   --primary: oklch(0.457 0.24 264.376);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -73,7 +89,6 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.457 0.24 264.376);
-  /* Chart colors — zinc scale */
   --chart-1: oklch(0.457 0.24 264.376);
   --chart-2: oklch(0.588 0.22 264.376);
   --chart-3: oklch(0.7 0.16 264.376);
@@ -90,41 +105,56 @@
   --sidebar-ring: oklch(0.457 0.24 264.376);
 }
 
-/* ─── Dark mode (app shell padrão) ──────────────────────────────────────── */
+/* ─── Dark mode — PipeFlow Brand v2 ─────────────────────────────────────── */
 .dark {
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  /* Indigo accent no dark */
-  --primary: oklch(0.588 0.22 264.376);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.23 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.23 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.25 0.06 264.376);
-  --accent-foreground: oklch(0.8 0.16 264.376);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.588 0.22 264.376);
-  /* Chart colors — indigo scale */
-  --chart-1: oklch(0.588 0.22 264.376);
-  --chart-2: oklch(0.7 0.18 264.376);
-  --chart-3: oklch(0.8 0.13 264.376);
-  --chart-4: oklch(0.5 0.25 264.376);
-  --chart-5: oklch(0.4 0.27 264.376);
-  --sidebar: oklch(0.16 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.588 0.22 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.23 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.588 0.22 264.376);
+  /* Backgrounds */
+  --background: #0C0C0E;
+  --foreground: #E8E8E8;
+  --card: #141416;
+  --card-foreground: #E8E8E8;
+  --popover: #141416;
+  --popover-foreground: #E8E8E8;
+
+  /* Primary = chartreuse accent */
+  --primary: #CAFF33;
+  --primary-foreground: #0C0C0E;
+
+  /* Secondary = surface-2 */
+  --secondary: #1A1A1E;
+  --secondary-foreground: #E8E8E8;
+
+  /* Muted */
+  --muted: #1A1A1E;
+  --muted-foreground: #8A8A8F;
+
+  /* Accent = subtle chartreuse tint for hover backgrounds */
+  --accent: rgba(202, 255, 51, 0.08);
+  --accent-foreground: #CAFF33;
+
+  /* Destructive */
+  --destructive: #FF4757;
+
+  /* Borders and inputs */
+  --border: #2A2A2E;
+  --input: #1A1A1E;
+  --ring: #CAFF33;
+
+  /* Charts — pipeline stage colors */
+  --chart-1: #5B7FFF;
+  --chart-2: #00B4D8;
+  --chart-3: #CAFF33;
+  --chart-4: #FF6B35;
+  --chart-5: #2ED573;
+
+  /* Sidebar */
+  --sidebar: #141416;
+  --sidebar-foreground: #E8E8E8;
+  --sidebar-primary: #CAFF33;
+  --sidebar-primary-foreground: #0C0C0E;
+  --sidebar-accent: rgba(202, 255, 51, 0.08);
+  --sidebar-accent-foreground: #CAFF33;
+  --sidebar-border: #1E1E22;
+  --sidebar-ring: #CAFF33;
 }
 
 @layer base {
@@ -133,6 +163,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Noise texture — sutil, identidade editorial */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

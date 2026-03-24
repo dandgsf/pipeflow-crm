@@ -9,8 +9,6 @@ import { formatCurrency } from '@/components/pipeline/deal-card'
 import { cn } from '@/lib/utils'
 import { type Deal, type PipelineStage } from '@/types'
 
-// ── Props ─────────────────────────────────────────────────────────────────────
-
 interface KanbanColumnProps {
   stage: { id: PipelineStage; label: string }
   stageColor: string
@@ -22,8 +20,6 @@ interface KanbanColumnProps {
   onDeleteDeal: (deal: Deal) => void
   onMoveDeal: (deal: Deal, stage: PipelineStage) => void
 }
-
-// ── Componente ────────────────────────────────────────────────────────────────
 
 export function KanbanColumn({
   stage,
@@ -46,27 +42,40 @@ export function KanbanColumn({
       className="flex w-[272px] flex-none flex-col animate-in fade-in slide-in-from-bottom-3 duration-500 fill-mode-both"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
-      {/* Header da coluna */}
+      {/* Header da coluna — editorial, sem glassmorphism */}
       <div
-        className="rounded-t-xl bg-card px-3 pb-2.5 pt-3 shrink-0"
-        style={{ borderTop: `3px solid ${stageColor}` }}
+        className="rounded-t-lg px-3 pb-3 pt-3 shrink-0"
+        style={{
+          backgroundColor: '#141416',
+          borderTop: `2px solid ${stageColor}`,
+          borderLeft: '1px solid #2A2A2E',
+          borderRight: '1px solid #2A2A2E',
+        }}
       >
         <div className="flex items-center justify-between">
+          {/* Dot + stage label em mono uppercase */}
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className="text-xs font-semibold uppercase tracking-wider truncate"
+              className="h-1.5 w-1.5 shrink-0 rounded-full"
+              style={{ backgroundColor: stageColor }}
+            />
+            <span
+              className="font-mono text-[10px] font-medium uppercase tracking-[0.15em] truncate"
               style={{ color: stageColor }}
             >
               {stage.label}
             </span>
-            <span className="shrink-0 rounded-full bg-white/5 px-1.5 py-0.5 text-xs text-muted-foreground tabular-nums">
+            <span
+              className="shrink-0 font-mono text-[10px] tabular-nums"
+              style={{ color: '#555559' }}
+            >
               {deals.length}
             </span>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6 shrink-0 rounded-md text-muted-foreground hover:text-foreground"
+            className="h-6 w-6 shrink-0 rounded-md text-[#555559] hover:text-[#E8E8E8] hover:bg-white/[0.06]"
             onClick={() => onAddDeal(stage.id)}
             title={`Novo negócio em ${stage.label}`}
           >
@@ -74,8 +83,8 @@ export function KanbanColumn({
           </Button>
         </div>
 
-        {/* Valor total da coluna */}
-        <p className="mt-1 text-sm font-semibold text-foreground tabular-nums">
+        {/* Valor total — Syne bold */}
+        <p className="mt-2 font-display text-base font-bold tabular-nums" style={{ color: '#E8E8E8' }}>
           {formatCurrency(totalValue)}
         </p>
       </div>
@@ -84,17 +93,15 @@ export function KanbanColumn({
       <div
         ref={setNodeRef}
         className={cn(
-          'flex-1 space-y-2 overflow-y-auto rounded-b-xl px-2 pb-2 pt-1.5',
-          'min-h-[120px] transition-colors duration-200',
-          isOver && 'bg-white/[0.03]',
+          'flex-1 space-y-2 overflow-y-auto rounded-b-lg px-2 pb-2 pt-1.5',
+          'min-h-[120px] transition-all duration-200',
         )}
-        style={
-          isOver
-            ? {
-                boxShadow: `inset 0 0 0 1.5px ${stageColor}55`,
-              }
-            : undefined
-        }
+        style={{
+          backgroundColor: isOver ? 'rgba(202,255,51,0.03)' : '#0C0C0E',
+          borderLeft: `1px solid ${isOver ? '#CAFF3340' : '#2A2A2E'}`,
+          borderRight: `1px solid ${isOver ? '#CAFF3340' : '#2A2A2E'}`,
+          borderBottom: `1px solid ${isOver ? '#CAFF3340' : '#2A2A2E'}`,
+        }}
       >
         <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
           {deals.map((deal) => (
@@ -109,11 +116,20 @@ export function KanbanColumn({
           ))}
         </SortableContext>
 
-        {/* Empty state sutil */}
+        {/* Empty state */}
         {deals.length === 0 && !isOver && (
           <button
             onClick={() => onAddDeal(stage.id)}
-            className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-border/50 py-4 text-xs text-muted-foreground/50 transition-colors hover:border-border hover:text-muted-foreground"
+            className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed py-4 font-mono text-[10px] uppercase tracking-[0.1em] transition-colors"
+            style={{ borderColor: '#2A2A2E', color: '#555559' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#CAFF3366'
+              e.currentTarget.style.color = '#CAFF33'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = '#2A2A2E'
+              e.currentTarget.style.color = '#555559'
+            }}
           >
             <Plus className="h-3 w-3" />
             Adicionar negócio

@@ -20,8 +20,6 @@ import {
 import { cn } from '@/lib/utils'
 import { PIPELINE_STAGES, type Deal, type PipelineStage } from '@/types'
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
-
 function initials(name: string): string {
   return name
     .split(' ')
@@ -40,8 +38,7 @@ export function formatCurrency(value?: number): string {
   })
 }
 
-// ── DealCardContent ────────────────────────────────────────────────────────────
-// Conteúdo visual do card — compartilhado com DragOverlay
+// ── DealCardContent ─────────────────────────────────────────────────────────
 
 interface DealCardContentProps {
   deal: Deal
@@ -49,8 +46,6 @@ interface DealCardContentProps {
 }
 
 export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
-  // isOverdue calculado apenas no cliente para evitar hydration mismatch
-  // (new Date() difere entre SSR e cliente)
   const [isOverdue, setIsOverdue] = useState(false)
   useEffect(() => {
     setIsOverdue(deal.due_date != null && new Date(deal.due_date) < new Date())
@@ -58,8 +53,8 @@ export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
 
   return (
     <div className="space-y-2.5">
-      {/* Título */}
-      <p className="text-sm font-medium leading-tight line-clamp-2 text-foreground">
+      {/* Título em DM Sans medium */}
+      <p className="text-sm font-medium leading-tight line-clamp-2" style={{ color: '#E8E8E8' }}>
         {deal.title}
       </p>
 
@@ -67,28 +62,34 @@ export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
       {deal.lead && (
         <div className="flex items-center gap-1.5 min-w-0">
           <Avatar className="h-5 w-5 shrink-0">
-            <AvatarFallback className="text-[9px] bg-indigo-600/20 text-indigo-400 font-semibold">
+            <AvatarFallback
+              className="text-[9px] font-semibold"
+              style={{ backgroundColor: `${stageColor}22`, color: stageColor }}
+            >
               {initials(deal.lead.name)}
             </AvatarFallback>
           </Avatar>
-          <span className="text-xs text-muted-foreground truncate">
+          <span className="text-xs truncate" style={{ color: '#8A8A8F' }}>
             {deal.lead.name}
           </span>
           {deal.lead.company && (
-            <span className="text-xs text-muted-foreground/50 truncate hidden sm:inline">
+            <span className="text-xs truncate hidden sm:inline" style={{ color: '#555559' }}>
               · {deal.lead.company}
             </span>
           )}
         </div>
       )}
 
-      {/* Valor + responsável */}
+      {/* Valor em IBM Plex Mono + responsável */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold tabular-nums" style={{ color: stageColor }}>
+        <span
+          className="font-mono text-sm font-semibold tabular-nums"
+          style={{ color: stageColor }}
+        >
           {formatCurrency(deal.estimated_value)}
         </span>
         {deal.owner?.full_name && (
-          <span className="text-xs text-muted-foreground/70 truncate">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] truncate" style={{ color: '#555559' }}>
             {deal.owner.full_name.split(' ')[0]}
           </span>
         )}
@@ -96,18 +97,13 @@ export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
 
       {/* Prazo */}
       {deal.due_date && (
-        <div
-          className={cn(
-            'flex items-center gap-1 text-xs',
-            isOverdue ? 'text-red-400' : 'text-muted-foreground/60',
-          )}
-        >
+        <div className="flex items-center gap-1 font-mono text-[10px]" style={{ color: isOverdue ? '#FF4757' : '#555559' }}>
           <Calendar className="h-3 w-3 shrink-0" />
           <span>
             {format(new Date(deal.due_date), "d 'de' MMM", { locale: ptBR })}
           </span>
           {isOverdue && (
-            <span className="font-semibold text-red-400 ml-0.5">· Vencido</span>
+            <span className="font-semibold ml-0.5" style={{ color: '#FF4757' }}>· Vencido</span>
           )}
         </div>
       )}
@@ -115,7 +111,7 @@ export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
   )
 }
 
-// ── DealCard ───────────────────────────────────────────────────────────────────
+// ── DealCard ────────────────────────────────────────────────────────────────
 
 interface DealCardProps {
   deal: Deal
@@ -150,15 +146,14 @@ export function DealCard({
   const cardStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    borderColor: hovered && !isBeingDragged
-      ? stageColor
-      : 'rgba(255,255,255,0.08)',
+    backgroundColor: '#141416',
+    borderColor: hovered && !isBeingDragged ? `${stageColor}66` : '#2A2A2E',
+    // Accent top bar via boxShadow inset top trick
     boxShadow: hovered && !isBeingDragged
-      ? `0 4px 20px ${stageColor}28`
-      : undefined,
+      ? `inset 0 2px 0 ${stageColor}, 0 4px 16px rgba(0,0,0,0.4)`
+      : 'none',
   }
 
-  // Outros estágios disponíveis para mover
   const otherStages = PIPELINE_STAGES.filter((s) => s.id !== deal.stage)
 
   return (
@@ -170,10 +165,10 @@ export function DealCard({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={cn(
-        'group relative rounded-xl border bg-card/80 p-3',
-        'backdrop-blur-md cursor-grab active:cursor-grabbing',
+        'group relative rounded-lg border p-3',
+        'cursor-grab active:cursor-grabbing',
         'transition-all duration-200 select-none',
-        isBeingDragged ? 'opacity-30' : 'hover:-translate-y-0.5',
+        isBeingDragged ? 'opacity-40' : 'hover:-translate-y-0.5',
       )}
     >
       <DealCardContent deal={deal} stageColor={stageColor} />
@@ -184,13 +179,13 @@ export function DealCard({
           'absolute right-2 top-2 transition-opacity duration-150',
           hovered ? 'opacity-100' : 'opacity-0',
         )}
-        // Interrompe propagação para não iniciar drag ao clicar no menu
         onMouseDown={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
       >
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex h-6 w-6 items-center justify-center rounded-md bg-background/80 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-6 w-6 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            style={{ backgroundColor: '#1A1A1E', color: '#8A8A8F' }}
             aria-label="Ações do negócio"
           >
             <MoreHorizontal className="h-3.5 w-3.5" />

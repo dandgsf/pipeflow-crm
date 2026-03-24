@@ -21,12 +21,12 @@ import { PIPELINE_STAGES, type Deal, type PipelineStage } from '@/types'
 // ── Cores por estágio ─────────────────────────────────────────────────────────
 
 export const STAGE_COLORS: Record<PipelineStage, string> = {
-  novo_lead:          '#3B82F6',
-  contato_realizado:  '#06B6D4',
-  proposta_enviada:   '#F59E0B',
-  negociacao:         '#F97316',
-  fechado_ganho:      '#22C55E',
-  fechado_perdido:    '#EF4444',
+  novo_lead:          '#5B7FFF',
+  contato_realizado:  '#00B4D8',
+  proposta_enviada:   '#CAFF33',
+  negociacao:         '#FF6B35',
+  fechado_ganho:      '#2ED573',
+  fechado_perdido:    '#FF4757',
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -258,10 +258,11 @@ export function KanbanBoard({
       <DragOverlay dropAnimation={null}>
         {activeDeal && (
           <div
-            className="rounded-xl border p-3 bg-card cursor-grabbing w-[272px]"
+            className="rounded-lg border p-3 cursor-grabbing w-[272px]"
             style={{
+              backgroundColor: '#141416',
               borderColor: STAGE_COLORS[activeDeal.stage],
-              boxShadow: `0 20px 40px ${STAGE_COLORS[activeDeal.stage]}40`,
+              boxShadow: `inset 0 2px 0 ${STAGE_COLORS[activeDeal.stage]}, 0 20px 40px rgba(0,0,0,0.6)`,
               transform: 'rotate(1.5deg) scale(1.04)',
             }}
           >

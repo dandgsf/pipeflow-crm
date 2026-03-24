@@ -118,7 +118,7 @@ export function PipelineView() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex h-full flex-col gap-6">
+    <div className="flex h-full flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
       <PageHeader
         title="Pipeline"
         description="Acompanhe seus negócios em cada etapa do funil de vendas"
