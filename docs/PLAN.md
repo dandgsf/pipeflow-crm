@@ -155,42 +155,42 @@ feat(auth): login, register and onboarding UI with form validation — no backen
 **Objetivo:** Gestão completa de leads com dados mockados. UI 100% funcional visualmente.
 
 #### Mock Data
-- [ ] `src/lib/mock/leads.ts` — array com 10-15 leads mockados com todos os campos
+- [x] `src/lib/mock/leads.ts` — array com 10-15 leads mockados com todos os campos
 
 #### Listagem de Leads (`/leads`)
-- [ ] Tabela com colunas: Nome, Empresa, Cargo, Status, Responsável, Data de Criação
-- [ ] Badge de status com cores (Novo, Contato, Proposta, Negociação, Ganho, Perdido)
-- [ ] Barra de busca por nome/empresa (filtro client-side sobre mock)
-- [ ] Filtro por status (Select)
-- [ ] Filtro por responsável (Select)
-- [ ] Botão "Novo Lead" → abre dialog
-- [ ] Paginação (UI, sem lógica real ainda)
-- [ ] EmptyState quando sem resultados
+- [x] Tabela com colunas: Nome, Empresa, Cargo, Status, Responsável, Data de Criação
+- [x] Badge de status com cores (Novo, Contato, Proposta, Negociação, Ganho, Perdido)
+- [x] Barra de busca por nome/empresa (filtro client-side sobre mock)
+- [x] Filtro por status (Select)
+- [x] Filtro por responsável (Select)
+- [x] Botão "Novo Lead" → abre dialog
+- [x] Paginação (UI, sem lógica real ainda)
+- [x] EmptyState quando sem resultados
 
 **Componentes**
-- [ ] `src/components/leads/leads-table.tsx`
-- [ ] `src/components/leads/leads-filters.tsx`
-- [ ] `src/components/leads/lead-status-badge.tsx`
+- [x] `src/components/leads/leads-table.tsx`
+- [x] `src/components/leads/leads-filters.tsx`
+- [x] `src/components/leads/lead-status-badge.tsx`
 
 #### Formulário de Lead (Dialog)
-- [ ] `src/components/leads/lead-form-dialog.tsx` — Dialog com formulário completo
-- [ ] Campos: nome*, email*, telefone, empresa, cargo, status, responsável, notas
-- [ ] Validação Zod em todos os campos obrigatórios
-- [ ] Estados: criando vs editando (título dinâmico)
-- [ ] Botão de exclusão com AlertDialog de confirmação
+- [x] `src/components/leads/lead-form-dialog.tsx` — Dialog com formulário completo
+- [x] Campos: nome*, email*, telefone, empresa, cargo, status, responsável, notas
+- [x] Validação Zod em todos os campos obrigatórios
+- [x] Estados: criando vs editando (título dinâmico)
+- [x] Botão de exclusão com AlertDialog de confirmação
 
 #### Página de Detalhe (`/leads/[id]`)
-- [ ] `src/app/(app)/leads/[id]/page.tsx`
-- [ ] Perfil do lead (nome, empresa, contato, status) — card lateral
-- [ ] Seção de informações (cargo, responsável, data criação, valor estimado)
-- [ ] Timeline de atividades (UI estática com dados mockados)
-- [ ] Botão "Editar Lead" → abre lead-form-dialog
-- [ ] Botão "Registrar Atividade" → modal (UI apenas)
+- [x] `src/app/(app)/leads/[id]/page.tsx`
+- [x] Perfil do lead (nome, empresa, contato, status) — card lateral
+- [x] Seção de informações (cargo, responsável, data criação, valor estimado)
+- [x] Timeline de atividades (UI estática com dados mockados)
+- [x] Botão "Editar Lead" → abre lead-form-dialog
+- [x] Botão "Registrar Atividade" → desabilitado (M8)
 
 **Componentes**
-- [ ] `src/components/leads/lead-profile-card.tsx`
-- [ ] `src/components/leads/activity-timeline.tsx` (UI estática)
-- [ ] `src/components/leads/activity-item.tsx`
+- [x] `src/components/leads/lead-profile-card.tsx`
+- [x] `src/components/leads/activity-timeline.tsx` (UI estática)
+- [x] `src/components/leads/activity-item.tsx`
 
 #### Commit Final
 ```
