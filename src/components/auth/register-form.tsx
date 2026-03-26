@@ -57,7 +57,7 @@ export function RegisterForm() {
   async function onSubmit() {
     setIsLoading(true)
     try {
-      // Navegação fake — backend real chega no M7
+      // Dados coletados para cadastro — integração Supabase chega no M7
       await new Promise((resolve) => setTimeout(resolve, 800))
       router.push('/onboarding')
     } finally {
@@ -66,10 +66,12 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+    <div className="rounded-2xl border border-pf-border bg-pf-surface p-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-zinc-900">Criar conta</h1>
-        <p className="mt-1 text-sm text-zinc-500">
+        <h1 className="font-display text-xl font-semibold text-pf-text">
+          Criar conta
+        </h1>
+        <p className="mt-1 text-sm text-pf-text-secondary">
           Comece grátis, sem cartão de crédito
         </p>
       </div>
@@ -82,16 +84,19 @@ export function RegisterForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-700">Nome completo</FormLabel>
+                <FormLabel className="text-pf-text-secondary text-xs font-medium tracking-wide uppercase">
+                  Nome completo
+                </FormLabel>
                 <FormControl>
                   <Input
                     placeholder="João Silva"
                     autoComplete="name"
                     disabled={isLoading}
+                    className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-pf-negative text-xs" />
               </FormItem>
             )}
           />
@@ -102,17 +107,20 @@ export function RegisterForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-700">E-mail</FormLabel>
+                <FormLabel className="text-pf-text-secondary text-xs font-medium tracking-wide uppercase">
+                  E-mail
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="voce@empresa.com"
                     autoComplete="email"
                     disabled={isLoading}
+                    className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-pf-negative text-xs" />
               </FormItem>
             )}
           />
@@ -123,17 +131,20 @@ export function RegisterForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-700">Senha</FormLabel>
+                <FormLabel className="text-pf-text-secondary text-xs font-medium tracking-wide uppercase">
+                  Senha
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     placeholder="Mínimo 6 caracteres"
                     autoComplete="new-password"
                     disabled={isLoading}
+                    className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-pf-negative text-xs" />
               </FormItem>
             )}
           />
@@ -144,17 +155,20 @@ export function RegisterForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-700">Confirmar senha</FormLabel>
+                <FormLabel className="text-pf-text-secondary text-xs font-medium tracking-wide uppercase">
+                  Confirmar senha
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     placeholder="••••••••"
                     autoComplete="new-password"
                     disabled={isLoading}
+                    className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-pf-negative text-xs" />
               </FormItem>
             )}
           />
@@ -162,7 +176,7 @@ export function RegisterForm() {
           {/* Submit */}
           <Button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700"
+            className="w-full bg-pf-accent text-pf-bg font-semibold hover:opacity-90 transition-opacity mt-2"
             disabled={isLoading}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -171,11 +185,11 @@ export function RegisterForm() {
         </form>
       </Form>
 
-      <p className="mt-6 text-center text-sm text-zinc-500">
+      <p className="mt-6 text-center text-sm text-pf-text-muted">
         Já tem uma conta?{' '}
         <Link
           href="/login"
-          className="font-medium text-indigo-600 hover:underline"
+          className="font-medium text-pf-accent hover:opacity-80 transition-opacity"
         >
           Entrar
         </Link>

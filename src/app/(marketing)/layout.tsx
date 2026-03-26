@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PipeFlow CRM — Vendas em Fluxo Contínuo",
   description:
     "Gerencie leads, negócios e equipe num CRM que respeita a velocidade do seu time. Multi-empresa. Pipeline visual. Sem fricção.",
+  openGraph: {
+    title: "PipeFlow CRM — Vendas em Fluxo Contínuo",
+    description:
+      "Pipeline Kanban visual, gestão de leads e dashboard de métricas para times de vendas que precisam de velocidade.",
+    type: "website",
+  },
 };
 
-export default function RootLayout({
+export default function MarketingLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return (
-    <html lang="pt-BR" className="dark">
-      <body className="font-body antialiased">{children}</body>
-    </html>
-  );
+}) {
+  return <>{children}</>;
 }

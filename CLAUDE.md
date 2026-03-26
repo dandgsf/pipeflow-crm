@@ -28,8 +28,8 @@ Full requirements: [docs/PRD.md](docs/PRD.md)
 ```
 src/
   app/
-    (marketing)/         # Public pages (no auth required)
-      page.tsx           # Landing page
+    (marketing)/         # Public pages (no auth required) — M8
+      page.tsx           # Landing page (recriada no M8)
     (auth)/              # Auth flow
       login/
       register/
@@ -155,11 +155,64 @@ Apply the same pattern to `getStripe()` and `getResend()`.
 ## Design System
 
 - **Component library:** shadcn/ui (copy-to-project model, fully customizable)
-- **Typography:** Geist Sans (UI text) + Geist Mono (code, IDs, metrics)
-- **Styling:** Tailwind CSS with zinc/neutral/slate tokens; single accent color (indigo)
-- **App shell:** Dark mode by default
-- **Landing page:** Light mode
+- **Styling:** Tailwind CSS + custom CSS tokens prefixed `--pf-*`
+- **App shell:** Dark mode enforced (`className="dark"` no `<html>`)
+- **Landing page:** Dark-first também, fundo `#0A0A0A`
 - **Reference UX:** Pipedrive Kanban, HubSpot dashboard metrics
+
+### Typography
+
+| Classe utilitária | Fonte | Uso |
+|---|---|---|
+| `font-display` | **Syne** (700/800) | Headlines, títulos, logo |
+| `font-body` | **DM Sans** (400/500) | Texto de interface, parágrafos |
+| `font-mono` | **IBM Plex Mono** | Métricas, IDs, código, tags |
+
+Fontes carregadas via Google Fonts no `globals.css`.
+
+### Paleta de Cores (tokens CSS)
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--pf-accent` | `#CAFF33` | Cor de destaque principal (verde-limão) |
+| `--pf-accent-dim` | `#a8d400` | Accent hover/pressed |
+| `--pf-bg` | `#0A0A0A` | Fundo da landing |
+| `--pf-surface` | `#111111` | Cards, painéis |
+| `--pf-surface-2` | `#1a1a1a` | Surface elevado |
+| `--pf-border` | `rgba(255,255,255,0.08)` | Bordas sutis |
+| `--pf-text` | `#F0F0F0` | Texto principal |
+| `--pf-text-muted` | `#888` | Texto secundário |
+
+Uso via Tailwind: `text-pf-accent`, `bg-pf-surface`, `border-pf-border`, etc.
+
+### Animações CSS Customizadas
+
+Definidas em `globals.css`, disponíveis como classes utilitárias:
+
+| Classe | Efeito |
+|---|---|
+| `pf-orb-float` | Orbe flutuante com movimento vertical suave |
+| `pf-wave-scroll` | Onda SVG em scroll horizontal infinito |
+| `pf-flow-pulse` | Pulso de opacidade (linha decorativa do logo) |
+| `pf-case-float` | Float vertical com delays para cards de casos |
+| `pf-case-float-delay-1` | Delay 0.3s para segundo card |
+| `pf-case-float-delay-2` | Delay 0.6s para terceiro card |
+| `pf-page-enter` | Fade-in + translate na entrada de página |
+| `pf-stagger` | Stagger de entrada para listas |
+| `pf-glass` | Fundo glassmorphism (blur + border semitransparente) |
+| `pf-glow-btn` | Glow no hover de botões com accent color |
+| `pf-nav-active` | Indicador de item ativo na navegação |
+
+### Componentes Compartilhados da Landing
+
+Localização: `src/components/shared/` e `src/components/landing/`
+
+| Componente | Arquivo | Descrição |
+|---|---|---|
+| `<Logo>` | `shared/logo.tsx` | Logo "PipeFlow" com accent color e linha pulsante |
+| `<WaveSeparator>` | `shared/wave-separator.tsx` | Divisor SVG animado entre seções; aceita `flip` |
+| `<AnimateOnScroll>` | `shared/animate-on-scroll.tsx` | Wrapper que anima filho ao entrar no viewport; aceita `as`, `delay` |
+| `<SuccessCases>` | `landing/success-cases.tsx` | Grid de 3 cards com CountUp animado de métricas |
 
 ### shadcn/ui Primitives in Use
 Button, Input, Textarea, Card, Tabs, Table, Dialog, AlertDialog, Sheet, DropdownMenu, Badge, Separator, Skeleton, Avatar, Select, Form (react-hook-form + zod)
