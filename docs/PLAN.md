@@ -264,34 +264,34 @@ feat(pipeline): kanban board with 6 stages, drag-and-drop, deal cards + brand id
 **Objetivo:** Dashboard completo com métricas, gráfico e lista de deals próximos — dados mockados.
 
 #### Mock Data
-- [ ] `src/lib/mock/metrics.ts` — valores mockados para todos os cards e gráfico
+- [x] `src/lib/mock/metrics.ts` — valores mockados para todos os cards e gráfico
 
 #### Página Dashboard (`/dashboard`)
-- [ ] `src/app/(app)/dashboard/page.tsx`
+- [x] `src/app/(app)/dashboard/page.tsx`
 
 **Cards de Métricas**
-- [ ] `src/components/dashboard/metric-card.tsx` — ícone, label, valor, variação (%)
-- [ ] Card: Total de Leads
-- [ ] Card: Negócios Abertos
-- [ ] Card: Valor Total do Pipeline (R$)
-- [ ] Card: Taxa de Conversão (%)
+- [x] `src/components/dashboard/metric-card.tsx` — ícone, label, valor, variação (%)
+- [x] Card: Total de Leads
+- [x] Card: Negócios Abertos
+- [x] Card: Valor Total do Pipeline (R$)
+- [x] Card: Taxa de Conversão (%)
 
 **Gráfico de Funil (Recharts)**
-- [ ] `src/components/dashboard/funnel-chart.tsx` — FunnelChart com as 6 etapas
-- [ ] Tooltip com quantidade e valor por etapa
-- [ ] Legenda das etapas
-- [ ] Responsivo (ResponsiveContainer)
+- [x] `src/components/dashboard/funnel-chart.tsx` — FunnelChart com as 6 etapas
+- [x] Tooltip com quantidade e valor por etapa
+- [x] Legenda das etapas
+- [x] Responsivo (ResponsiveContainer)
 
 **Lista de Deals com Prazo Próximo**
-- [ ] `src/components/dashboard/upcoming-deals.tsx`
-- [ ] Tabela compacta: título, lead, etapa, prazo, responsável
-- [ ] Cor de alerta para prazos vencidos
-- [ ] Link para o deal no pipeline
+- [x] `src/components/dashboard/upcoming-deals.tsx`
+- [x] Tabela compacta: título, lead, etapa, prazo, responsável
+- [x] Cor de alerta para prazos vencidos
+- [x] Link para o deal no pipeline
 
 **Layout**
-- [ ] Grid responsivo: 2 colunas em tablet, 4 em desktop para metric cards
-- [ ] Gráfico ocupa largura total
-- [ ] Deals próximos abaixo do gráfico
+- [x] Grid responsivo: 2 colunas em tablet, 4 em desktop para metric cards
+- [x] Gráfico ocupa largura total
+- [x] Deals próximos abaixo do gráfico
 
 #### Commit Final
 ```
@@ -300,44 +300,44 @@ feat(dashboard): metric cards, sales funnel chart (Recharts), upcoming deals lis
 
 ---
 
-### M6 — Landing Page
+### M6 — Landing Page ✅
 
-**Branch:** `feat/landing`
-**Objetivo:** Landing page pública de apresentação do PipeFlow CRM, light mode, pronta para deploy.
+**Branch:** `feat/landing` → mergeado em `main`
+**Objetivo:** Landing page pública de apresentação do PipeFlow CRM, dark mode, pronta para deploy.
 
 #### Estrutura (`src/app/(marketing)/`)
-- [ ] `layout.tsx` — navbar pública + footer, light mode
-- [ ] `page.tsx` — composição das seções
+- [x] `layout.tsx` — layout público sem auth
+- [x] `page.tsx` — composição de todas as seções (496 linhas)
 
 **Seções**
-- [ ] `src/components/marketing/hero.tsx`
-  - Headline impactante + subtítulo
-  - CTA primário "Começar Grátis" → `/register`
-  - CTA secundário "Ver Demo" → screenshot/vídeo placeholder
-  - Badge "Sem cartão de crédito"
-- [ ] `src/components/marketing/features.tsx`
-  - Grid 3 colunas: Pipeline Kanban, Gestão de Leads, Dashboard de Métricas
-  - Ícones + título + descrição por feature
-- [ ] `src/components/marketing/pricing.tsx`
-  - 2 cards: Free vs Pro
-  - Lista de features por plano com checkmarks
-  - Botão "Começar Grátis" (Free) e "Assinar Pro" (Pro)
-  - Destaque visual no plano Pro
-- [ ] `src/components/marketing/cta-banner.tsx`
-  - Banner final com CTA de conversão
-- [ ] `src/components/marketing/navbar-public.tsx`
-  - Logo + links (Features, Preços) + botões Login/Cadastro
-  - Sticky, backdrop-blur em scroll
-- [ ] `src/components/marketing/footer.tsx`
+- [x] Hero com orbs animados, headline, CTA "Começar Grátis" → `/register`
+- [x] Pipeline visualization terminal (animação de etapas)
+- [x] Stats section (4 métricas de impacto)
+- [x] Features grid (6 cards com ícones e descrições)
+- [x] `src/components/landing/success-cases.tsx` — 3 cards com CountUp animado
+- [x] Pricing section (Free vs Pro com destaque visual)
+- [x] CTA final com wave separators
+- [x] `src/components/landing/navbar-mobile.tsx` — menu mobile
+- [x] `src/components/shared/logo.tsx` — Logo PipeFlow com accent e linha pulsante
+- [x] `src/components/shared/wave-separator.tsx` — divisor SVG animado
+- [x] `src/components/shared/animate-on-scroll.tsx` — Intersection Observer fade-in
 
-**UX**
-- [ ] Responsivo (mobile-first)
-- [ ] Smooth scroll para seções internas
-- [ ] Meta tags SEO (`generateMetadata`)
+**UX & Brand Identity**
+- [x] Dark mode (bg `#0A0A0A`, accent chartreuse `#CAFF33`)
+- [x] Fontes: Syne (display) + DM Sans (body) + IBM Plex Mono (dados)
+- [x] Animações CSS: orbs flutuantes, wave scroll, flow pulse, page enter, stagger
+- [x] Glassmorphism e glow em botões accent
+- [x] Responsivo (mobile-first)
+- [x] Meta tags SEO no `layout.tsx` root
+
+**Auth & Onboarding (identidade visual corrigida)**
+- [x] `(auth)/layout.tsx` — dark mode com orbs e logo PipeFlow
+- [x] `(onboarding)/onboarding/page.tsx` — dark mode idêntico ao auth
+- [x] `workspace-form.tsx` — tokens PipeFlow (bg-pf-surface, accent, inputs dark)
 
 #### Commit Final
 ```
-feat(landing): public marketing page with hero, features, pricing, CTA — light mode
+feat(landing): public marketing page — dark mode, hero, features, pricing, CTA, brand identity v2
 ```
 
 ---

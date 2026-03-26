@@ -53,47 +53,70 @@ export function WorkspaceForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Nome do workspace */}
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-zinc-700">
-                Nome da empresa ou equipe
-              </FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+    <div className="rounded-2xl border border-pf-border bg-pf-surface p-8">
+      {/* Cabeçalho */}
+      <div className="mb-6 flex flex-col items-start gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pf-accent/10 border border-pf-accent/20">
+          <Building2 className="h-5 w-5 text-pf-accent" />
+        </div>
+        <div>
+          <h1 className="font-display text-xl font-semibold text-pf-text">
+            Criar seu workspace
+          </h1>
+          <p className="mt-1 text-sm text-pf-text-secondary">
+            Um workspace é onde você e sua equipe gerenciam leads e negócios.
+          </p>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          {/* Nome do workspace */}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-pf-text-secondary text-xs font-medium tracking-wide uppercase">
+                  Nome da empresa ou equipe
+                </FormLabel>
+                <FormControl>
                   <Input
-                    placeholder="Ex: Acme Corp, Time de Vendas..."
-                    className="pl-9"
+                    placeholder="Ex: Acme Corp, Time de Vendas…"
                     autoFocus
+                    autoComplete="organization"
                     disabled={isLoading}
+                    className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"
                     {...field}
                   />
-                </div>
-              </FormControl>
-              <FormDescription className="text-xs text-zinc-500">
-                Você poderá alterar isso depois nas configurações.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                <FormDescription className="text-xs text-pf-text-muted">
+                  Você poderá alterar isso depois nas configurações.
+                </FormDescription>
+                <FormMessage className="text-pf-negative text-xs" />
+              </FormItem>
+            )}
+          />
 
-        {/* Submit */}
-        <Button
-          type="submit"
-          className="w-full bg-indigo-600 hover:bg-indigo-700"
-          disabled={isLoading}
-        >
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isLoading ? 'Criando workspace…' : 'Criar workspace e entrar'}
-        </Button>
-      </form>
-    </Form>
+          {/* Submit */}
+          <Button
+            type="submit"
+            className="w-full bg-pf-accent text-pf-bg font-semibold hover:opacity-90 transition-opacity mt-2"
+            disabled={isLoading}
+          >
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading ? 'Criando workspace…' : 'Criar workspace e entrar'}
+          </Button>
+        </form>
+      </Form>
+
+      {/* Indicador de progresso */}
+      <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="h-1.5 w-6 rounded-full bg-pf-surface-2" />
+        <div className="h-1.5 w-6 rounded-full bg-pf-surface-2" />
+        <div className="h-1.5 w-6 rounded-full bg-pf-accent" />
+      </div>
+      <p className="mt-2 text-center text-xs text-pf-text-muted">Passo 3 de 3 — Configuração inicial</p>
+    </div>
   )
 }

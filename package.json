@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:clean": "powershell -Command \"Stop-Process -Name node -Force -ErrorAction SilentlyContinue\" && next dev",
+    "dev:clean": "powershell -Command \"Stop-Process -Name node -Force -ErrorAction SilentlyContinue; Remove-Item -Force -ErrorAction SilentlyContinue .next/dev/lock\" && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
