@@ -353,13 +353,15 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
 
 #### Setup Supabase
 - [x] Criar projeto no Supabase Dashboard
-- [ ] Instalar Supabase CLI e inicializar: `npx supabase init`
 - [x] Configurar variáveis de ambiente reais no `.env.local`
 - [x] Criar `src/lib/supabase/client.ts` — browser client (lazy singleton)
 - [x] Criar `src/lib/supabase/server.ts` — server client com cookies (lazy, async)
 
-#### Migrations (`supabase/migrations/`)
-- [ ] `001_create_workspaces.sql`
+#### Migrations (SQL direto no Supabase Dashboard)
+
+> Não utilizamos Supabase CLI. As migrations são aplicadas diretamente no **SQL Editor** do Supabase Dashboard. Os arquivos ficam em `docs/migrations/` apenas como referência e controle de versão.
+
+- [ ] `docs/migrations/001_create_workspaces.sql`
   ```sql
   CREATE TABLE workspaces (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -369,7 +371,7 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
     created_at TIMESTAMPTZ DEFAULT now()
   );
   ```
-- [ ] `002_create_workspace_members.sql`
+- [ ] `docs/migrations/002_create_workspace_members.sql`
   ```sql
   CREATE TABLE workspace_members (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -380,15 +382,15 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
     UNIQUE(workspace_id, user_id)
   );
   ```
-- [ ] `003_create_leads.sql`
-- [ ] `004_create_deals.sql` (com coluna `stage` e `position` para ordenação)
-- [ ] `005_create_activities.sql`
-- [ ] `006_create_subscriptions.sql`
-- [ ] `007_rls_policies.sql` — RLS em todas as tabelas (workspace_id scoping)
-- [ ] Rodar `npx supabase db reset` para validar todas as migrations
+- [ ] `docs/migrations/003_create_leads.sql`
+- [ ] `docs/migrations/004_create_deals.sql` (com coluna `stage` e `position` para ordenação)
+- [ ] `docs/migrations/005_create_activities.sql`
+- [ ] `docs/migrations/006_create_subscriptions.sql`
+- [ ] `docs/migrations/007_rls_policies.sql` — RLS em todas as tabelas (workspace_id scoping)
+- [ ] Executar cada arquivo no SQL Editor do Supabase Dashboard e validar
 
 #### Tipos TypeScript
-- [ ] `npx supabase gen types typescript --local > src/types/supabase.ts`
+- [ ] Gerar `src/types/supabase.ts` via **Supabase Dashboard → Settings → API → Generate types** (download) ou copiar do editor
 - [ ] Atualizar `src/types/index.ts` para usar os tipos gerados
 
 #### Auth Real
@@ -560,13 +562,10 @@ feat(billing): Stripe checkout, webhooks, plan limits enforcement, customer port
 **Objetivo:** Aplicação em produção no Vercel + Supabase, estável e monitorável.
 
 #### Supabase em Produção
-- [ ] Rodar todas as migrations no projeto Supabase de produção
-  ```bash
-  npx supabase db push
-  ```
-- [ ] Verificar que RLS está habilitado em todas as tabelas
-- [ ] Configurar Supabase Auth: URL de redirecionamento de produção
-- [ ] Gerar tipos atualizados do projeto de produção
+- [ ] Executar todos os arquivos de `docs/migrations/` no SQL Editor do projeto de produção (Supabase Dashboard)
+- [ ] Verificar que RLS está habilitado em todas as tabelas (Table Editor → cada tabela → RLS enabled)
+- [ ] Configurar Supabase Auth: URL de redirecionamento de produção (Authentication → URL Configuration)
+- [ ] Atualizar `src/types/supabase.ts` com tipos do projeto de produção (Dashboard → Settings → API → Generate types)
 
 #### Vercel
 - [ ] Conectar repositório GitHub ao Vercel
