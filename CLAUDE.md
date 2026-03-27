@@ -227,12 +227,6 @@ npm run dev          # Start Next.js dev server (http://localhost:3000)
 npm run build        # Production build
 npm run lint         # ESLint check
 
-# Supabase (requires Supabase CLI)
-npx supabase start                    # Start local Supabase stack
-npx supabase db reset                 # Reset local DB and apply migrations
-npx supabase migration new <name>     # Create new migration
-npx supabase gen types typescript \
-  --local > src/types/supabase.ts     # Regenerate DB types
 ```
 
 ---
