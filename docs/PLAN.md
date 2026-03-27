@@ -352,11 +352,11 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
 **Objetivo:** Supabase configurado localmente e em produção, auth real funcionando, dados persistentes.
 
 #### Setup Supabase
-- [ ] Criar projeto no Supabase Dashboard
+- [x] Criar projeto no Supabase Dashboard
 - [ ] Instalar Supabase CLI e inicializar: `npx supabase init`
-- [ ] Configurar variáveis de ambiente reais no `.env.local`
-- [ ] Criar `src/lib/supabase/client.ts` — browser client (lazy singleton)
-- [ ] Criar `src/lib/supabase/server.ts` — server client com cookies (lazy, async)
+- [x] Configurar variáveis de ambiente reais no `.env.local`
+- [x] Criar `src/lib/supabase/client.ts` — browser client (lazy singleton)
+- [x] Criar `src/lib/supabase/server.ts` — server client com cookies (lazy, async)
 
 #### Migrations (`supabase/migrations/`)
 - [ ] `001_create_workspaces.sql`
