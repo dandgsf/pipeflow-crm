@@ -361,7 +361,7 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
 
 > Não utilizamos Supabase CLI. As migrations são aplicadas diretamente no **SQL Editor** do Supabase Dashboard. Os arquivos ficam em `docs/migrations/` apenas como referência e controle de versão.
 
-- [ ] `docs/migrations/001_create_workspaces.sql`
+- [x] `docs/migrations/001_create_workspaces.sql`
   ```sql
   CREATE TABLE workspaces (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -371,7 +371,7 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
     created_at TIMESTAMPTZ DEFAULT now()
   );
   ```
-- [ ] `docs/migrations/002_create_workspace_members.sql`
+- [x] `docs/migrations/002_create_workspace_members.sql`
   ```sql
   CREATE TABLE workspace_members (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -382,15 +382,15 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
     UNIQUE(workspace_id, user_id)
   );
   ```
-- [ ] `docs/migrations/003_create_leads.sql`
-- [ ] `docs/migrations/004_create_deals.sql` (com coluna `stage` e `position` para ordenação)
-- [ ] `docs/migrations/005_create_activities.sql`
-- [ ] `docs/migrations/006_create_subscriptions.sql`
-- [ ] `docs/migrations/007_rls_policies.sql` — RLS em todas as tabelas (workspace_id scoping)
-- [ ] Executar cada arquivo no SQL Editor do Supabase Dashboard e validar
+- [x] `docs/migrations/003_create_leads.sql`
+- [x] `docs/migrations/004_create_deals.sql` (com coluna `stage` e `position` para ordenação)
+- [x] `docs/migrations/005_create_activities.sql`
+- [x] `docs/migrations/006_create_subscriptions.sql`
+- [x] `docs/migrations/007_rls_policies.sql` — RLS em todas as tabelas (workspace_id scoping)
+- [x] Executar cada arquivo no SQL Editor do Supabase Dashboard e validar
 
 #### Tipos TypeScript
-- [ ] Gerar `src/types/supabase.ts` via **Supabase Dashboard → Settings → API → Generate types** (download) ou copiar do editor
+- [x] Gerar `src/types/supabase.ts` via **Supabase Dashboard → Settings → API → Generate types** (download) ou copiar do editor
 - [ ] Atualizar `src/types/index.ts` para usar os tipos gerados
 
 #### Auth Real
