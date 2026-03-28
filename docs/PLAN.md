@@ -465,37 +465,51 @@ feat(leads-pipeline): replace mock data with real Supabase queries and Server Ac
 
 ---
 
-### M9 — Workspace & Colaboração
+### M9 — Workspace & Colaboração ✅
 
-**Branch:** `feat/collaboration`
+**Branch:** `feat/collaboration` → mergeado em `main` (PR #10)
 **Objetivo:** Convites por e-mail, gestão de membros e isolamento multi-workspace funcional.
 
 #### Server Actions
-- [ ] `workspaces.ts`
-  - `inviteMember(email, role, workspaceId)` — cria convite + envia e-mail via Resend
-  - `acceptInvite(token)` — valida token, cria workspace_member
-  - `removeMember(memberId, workspaceId)` — remove (apenas admin)
-  - `updateMemberRole(memberId, role)` — muda de admin para membro
+- [x] `src/lib/actions/workspaces.ts`
+  - `inviteMemberAction(email, role)` — cria convite + envia e-mail via Resend, retorna `warning` se email falhou
+  - `acceptInviteAction(token)` — valida token + email, cria workspace_member, retorna `expectedEmail` se email errado
+  - `removeMemberAction(memberId)` — remove (apenas admin, protege último admin)
+  - `updateMemberRoleAction(memberId, role)` — muda role (apenas admin, protege último admin)
+  - `cancelInviteAction(inviteId)` — cancela convite pendente (apenas admin)
+  - `updateWorkspaceAction(name)` — atualiza nome (apenas admin)
 
 #### Resend — E-mail de Convite
-- [ ] `src/lib/resend.ts` — lazy singleton
-- [ ] `src/emails/workspace-invite.tsx` — template React Email
-- [ ] Rota de aceite de convite: `src/app/invite/[token]/page.tsx`
-- [ ] Tabela `workspace_invites` (token, email, workspace_id, expires_at, accepted_at)
-- [ ] Migration: `008_create_workspace_invites.sql`
+- [x] `src/lib/resend.ts` — lazy singleton (já existia)
+- [x] `src/emails/workspace-invite.tsx` — template HTML puro (sem react-dom/server — Turbopack-safe)
+- [x] `src/app/invite/[token]/page.tsx` — rota pública com detecção de email errado + SwitchAccountButton
+- [x] `src/app/invite/[token]/switch-account-button.tsx` — faz signOut e preserva token na URL
+- [x] Tabela `workspace_invites` (token 256-bit, email, workspace_id, role, expires_at, accepted_at)
+- [x] Migration: `docs/migrations/010_create_workspace_invites.sql`
 
 #### Página de Configurações
-- [ ] `/settings/workspace` — nome do workspace, slug (apenas admin)
-- [ ] `/settings/members` — lista de membros, badges de role, convite novo, remover
-- [ ] Validação de limites do plano Free (máx 2 membros) antes de convidar
+- [x] `src/app/(app)/settings/layout.tsx` — layout com tabs Workspace / Membros
+- [x] `/settings/workspace` — nome + slug (readonly) + plano; edição apenas admin
+- [x] `/settings/members` — lista de membros + convites pendentes + banner limite Free
+- [x] Validação de limites do plano Free (máx 2 membros) na Server Action e UI
 
 #### Role Enforcement
-- [ ] Helper `src/lib/permissions.ts` — `isAdmin(userId, workspaceId)`
-- [ ] Server Actions verificam role antes de mutações sensíveis
-- [ ] UI esconde botões de admin para membros
+- [x] `src/lib/permissions.ts` — `isAdmin()` e `getMemberRole()`
+- [x] Server Actions verificam role antes de mutações sensíveis
+- [x] UI esconde botões de admin para membros
+
+#### Fluxo de Auth com Convite
+- [x] `proxy.ts` — usuário autenticado com `?invite=` vai direto para `/invite/[token]`
+- [x] `login-form.tsx` — banner de convite pendente, preserva token no link "Criar conta"
+- [x] `register-form.tsx` — emailRedirectTo aponta para `/invite/[token]` se há token
+
+#### Outros
+- [x] `src/components/ui/currency-input.tsx` — input BRL formatado nos forms de lead e deal
+- [x] `src/types/supabase.ts` — tipos da tabela `workspace_invites`
 
 **Verificação**
-- [ ] Convidar por email → e-mail chega → link de aceite funciona
+- [x] Build limpo (`npm run build`, 14 rotas, zero erros TypeScript)
+- [ ] Convidar por email → e-mail chega no Resend Dashboard → link de aceite funciona
 - [ ] Membro convidado acessa o workspace sem acesso a outros workspaces
 - [ ] Admin remove membro → membro perde acesso imediatamente
 
