@@ -45,8 +45,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Usuário autenticado tentando acessar /login ou /register → /dashboard
+  // Usuário autenticado tentando acessar /login ou /register
   if (isAuthRoute && user) {
+    // Se há token de convite, redirecionar para aceitar o convite
+    const inviteToken = request.nextUrl.searchParams.get('invite')
+    if (inviteToken) {
+      return NextResponse.redirect(new URL(`/invite/${inviteToken}`, request.url))
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

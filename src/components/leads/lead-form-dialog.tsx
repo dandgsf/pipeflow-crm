@@ -42,6 +42,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { CurrencyInput, parseCurrencyBRL } from '@/components/ui/currency-input'
 import type { Lead, LeadStatus, WorkspaceMember } from '@/types'
 
 // ── Schema de validação ────────────────────────────────────────────────────────
@@ -145,7 +146,6 @@ export function LeadFormDialog({
   }, [lead, form, currentUserId])
 
   async function onSubmit(values: LeadFormValues) {
-    const parsed = parseFloat(values.estimated_value ?? '')
     const payload: LeadSavePayload = {
       name: values.name,
       email: values.email,
@@ -154,7 +154,7 @@ export function LeadFormDialog({
       position: values.position || undefined,
       status: values.status,
       owner_id: values.owner_id,
-      estimated_value: isNaN(parsed) ? undefined : parsed,
+      estimated_value: parseCurrencyBRL(values.estimated_value ?? ''),
       notes: values.notes || undefined,
     }
     onSave(payload, lead)
@@ -281,52 +281,51 @@ export function LeadFormDialog({
               />
             </div>
 
-            {/* Responsável + Valor estimado */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="owner_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Responsável *</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {members.map((m) => (
-                          <SelectItem key={m.user_id} value={m.user_id}>
-                            {m.user?.full_name ?? m.user?.email ?? m.user_id}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="estimated_value"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Valor estimado (R$)</FormLabel>
+            {/* Responsável */}
+            <FormField
+              control={form.control}
+              name="owner_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Responsável *</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="0"
-                        min={0}
-                        {...field}
-                        value={field.value ?? ''}
-                      />
+                      <SelectTrigger className="w-full">
+                        <div className="min-w-0 flex-1 truncate text-left">
+                          <SelectValue />
+                        </div>
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                    <SelectContent>
+                      {members.map((m) => (
+                        <SelectItem key={m.user_id} value={m.user_id}>
+                          {m.user?.full_name ?? m.user?.email ?? m.user_id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Valor estimado */}
+            <FormField
+              control={form.control}
+              name="estimated_value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor estimado (R$)</FormLabel>
+                  <FormControl>
+                    <CurrencyInput
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Notas */}
             <FormField
