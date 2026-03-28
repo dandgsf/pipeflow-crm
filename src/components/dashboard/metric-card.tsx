@@ -4,13 +4,14 @@ import { Card, CardContent } from '@/components/ui/card'
 interface MetricCardProps {
   label: string
   value: string
-  growth: number
+  growth?: number
   icon: LucideIcon
   iconColor?: string
 }
 
 export function MetricCard({ label, value, growth, icon: Icon, iconColor = 'text-[#CAFF33]' }: MetricCardProps) {
-  const isPositive = growth >= 0
+  const showGrowth = growth !== undefined
+  const isPositive = (growth ?? 0) >= 0
   const TrendIcon = isPositive ? TrendingUp : TrendingDown
 
   return (
@@ -25,15 +26,17 @@ export function MetricCard({ label, value, growth, icon: Icon, iconColor = 'text
             <Icon className="h-5 w-5" />
           </div>
         </div>
-        <div className="mt-4 flex items-center gap-1.5">
-          <TrendIcon
-            className={`h-3.5 w-3.5 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}
-          />
-          <span className={`text-xs font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-            {isPositive ? '+' : ''}{growth}%
-          </span>
-          <span className="text-xs text-zinc-600">vs mês anterior</span>
-        </div>
+        {showGrowth && (
+          <div className="mt-4 flex items-center gap-1.5">
+            <TrendIcon
+              className={`h-3.5 w-3.5 ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}
+            />
+            <span className={`text-xs font-medium ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+              {isPositive ? '+' : ''}{growth}%
+            </span>
+            <span className="text-xs text-zinc-600">vs mês anterior</span>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

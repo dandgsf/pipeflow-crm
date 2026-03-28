@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { format } from 'date-fns'
@@ -46,10 +46,7 @@ interface DealCardContentProps {
 }
 
 export function DealCardContent({ deal, stageColor }: DealCardContentProps) {
-  const [isOverdue, setIsOverdue] = useState(false)
-  useEffect(() => {
-    setIsOverdue(deal.due_date != null && new Date(deal.due_date) < new Date())
-  }, [deal.due_date])
+  const isOverdue = deal.due_date != null && new Date(deal.due_date) < new Date()
 
   return (
     <div className="space-y-2.5">

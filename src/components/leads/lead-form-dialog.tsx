@@ -42,8 +42,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import type { Lead, LeadStatus } from '@/types'
-import { MOCK_OWNERS } from '@/lib/mock/leads'
+import type { Lead, LeadStatus, WorkspaceMember } from '@/types'
 
 // ── Schema de validação ────────────────────────────────────────────────────────
 
@@ -82,6 +81,8 @@ interface LeadFormDialogProps {
   lead?: Lead | null
   onSave: (values: LeadSavePayload, lead?: Lead | null) => void
   onDelete?: (lead: Lead) => void
+  members?: WorkspaceMember[]
+  currentUserId?: string
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────────
@@ -92,6 +93,8 @@ export function LeadFormDialog({
   lead,
   onSave,
   onDelete,
+  members = [],
+  currentUserId = '',
 }: LeadFormDialogProps) {
   const isEditing = Boolean(lead)
 
@@ -104,7 +107,7 @@ export function LeadFormDialog({
       company: '',
       position: '',
       status: 'novo',
-      owner_id: MOCK_OWNERS[0].id,
+      owner_id: currentUserId,
       estimated_value: '',
       notes: '',
     },
@@ -122,7 +125,7 @@ export function LeadFormDialog({
         company: lead.company ?? '',
         position: lead.position ?? '',
         status: lead.status,
-        owner_id: lead.owner_id ?? MOCK_OWNERS[0].id,
+        owner_id: lead.owner_id ?? currentUserId,
         estimated_value: lead.estimated_value != null ? String(lead.estimated_value) : '',
         notes: lead.notes ?? '',
       })
@@ -134,16 +137,14 @@ export function LeadFormDialog({
         company: '',
         position: '',
         status: 'novo',
-        owner_id: MOCK_OWNERS[0].id,
+        owner_id: currentUserId,
         estimated_value: '',
         notes: '',
       })
     }
-  }, [lead, form])
+  }, [lead, form, currentUserId])
 
   async function onSubmit(values: LeadFormValues) {
-    // Simula delay de rede (mock)
-    await new Promise((r) => setTimeout(r, 400))
     const parsed = parseFloat(values.estimated_value ?? '')
     const payload: LeadSavePayload = {
       name: values.name,
@@ -295,9 +296,9 @@ export function LeadFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {MOCK_OWNERS.map((o) => (
-                          <SelectItem key={o.id} value={o.id}>
-                            {o.full_name}
+                        {members.map((m) => (
+                          <SelectItem key={m.user_id} value={m.user_id}>
+                            {m.user?.full_name ?? m.user?.email ?? m.user_id}
                           </SelectItem>
                         ))}
                       </SelectContent>

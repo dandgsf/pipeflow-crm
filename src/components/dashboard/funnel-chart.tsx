@@ -10,7 +10,6 @@ import {
   Tooltip,
   Cell,
 } from 'recharts'
-import { MOCK_FUNNEL_DATA } from '@/lib/mock/metrics'
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', {
@@ -46,7 +45,19 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Toolti
   )
 }
 
-export function FunnelChart() {
+export interface FunnelDataItem {
+  stage: string
+  label: string
+  count: number
+  value: number
+  color: string
+}
+
+interface FunnelChartProps {
+  data: FunnelDataItem[]
+}
+
+export function FunnelChart({ data }: FunnelChartProps) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
@@ -58,7 +69,7 @@ export function FunnelChart() {
     <div className="w-full h-64">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
-          data={MOCK_FUNNEL_DATA}
+          data={data}
           margin={{ top: 4, right: 8, left: 8, bottom: 4 }}
           barCategoryGap="20%"
         >
@@ -76,7 +87,7 @@ export function FunnelChart() {
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
           <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-            {MOCK_FUNNEL_DATA.map((entry) => (
+            {data.map((entry) => (
               <Cell key={entry.stage} fill={entry.color} fillOpacity={0.85} />
             ))}
           </Bar>

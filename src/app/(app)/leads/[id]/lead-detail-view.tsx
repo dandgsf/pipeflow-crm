@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Pencil, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -9,6 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LeadProfileCard } from '@/components/leads/lead-profile-card'
 import { ActivityTimeline } from '@/components/leads/activity-timeline'
 import { LeadFormDialog, type LeadSavePayload } from '@/components/leads/lead-form-dialog'
+import { ActivityFormDialog, type ActivitySavePayload } from '@/components/leads/activity-form-dialog'
+import { updateLeadAction } from '@/lib/actions/leads'
+import { createActivityAction } from '@/lib/actions/activities'
 import { cn } from '@/lib/utils'
 import type { Lead, Activity } from '@/types'
 
@@ -17,21 +21,41 @@ import type { Lead, Activity } from '@/types'
 interface LeadDetailViewProps {
   lead: Lead
   activities: Activity[]
+  currentUserId: string
 }
 
 export function LeadDetailView({
   lead: initialLead,
-  activities,
+  activities: initialActivities,
+  currentUserId,
 }: LeadDetailViewProps) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
   const [lead, setLead] = useState(initialLead)
+  const [activities, setActivities] = useState(initialActivities)
   const [editOpen, setEditOpen] = useState(false)
+  const [activityOpen, setActivityOpen] = useState(false)
 
   function handleSave(values: LeadSavePayload) {
-    setLead((prev) => ({
-      ...prev,
-      ...values,
-      updated_at: new Date().toISOString(),
-    }))
+    setLead((prev) => ({ ...prev, ...values, updated_at: new Date().toISOString() }))
+
+    startTransition(async () => {
+      const result = await updateLeadAction(lead.id, values)
+      if (result?.error) {
+        // Reverte para o estado original em caso de falha
+        setLead(initialLead)
+      } else {
+        router.refresh()
+      }
+    })
+  }
+
+  function handleSaveActivity(payload: ActivitySavePayload) {
+    startTransition(async () => {
+      const result = await createActivityAction(lead.id, payload)
+      if (!result?.error) router.refresh()
+    })
   }
 
   return (
@@ -57,6 +81,7 @@ export function LeadDetailView({
           variant="outline"
           onClick={() => setEditOpen(true)}
           className="gap-1.5"
+          disabled={isPending}
         >
           <Pencil className="h-3.5 w-3.5" />
           Editar Lead
@@ -82,13 +107,11 @@ export function LeadDetailView({
                   </span>
                 )}
               </CardTitle>
-              {/* Botão ativo no M8 — backend real com Supabase */}
               <Button
                 size="sm"
                 variant="outline"
                 className="gap-1.5"
-                disabled
-                title="Disponível no M8 — integração com Supabase"
+                onClick={() => setActivityOpen(true)}
               >
                 <Plus className="h-3.5 w-3.5" />
                 Registrar atividade
@@ -101,12 +124,20 @@ export function LeadDetailView({
         </div>
       </div>
 
-      {/* Dialog de edição */}
+      {/* Dialog de edição do lead */}
       <LeadFormDialog
         open={editOpen}
         onOpenChange={setEditOpen}
         lead={lead}
         onSave={handleSave}
+        currentUserId={currentUserId}
+      />
+
+      {/* Dialog de nova atividade */}
+      <ActivityFormDialog
+        open={activityOpen}
+        onOpenChange={setActivityOpen}
+        onSave={handleSaveActivity}
       />
     </div>
   )
