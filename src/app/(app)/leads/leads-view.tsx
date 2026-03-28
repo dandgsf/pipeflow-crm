@@ -1,24 +1,36 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/layout/page-header'
 import { LeadsTable } from '@/components/leads/leads-table'
 import { LeadsFilters, type LeadsFiltersState } from '@/components/leads/leads-filters'
 import { LeadFormDialog, type LeadSavePayload } from '@/components/leads/lead-form-dialog'
-import { MOCK_LEADS } from '@/lib/mock/leads'
-import type { Lead } from '@/types'
+import { createLeadAction, updateLeadAction, deleteLeadAction } from '@/lib/actions/leads'
+import type { Lead, WorkspaceMember } from '@/types'
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 
 const PAGE_SIZE = 8
 
+// ── Props ──────────────────────────────────────────────────────────────────────
+
+interface LeadsViewProps {
+  initialLeads: Lead[]
+  members: WorkspaceMember[]
+  currentUserId: string
+}
+
 // ── Componente ─────────────────────────────────────────────────────────────────
 
-export function LeadsView() {
-  // Estado de dados (mock, mutável durante a sessão)
-  const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS)
+export function LeadsView({ initialLeads, members, currentUserId }: LeadsViewProps) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  // Estado de dados — otimista local, revalidado pelo router após Server Action
+  const [leads, setLeads] = useState<Lead[]>(initialLeads)
 
   // Filtros
   const [filters, setFilters] = useState<LeadsFiltersState>({
@@ -53,7 +65,6 @@ export function LeadsView() {
     })
   }, [leads, filters])
 
-  // Resetar para página 1 ao filtrar
   const handleFiltersChange = (next: LeadsFiltersState) => {
     setFilters(next)
     setPage(1)
@@ -81,42 +92,42 @@ export function LeadsView() {
   }
 
   function handleDelete(lead: Lead) {
+    const originalIndex = leads.findIndex((l) => l.id === lead.id)
     setLeads((prev) => prev.filter((l) => l.id !== lead.id))
+
+    startTransition(async () => {
+      const result = await deleteLeadAction(lead.id)
+      if (result?.error) {
+        setLeads((prev) => {
+          const next = [...prev]
+          next.splice(originalIndex, 0, lead)
+          return next
+        })
+      } else {
+        router.refresh()
+      }
+    })
   }
 
   function handleSave(values: LeadSavePayload, lead?: Lead | null) {
     if (lead) {
-      // Edição
+      // Edição — atualização otimista
       setLeads((prev) =>
         prev.map((l) =>
-          l.id === lead.id
-            ? {
-                ...l,
-                ...values,
-                updated_at: new Date().toISOString(),
-              }
-            : l,
+          l.id === lead.id ? { ...l, ...values, updated_at: new Date().toISOString() } : l,
         ),
       )
+
+      startTransition(async () => {
+        const result = await updateLeadAction(lead.id, values)
+        if (!result?.error) router.refresh()
+      })
     } else {
-      // Criação
-      const newLead: Lead = {
-        id: `l${Date.now()}`,
-        workspace_id: 'ws1',
-        name: values.name,
-        email: values.email,
-        phone: values.phone || undefined,
-        company: values.company || undefined,
-        position: values.position || undefined,
-        status: values.status,
-        owner_id: values.owner_id,
-        estimated_value: values.estimated_value,
-        notes: values.notes || undefined,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-      setLeads((prev) => [newLead, ...prev])
-      setPage(1)
+      // Criação — Server Action, depois refresh para obter ID real
+      startTransition(async () => {
+        const result = await createLeadAction(values)
+        if (!result?.error) router.refresh()
+      })
     }
   }
 
@@ -128,14 +139,14 @@ export function LeadsView() {
         title="Leads"
         description={`${filteredLeads.length} lead${filteredLeads.length !== 1 ? 's' : ''} encontrado${filteredLeads.length !== 1 ? 's' : ''}`}
         action={
-          <Button size="sm" onClick={handleNew} className="gap-1.5">
+          <Button size="sm" onClick={handleNew} className="gap-1.5" disabled={isPending}>
             <Plus className="h-4 w-4" />
             Novo Lead
           </Button>
         }
       />
 
-      <LeadsFilters filters={filters} onChange={handleFiltersChange} />
+      <LeadsFilters filters={filters} onChange={handleFiltersChange} members={members} />
 
       <LeadsTable
         leads={paginatedLeads}
@@ -179,6 +190,8 @@ export function LeadsView() {
         lead={editingLead}
         onSave={handleSave}
         onDelete={handleDelete}
+        members={members}
+        currentUserId={currentUserId}
       />
     </div>
   )

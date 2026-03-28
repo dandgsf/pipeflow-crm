@@ -3,7 +3,7 @@ import { format, differenceInDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { ArrowRight, Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { MOCK_UPCOMING_DEALS, PIPELINE_STAGES } from '@/lib/mock/metrics'
+import { PIPELINE_STAGES } from '@/types'
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', {
@@ -14,12 +14,22 @@ function formatCurrency(value: number) {
 }
 
 function StageBadge({ stage }: { stage: string }) {
-  const found = PIPELINE_STAGES.find((s) => s.key === stage)
+  // Cores por stage (consistente com o Kanban)
+  const stageColors: Record<string, string> = {
+    novo_lead: '#60a5fa',
+    contato_realizado: '#22d3ee',
+    proposta_enviada: '#CAFF33',
+    negociacao: '#fb923c',
+    fechado_ganho: '#4ade80',
+    fechado_perdido: '#f87171',
+  }
+  const found = PIPELINE_STAGES.find((s) => s.id === stage)
   if (!found) return null
+  const color = stageColors[stage] ?? '#71717a'
   return (
     <span
       className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
-      style={{ backgroundColor: `${found.color}22`, color: found.color }}
+      style={{ backgroundColor: `${color}22`, color }}
     >
       {found.label}
     </span>
@@ -28,13 +38,13 @@ function StageBadge({ stage }: { stage: string }) {
 
 function DueDateCell({ dueDate, isOverdue }: { dueDate: string; isOverdue: boolean }) {
   const date = new Date(dueDate)
-  const days = differenceInDays(date, new Date('2026-03-25'))
+  const days = differenceInDays(date, new Date())
 
   return (
     <div className="flex items-center gap-1.5">
       <Clock className={`h-3 w-3 ${isOverdue ? 'text-red-400' : 'text-zinc-500'}`} />
       <span className={`text-xs font-mono ${isOverdue ? 'text-red-400 font-semibold' : 'text-zinc-400'}`}>
-        {format(date, "d MMM", { locale: ptBR })}
+        {format(date, 'd MMM', { locale: ptBR })}
       </span>
       {isOverdue ? (
         <Badge variant="destructive" className="text-[9px] px-1 py-0 h-4">Vencido</Badge>
@@ -45,8 +55,22 @@ function DueDateCell({ dueDate, isOverdue }: { dueDate: string; isOverdue: boole
   )
 }
 
-export function UpcomingDeals() {
-  if (MOCK_UPCOMING_DEALS.length === 0) {
+export interface UpcomingDealItem {
+  id: string
+  title: string
+  stage: string
+  due_date: string
+  estimated_value?: number
+  isOverdue: boolean
+  lead?: { name: string; company?: string }
+}
+
+interface UpcomingDealsProps {
+  deals: UpcomingDealItem[]
+}
+
+export function UpcomingDeals({ deals }: UpcomingDealsProps) {
+  if (deals.length === 0) {
     return (
       <p className="text-sm text-zinc-500 text-center py-8">
         Nenhum negócio com prazo definido.
@@ -67,7 +91,7 @@ export function UpcomingDeals() {
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/60">
-          {MOCK_UPCOMING_DEALS.map((deal) => (
+          {deals.map((deal) => (
             <tr key={deal.id} className="group">
               <td className="py-3 pr-4">
                 <Link
@@ -77,7 +101,6 @@ export function UpcomingDeals() {
                   {deal.title}
                   <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
-                <p className="text-xs text-zinc-500 mt-0.5">{deal.owner?.full_name}</p>
               </td>
               <td className="py-3 pr-4 hidden sm:table-cell">
                 <p className="text-zinc-300 text-xs">{deal.lead?.name}</p>
@@ -87,7 +110,7 @@ export function UpcomingDeals() {
                 <StageBadge stage={deal.stage} />
               </td>
               <td className="py-3 pr-4">
-                <DueDateCell dueDate={deal.due_date!} isOverdue={deal.isOverdue} />
+                <DueDateCell dueDate={deal.due_date} isOverdue={deal.isOverdue} />
               </td>
               <td className="py-3 text-right">
                 <span className="font-mono text-xs text-zinc-300">

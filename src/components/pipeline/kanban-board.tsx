@@ -12,6 +12,7 @@ import {
   type DragStartEvent,
   type DragEndEvent,
   type DragOverEvent,
+  defaultDropAnimationSideEffects,
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { KanbanColumn } from '@/components/pipeline/kanban-column'
@@ -164,7 +165,6 @@ export function KanbanBoard({
     setOverId(null)
 
     if (!over) {
-      // Revert: sem destino válido
       setInternalDeals(deals)
       return
     }
@@ -172,6 +172,7 @@ export function KanbanBoard({
     const activeIdStr = String(active.id)
     const overIdStr = String(over.id)
 
+    // Captura o deal com o stage atual (pode ter mudado via onDragOver)
     const activeDealItem = internalDeals.find((d) => d.id === activeIdStr)
     if (!activeDealItem) return
 
@@ -197,12 +198,19 @@ export function KanbanBoard({
         updated = reposition(internalDeals)
       }
     } else {
-      // Já movido via onDragOver — apenas confirmar
+      // Já movido via onDragOver — apenas re-calcula posições
       updated = reposition(internalDeals)
     }
 
     setInternalDeals(updated)
     onDealsChange(updated)
+
+    // Notifica o pai para persistir no banco:
+    // usa o deal com stage e position já atualizados
+    const movedDeal = updated.find((d) => d.id === activeIdStr)
+    if (movedDeal) {
+      onMoveDeal(movedDeal, movedDeal.stage)
+    }
   }
 
   function handleDragCancel() {
@@ -215,6 +223,7 @@ export function KanbanBoard({
 
   return (
     <DndContext
+      id="pipeline-kanban"
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
@@ -255,7 +264,11 @@ export function KanbanBoard({
       </div>
 
       {/* Overlay animado durante drag */}
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay
+        dropAnimation={{
+          sideEffects: defaultDropAnimationSideEffects({ styles: { active: { opacity: '0.4' } } }),
+        }}
+      >
         {activeDeal && (
           <div
             className="rounded-lg border p-3 cursor-grabbing w-[272px]"
@@ -263,7 +276,6 @@ export function KanbanBoard({
               backgroundColor: '#141416',
               borderColor: STAGE_COLORS[activeDeal.stage],
               boxShadow: `inset 0 2px 0 ${STAGE_COLORS[activeDeal.stage]}, 0 20px 40px rgba(0,0,0,0.6)`,
-              transform: 'rotate(1.5deg) scale(1.04)',
             }}
           >
             <DealCardContent

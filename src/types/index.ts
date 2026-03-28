@@ -92,7 +92,7 @@ export interface Deal {
   created_at: string
   updated_at: string
   // Joined fields
-  lead?: Pick<Lead, 'id' | 'name' | 'company' | 'avatar_url' | 'email'>
+  lead?: Pick<Lead, 'id' | 'name' | 'company' | 'email'>
   owner?: {
     id: string
     email: string

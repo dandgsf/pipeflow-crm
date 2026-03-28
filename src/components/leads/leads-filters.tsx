@@ -10,8 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import type { LeadStatus } from '@/types'
-import { MOCK_OWNERS } from '@/lib/mock/leads'
+import type { LeadStatus, WorkspaceMember } from '@/types'
 
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 
@@ -24,11 +23,12 @@ export interface LeadsFiltersState {
 interface LeadsFiltersProps {
   filters: LeadsFiltersState
   onChange: (filters: LeadsFiltersState) => void
+  members?: WorkspaceMember[]
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────────
 
-export function LeadsFilters({ filters, onChange }: LeadsFiltersProps) {
+export function LeadsFilters({ filters, onChange, members = [] }: LeadsFiltersProps) {
   const hasActiveFilters =
     filters.search !== '' ||
     filters.status !== 'all' ||
@@ -82,9 +82,9 @@ export function LeadsFilters({ filters, onChange }: LeadsFiltersProps) {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos os responsáveis</SelectItem>
-          {MOCK_OWNERS.map((owner) => (
-            <SelectItem key={owner.id} value={owner.id}>
-              {owner.full_name}
+          {members.map((m) => (
+            <SelectItem key={m.user_id} value={m.user_id}>
+              {m.user?.full_name ?? m.user?.email ?? m.user_id}
             </SelectItem>
           ))}
         </SelectContent>

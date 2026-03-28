@@ -42,8 +42,14 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { PIPELINE_STAGES, type Deal, type PipelineStage } from '@/types'
-import { MOCK_LEADS, MOCK_OWNERS } from '@/lib/mock/leads'
+import { PIPELINE_STAGES, type Deal, type PipelineStage, type WorkspaceMember } from '@/types'
+
+// Tipo mínimo de lead necessário para o select
+export interface DealLeadOption {
+  id: string
+  name: string
+  company?: string
+}
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -87,6 +93,9 @@ interface DealFormDialogProps {
   defaultStage?: PipelineStage
   onSave: (payload: DealSavePayload, deal?: Deal | null) => void
   onDelete?: (deal: Deal) => void
+  leads?: DealLeadOption[]
+  members?: WorkspaceMember[]
+  currentUserId?: string
 }
 
 // ── Componente ────────────────────────────────────────────────────────────────
@@ -98,6 +107,9 @@ export function DealFormDialog({
   defaultStage = 'novo_lead',
   onSave,
   onDelete,
+  leads = [],
+  members = [],
+  currentUserId = '',
 }: DealFormDialogProps) {
   const isEditing = !!deal
 
@@ -108,7 +120,7 @@ export function DealFormDialog({
       lead_id: '',
       stage: defaultStage,
       estimated_value: '',
-      owner_id: MOCK_OWNERS[0].id,
+      owner_id: currentUserId,
       due_date: '',
       notes: '',
     },
@@ -124,7 +136,7 @@ export function DealFormDialog({
           lead_id: deal.lead_id,
           stage: deal.stage,
           estimated_value: deal.estimated_value?.toString() ?? '',
-          owner_id: deal.owner_id ?? MOCK_OWNERS[0].id,
+          owner_id: deal.owner_id ?? currentUserId,
           due_date: deal.due_date
             ? deal.due_date.split('T')[0] // 'YYYY-MM-DD' para input type="date"
             : '',
@@ -137,13 +149,13 @@ export function DealFormDialog({
           lead_id: '',
           stage: defaultStage,
           estimated_value: '',
-          owner_id: MOCK_OWNERS[0].id,
+          owner_id: currentUserId,
           due_date: '',
           notes: '',
         })
       }
     }
-  }, [open, deal, defaultStage, form])
+  }, [open, deal, defaultStage, form, currentUserId])
 
   function onSubmit(values: DealFormValues) {
     const payload: DealSavePayload = {
@@ -170,8 +182,7 @@ export function DealFormDialog({
     }
   }
 
-  // Leads ordenados alfabeticamente
-  const sortedLeads = [...MOCK_LEADS].sort((a, b) => a.name.localeCompare(b.name))
+  const sortedLeads = [...leads].sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -228,7 +239,7 @@ export function DealFormDialog({
             />
 
             {/* Estágio + Responsável */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="stage"
@@ -267,9 +278,9 @@ export function DealFormDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {MOCK_OWNERS.map((owner) => (
-                          <SelectItem key={owner.id} value={owner.id}>
-                            {owner.full_name}
+                        {members.map((m) => (
+                          <SelectItem key={m.user_id} value={m.user_id}>
+                            {m.user?.full_name ?? m.user?.email ?? m.user_id}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -281,7 +292,7 @@ export function DealFormDialog({
             </div>
 
             {/* Valor estimado + Prazo */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="estimated_value"
