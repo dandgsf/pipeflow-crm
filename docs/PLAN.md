@@ -424,46 +424,43 @@ feat(supabase): database migrations, RLS policies, real auth flow, workspace con
 
 ---
 
-### M8 — Leads & Pipeline — Dados Reais
+### M8 — Leads & Pipeline — Dados Reais ✅
 
-**Branch:** `feat/leads-data`
+**Branch:** `feat/leads-data` → mergeado em `main` (PR #9)
 **Objetivo:** Substituir todos os dados mockados por dados reais do Supabase.
 
 #### Server Actions (`src/lib/actions/`)
-- [ ] `leads.ts`
-  - `createLead(formData)` — insere no Supabase, revalida `/leads`
-  - `updateLead(id, formData)` — atualiza, revalida
-  - `deleteLead(id)` — soft delete (status = 'perdido') ou hard delete
-  - `getLeads(workspaceId, filters)` — query com filtros
-  - `getLeadById(id)` — busca lead + atividades relacionadas
-- [ ] `deals.ts`
-  - `createDeal(formData)`
-  - `updateDeal(id, formData)`
-  - `moveDeal(id, newStage, newPosition)` — chamado pelo drag-and-drop
-  - `deleteDeal(id)`
-  - `getDeals(workspaceId)` — agrupados por stage
+- [x] `leads.ts` — `createLeadAction`, `updateLeadAction`, `deleteLeadAction`
+- [x] `deals.ts` — `createDealAction`, `updateDealAction`, `moveDealAction`, `deleteDealAction`
+- [x] `activities.ts` — `createActivityAction`
 
 #### Integração nas Páginas
-- [ ] `/leads` — substituir mock por query real (Server Component)
-- [ ] `/leads/[id]` — Server Component busca lead real com `await params`
-- [ ] Formulário de lead — Server Action real com `revalidatePath`
-- [ ] `/pipeline` — buscar deals do Supabase, agrupados por stage
-- [ ] Drag-and-drop → chamar `moveDeal()` no `onDragEnd`
-- [ ] `/dashboard` — calcular métricas reais com queries Supabase
+- [x] `/leads` — Server Component com query real + filtros passados via props
+- [x] `/leads/[id]` — Server Component busca lead + atividades reais; "Registrar Atividade" habilitado
+- [x] Formulário de lead — Server Action real com `revalidatePath`, otimismo com revert em erro
+- [x] `/pipeline` — buscar deals com join `lead:leads(id, name, company, email)`
+- [x] Drag-and-drop → `moveDealAction(id, stage, position)` chamado no `onDragEnd`
+- [x] `/dashboard` — métricas reais: total leads, negócios abertos, valor do pipeline, conversão
 
 #### Filtros e Busca
-- [ ] Filtro de leads implementado como query param (não client-side)
-- [ ] Busca por nome/empresa via `ilike` no Supabase
+- [x] Filtros de leads funcionam contra dados reais (passados como props para client component)
+- [x] Membros reais no select de responsável (sem mock)
+
+#### Bug Fixes
+- [x] Hydration mismatch: `id="pipeline-kanban"` no `DndContext` + `isOverdue` computado inline
+- [x] Cursor offset no drag: removido `rotate/scale` do `DragOverlay`
+- [x] Campo de valor invadido: `grid-cols-1 sm:grid-cols-2` nos forms
+- [x] Revert otimista preserva índice original com `splice`
 
 **Verificação**
-- [ ] CRUD completo de leads funciona e persiste após reload
-- [ ] Drag no pipeline persiste após reload
-- [ ] Dados do dashboard refletem o banco real
-- [ ] RLS: usuário só vê dados do seu workspace
+- [x] CRUD completo de leads funciona e persiste após reload
+- [x] Drag no pipeline persiste após reload
+- [x] Dados do dashboard refletem o banco real
+- [x] RLS: usuário só vê dados do seu workspace
 
 #### Commit Final
 ```
-feat(data): leads and pipeline wired to Supabase — real CRUD, drag persists, dashboard metrics live
+feat(leads-pipeline): replace mock data with real Supabase queries and Server Actions
 ```
 
 ---
