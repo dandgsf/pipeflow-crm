@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { getSupabaseClient } from '@/lib/supabase/client'
 
 // ── Schema de validação ────────────────────────────────────────────────────────
 
@@ -37,19 +38,33 @@ type LoginValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  async function onSubmit() {
+  async function onSubmit(values: LoginValues) {
     setIsLoading(true)
+    setAuthError(null)
     try {
-      // Navegação fake — backend real chega no M7
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      router.push('/dashboard')
+      const supabase = getSupabaseClient()
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      })
+
+      if (error) {
+        setAuthError('E-mail ou senha incorretos. Tente novamente.')
+        return
+      }
+
+      const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
+      router.push(redirectTo)
+      router.refresh()
     } finally {
       setIsLoading(false)
     }
@@ -68,6 +83,11 @@ export function LoginForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {authError && (
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              {authError}
+            </div>
+          )}
           {/* E-mail */}
           <FormField
             control={form.control}

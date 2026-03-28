@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { buttonVariants } from '@/components/ui/button'
 import { WorkspaceSwitcher } from '@/components/layout/workspace-switcher'
 import { cn } from '@/lib/utils'
+import type { Workspace } from '@/types'
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -51,7 +52,18 @@ function NavLink({ href, label, icon: Icon, onClick }: NavLinkProps) {
   )
 }
 
-function NavContent({ onLinkClick }: { onLinkClick?: () => void }) {
+interface SidebarData {
+  workspaces: Workspace[]
+  activeWorkspace: Workspace
+}
+
+function NavContent({
+  onLinkClick,
+  sidebarData,
+}: {
+  onLinkClick?: () => void
+  sidebarData: SidebarData
+}) {
   return (
     <div className="flex h-full flex-col">
       {/* Logo */}
@@ -78,21 +90,24 @@ function NavContent({ onLinkClick }: { onLinkClick?: () => void }) {
 
       {/* Workspace switcher */}
       <div className="border-t border-[#1E1E22] p-3">
-        <WorkspaceSwitcher />
+        <WorkspaceSwitcher
+          workspaces={sidebarData.workspaces}
+          activeWorkspace={sidebarData.activeWorkspace}
+        />
       </div>
     </div>
   )
 }
 
-function DesktopSidebar() {
+function DesktopSidebar({ sidebarData }: { sidebarData: SidebarData }) {
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-[#1E1E22] bg-[#141416] md:flex">
-      <NavContent />
+      <NavContent sidebarData={sidebarData} />
     </aside>
   )
 }
 
-function MobileSidebar() {
+function MobileSidebar({ sidebarData }: { sidebarData?: SidebarData }) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -112,14 +127,19 @@ function MobileSidebar() {
         className="w-60 gap-0 p-0 border-r border-[#1E1E22] bg-[#141416]"
         showCloseButton={false}
       >
-        <NavContent onLinkClick={() => setOpen(false)} />
+        {sidebarData && (
+          <NavContent
+            onLinkClick={() => setOpen(false)}
+            sidebarData={sidebarData}
+          />
+        )}
       </SheetContent>
     </Sheet>
   )
 }
 
-export function Sidebar() {
-  return <DesktopSidebar />
+export function Sidebar({ sidebarData }: { sidebarData: SidebarData }) {
+  return <DesktopSidebar sidebarData={sidebarData} />
 }
 
 export { MobileSidebar }
