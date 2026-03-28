@@ -76,6 +76,52 @@ export interface Database {
         ]
       }
 
+      // ── workspace_invites ───────────────────────────────────
+      workspace_invites: {
+        Row: {
+          id: string
+          workspace_id: string
+          email: string
+          role: 'admin' | 'member'
+          token: string
+          expires_at: string
+          accepted_at: string | null
+          invited_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          email: string
+          role?: 'admin' | 'member'
+          token?: string
+          expires_at?: string
+          accepted_at?: string | null
+          invited_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          email?: string
+          role?: 'admin' | 'member'
+          token?: string
+          expires_at?: string
+          accepted_at?: string | null
+          invited_by?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'workspace_invites_workspace_id_fkey'
+            columns: ['workspace_id']
+            isOneToOne: false
+            referencedRelation: 'workspaces'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+
       // ── leads ───────────────────────────────────────────────
       leads: {
         Row: {

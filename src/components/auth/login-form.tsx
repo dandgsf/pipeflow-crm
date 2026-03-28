@@ -42,6 +42,8 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
+  const inviteToken = searchParams.get('invite')
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
@@ -62,6 +64,13 @@ export function LoginForm() {
         return
       }
 
+      // Se veio de um convite, redireciona de volta para aceitar o convite
+      if (inviteToken) {
+        router.push(`/invite/${inviteToken}`)
+        router.refresh()
+        return
+      }
+
       const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
       router.push(redirectTo)
       router.refresh()
@@ -72,6 +81,25 @@ export function LoginForm() {
 
   return (
     <div className="rounded-2xl border border-pf-border bg-pf-surface p-8">
+      {inviteToken && (
+        <div
+          className="mb-5 rounded-lg border px-3 py-2.5 text-sm"
+          style={{
+            backgroundColor: 'rgba(202,255,51,0.08)',
+            borderColor: 'rgba(202,255,51,0.2)',
+            color: '#CAFF33',
+          }}
+        >
+          Você foi convidado para um workspace. Entre ou{' '}
+          <a
+            href={`/register?invite=${inviteToken}`}
+            className="font-semibold underline underline-offset-2"
+          >
+            crie uma conta
+          </a>{' '}
+          para aceitar.
+        </div>
+      )}
       <div className="mb-6">
         <h1 className="font-display text-xl font-semibold text-pf-text">
           Entrar na conta
@@ -160,7 +188,7 @@ export function LoginForm() {
       <p className="mt-6 text-center text-sm text-pf-text-muted">
         Não tem uma conta?{' '}
         <Link
-          href="/register"
+          href={searchParams.get('invite') ? `/register?invite=${searchParams.get('invite')}` : '/register'}
           className="font-medium text-pf-accent hover:opacity-80 transition-opacity"
         >
           Criar conta grátis

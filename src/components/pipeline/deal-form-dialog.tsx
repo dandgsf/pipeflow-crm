@@ -42,6 +42,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { CurrencyInput, parseCurrencyBRL } from '@/components/ui/currency-input'
 import { PIPELINE_STAGES, type Deal, type PipelineStage, type WorkspaceMember } from '@/types'
 
 // Tipo mínimo de lead necessário para o select
@@ -162,9 +163,7 @@ export function DealFormDialog({
       title: values.title,
       lead_id: values.lead_id,
       stage: values.stage,
-      estimated_value: values.estimated_value
-        ? parseFloat(values.estimated_value) || undefined
-        : undefined,
+      estimated_value: parseCurrencyBRL(values.estimated_value ?? ''),
       owner_id: values.owner_id,
       due_date: values.due_date
         ? new Date(values.due_date + 'T00:00:00').toISOString()
@@ -248,8 +247,10 @@ export function DealFormDialog({
                     <FormLabel>Estágio *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
+                        <SelectTrigger className="w-full">
+                          <div className="min-w-0 flex-1 truncate text-left">
+                            <SelectValue />
+                          </div>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -273,8 +274,10 @@ export function DealFormDialog({
                     <FormLabel>Responsável *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
+                        <SelectTrigger className="w-full">
+                          <div className="min-w-0 flex-1 truncate text-left">
+                            <SelectValue />
+                          </div>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -300,12 +303,9 @@ export function DealFormDialog({
                   <FormItem>
                     <FormLabel>Valor estimado (R$)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="100"
-                        placeholder="0"
-                        {...field}
+                      <CurrencyInput
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
                       />
                     </FormControl>
                     <FormMessage />

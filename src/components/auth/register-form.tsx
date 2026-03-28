@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useForm } from 'react-hook-form'
@@ -48,6 +48,7 @@ type RegisterValues = z.infer<typeof registerSchema>
 
 export function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
@@ -62,12 +63,15 @@ export function RegisterForm() {
     setAuthError(null)
     try {
       const supabase = getSupabaseClient()
+      const inviteToken = searchParams.get('invite')
+      const next = inviteToken ? `/invite/${inviteToken}` : '/onboarding'
+
       const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
           data: { full_name: values.name },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${next}`,
         },
       })
 
@@ -241,7 +245,7 @@ export function RegisterForm() {
       <p className="mt-6 text-center text-sm text-pf-text-muted">
         Já tem uma conta?{' '}
         <Link
-          href="/login"
+          href={searchParams.get('invite') ? `/login?invite=${searchParams.get('invite')}` : '/login'}
           className="font-medium text-pf-accent hover:opacity-80 transition-opacity"
         >
           Entrar
