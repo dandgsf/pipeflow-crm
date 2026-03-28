@@ -1,14 +1,14 @@
 'use client'
 
-// Placeholder para M7 (Supabase core)
-// Na fase de integração real, este hook lerá o workspace ativo do cookie
-// e fornecerá o contexto de workspace para os Client Components.
-
 import { useState, useEffect } from 'react'
-import type { Workspace } from '@/types'
 
 const ACTIVE_WORKSPACE_COOKIE = 'pipeflow_workspace_id'
 
+/**
+ * Hook client-side para ler o workspace ativo do cookie.
+ * O cookie é definido/atualizado pelo server via lib/workspace.ts.
+ * Use este hook em Client Components que precisam do workspaceId.
+ */
 export function useWorkspace() {
   const [workspaceId, setWorkspaceId] = useState<string | null>(null)
 
@@ -16,7 +16,8 @@ export function useWorkspace() {
     const match = document.cookie
       .split('; ')
       .find((row) => row.startsWith(`${ACTIVE_WORKSPACE_COOKIE}=`))
-    setWorkspaceId(match ? match.split('=')[1] : null) // eslint-disable-line react-hooks/set-state-in-effect
+    const id = match ? decodeURIComponent(match.split('=')[1]) : null
+    setWorkspaceId(id)
   }, [])
 
   return { workspaceId }

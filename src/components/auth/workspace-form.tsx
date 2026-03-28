@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,6 +16,7 @@ import {
   FormMessage,
   FormDescription,
 } from '@/components/ui/form'
+import { createWorkspaceAction } from '@/lib/actions/workspace'
 
 // ── Schema de validação ────────────────────────────────────────────────────────
 
@@ -33,20 +33,23 @@ type WorkspaceValues = z.infer<typeof workspaceSchema>
 // ── Componente ─────────────────────────────────────────────────────────────────
 
 export function WorkspaceForm() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
 
   const form = useForm<WorkspaceValues>({
     resolver: zodResolver(workspaceSchema),
     defaultValues: { name: '' },
   })
 
-  async function onSubmit() {
+  async function onSubmit(values: WorkspaceValues) {
     setIsLoading(true)
+    setServerError(null)
     try {
-      // Navegação fake — backend real chega no M7
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      router.push('/dashboard')
+      const result = await createWorkspaceAction(values.name)
+      if (result?.error) {
+        setServerError(result.error)
+      }
+      // Se não houver erro, o redirect ocorre dentro da Server Action
     } finally {
       setIsLoading(false)
     }
@@ -71,6 +74,11 @@ export function WorkspaceForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          {serverError && (
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              {serverError}
+            </div>
+          )}
           {/* Nome do workspace */}
           <FormField
             control={form.control}
