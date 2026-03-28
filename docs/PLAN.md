@@ -346,9 +346,9 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
 
 ---
 
-### M7 — Banco de Dados & Auth Real
+### M7 — Banco de Dados & Auth Real ✅
 
-**Branch:** `feat/supabase-core`
+**Branch:** `feat/supabase-core` → mergeado em `main` (PR #8)
 **Objetivo:** Supabase configurado localmente e em produção, auth real funcionando, dados persistentes.
 
 #### Setup Supabase
@@ -386,32 +386,36 @@ feat(landing): public marketing page — dark mode, hero, features, pricing, CTA
 - [x] `docs/migrations/004_create_deals.sql` (com coluna `stage` e `position` para ordenação)
 - [x] `docs/migrations/005_create_activities.sql`
 - [x] `docs/migrations/006_create_subscriptions.sql`
-- [x] `docs/migrations/007_rls_policies.sql` — RLS em todas as tabelas (workspace_id scoping)
+- [x] `docs/migrations/007_rls_policies.sql` — RLS em todas as tabelas; `(SELECT auth.uid())` para performance, `SET search_path=''` nas funções SECURITY DEFINER, policies `TO authenticated`
+- [x] `docs/migrations/007_drop_before_recreate.sql` — helper para recriar funções/policies com CASCADE
+- [x] `docs/migrations/008_search_indexes.sql` — `pg_trgm` + GIN indexes em `leads.name/company` e `deals.title`; índice composto `(workspace_id, email)`
+- [x] `docs/migrations/009_create_workspace_rpc.sql` — função `create_workspace` PL/pgSQL atômica (SECURITY DEFINER, REVOKE PUBLIC, GRANT authenticated)
 - [x] Executar cada arquivo no SQL Editor do Supabase Dashboard e validar
 
 #### Tipos TypeScript
 - [x] Gerar `src/types/supabase.ts` via **Supabase Dashboard → Settings → API → Generate types** (download) ou copiar do editor
-- [ ] Atualizar `src/types/index.ts` para usar os tipos gerados
+- [x] Atualizar `src/types/index.ts` para usar os tipos gerados
 
 #### Auth Real
-- [ ] Configurar Supabase Auth: Email/Password habilitado
-- [ ] `src/proxy.ts` — proteger rotas `(app)/*`, redirecionar para `/login` se sem sessão
-- [ ] `src/app/(auth)/login/page.tsx` — conectar form ao Supabase Auth (`signInWithPassword`)
-- [ ] `src/app/(auth)/register/page.tsx` — conectar ao Supabase Auth (`signUp`)
-- [ ] `src/app/(app)/onboarding/page.tsx` — Server Action cria workspace + workspace_member
-- [ ] Callback de auth: `src/app/auth/callback/route.ts`
-- [ ] Logout: Server Action em `src/components/layout/navbar.tsx`
-- [ ] Redirecionar para onboarding se usuário não tem workspace
+- [x] Configurar Supabase Auth: Email/Password habilitado
+- [x] `src/proxy.ts` — proteger rotas `(app)/*`, redirecionar para `/login` se sem sessão (`proxyConfig` — Next.js 16)
+- [x] `src/app/(auth)/login/page.tsx` — conectar form ao Supabase Auth (`signInWithPassword`); `<Suspense>` para `useSearchParams`
+- [x] `src/app/(auth)/register/page.tsx` — conectar ao Supabase Auth (`signUp`) com `emailRedirectTo`
+- [x] `src/app/(onboarding)/onboarding/page.tsx` — Server Action `createWorkspaceAction` cria workspace + workspace_member via RPC atômico
+- [x] Callback de auth: `src/app/auth/callback/route.ts` — `exchangeCodeForSession`
+- [x] Logout: `signOutAction` em `src/lib/actions/workspace.ts`, chamada pelo navbar
+- [x] Redirecionar para onboarding se usuário não tem workspace
 
 #### Context de Workspace
-- [ ] `src/hooks/use-workspace.ts` — lê workspace ativo do cookie
-- [ ] `src/lib/workspace.ts` — helpers `getActiveWorkspace()`, `setActiveWorkspace()`
-- [ ] Workspace switcher funcional (atualiza cookie, revalida página)
+- [x] `src/hooks/use-workspace.ts` — lê workspace ativo do cookie
+- [x] `src/lib/workspace.ts` — `getWorkspaceContext()` (única query, sem N+1), `getActiveWorkspace()`, `setActiveWorkspace()`
+- [x] `src/lib/actions/workspace.ts` — `switchWorkspaceAction` (verifica membership, seta cookie, redirect)
+- [x] Workspace switcher funcional (atualiza cookie, revalida página)
 
 **Verificação**
-- [ ] Registro → email de confirmação → login → onboarding → dashboard
-- [ ] Logout redireciona para `/login`
-- [ ] Rotas protegidas redirecionam quem não está logado
+- [x] Registro → email de confirmação → login → onboarding → dashboard
+- [x] Logout redireciona para `/login`
+- [x] Rotas protegidas redirecionam quem não está logado
 
 #### Commit Final
 ```
