@@ -34,7 +34,7 @@ const registerSchema = z
     password: z
       .string()
       .min(1, 'Senha é obrigatória')
-      .min(6, 'A senha deve ter pelo menos 6 caracteres'),
+      .min(8, 'A senha deve ter pelo menos 8 caracteres'),
     confirmPassword: z.string().min(1, 'Confirme a sua senha'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -194,7 +194,7 @@ export function RegisterForm() {
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Mínimo 8 caracteres"
                     autoComplete="new-password"
                     disabled={isLoading}
                     className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"

@@ -46,7 +46,6 @@ export async function createWorkspaceAction(name: string) {
   }).rpc('create_workspace', {
     p_name: name,
     p_slug: slug,
-    p_user_id: user.id,
   })
 
   if (rpcResult.error || !rpcResult.data || rpcResult.data.length === 0) {

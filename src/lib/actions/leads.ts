@@ -2,10 +2,25 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getActiveWorkspace } from '@/lib/workspace'
 import { canAddLead } from '@/lib/limits'
 import type { LeadStatus } from '@/types'
+
+const leadSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email().max(320),
+  phone: z.string().max(30).optional().default(''),
+  company: z.string().max(200).optional().default(''),
+  position: z.string().max(200).optional().default(''),
+  status: z.enum(['novo', 'contato', 'proposta', 'negociacao', 'ganho', 'perdido']),
+  owner_id: z.string().uuid().or(z.literal('')),
+  estimated_value: z.number().min(0).max(999_999_999).optional(),
+  notes: z.string().max(5000).optional().default(''),
+})
+
+const idSchema = z.string().uuid()
 
 export interface LeadFormPayload {
   name: string
@@ -20,6 +35,9 @@ export interface LeadFormPayload {
 }
 
 export async function createLeadAction(payload: LeadFormPayload) {
+  const parsed = leadSchema.safeParse(payload)
+  if (!parsed.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -35,17 +53,18 @@ export async function createLeadAction(payload: LeadFormPayload) {
     }
   }
 
+  const d = parsed.data
   const { error } = await supabase.from('leads').insert({
     workspace_id: workspace.id,
-    name: payload.name,
-    email: payload.email,
-    phone: payload.phone || null,
-    company: payload.company || null,
-    position: payload.position || null,
-    status: payload.status,
-    owner_id: payload.owner_id || null,
-    estimated_value: payload.estimated_value ?? null,
-    notes: payload.notes || null,
+    name: d.name,
+    email: d.email,
+    phone: d.phone || null,
+    company: d.company || null,
+    position: d.position || null,
+    status: d.status,
+    owner_id: d.owner_id || null,
+    estimated_value: d.estimated_value ?? null,
+    notes: d.notes || null,
   })
 
   if (error) return { error: 'Erro ao criar lead. Tente novamente.' }
@@ -55,6 +74,10 @@ export async function createLeadAction(payload: LeadFormPayload) {
 }
 
 export async function updateLeadAction(id: string, payload: LeadFormPayload) {
+  const parsedId = idSchema.safeParse(id)
+  const parsed = leadSchema.safeParse(payload)
+  if (!parsedId.success || !parsed.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -87,6 +110,9 @@ export async function updateLeadAction(id: string, payload: LeadFormPayload) {
 }
 
 export async function deleteLeadAction(id: string) {
+  const parsedId = idSchema.safeParse(id)
+  if (!parsedId.success) return { error: 'ID inválido.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
