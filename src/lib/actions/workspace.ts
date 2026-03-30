@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { setActiveWorkspace } from '@/lib/workspace'
+import { canCreateWorkspace } from '@/lib/limits'
 
 function generateSlug(name: string): string {
   return name
@@ -21,6 +22,14 @@ export async function createWorkspaceAction(name: string) {
 
   const { data: { user }, error: userError } = await supabase.auth.getUser()
   if (userError || !user) redirect('/login')
+
+  // Verificar limite de workspaces do plano
+  const { allowed, current, limit } = await canCreateWorkspace()
+  if (!allowed) {
+    return {
+      error: `Limite de ${limit} workspace${limit === 1 ? '' : 's'} atingido (${current}/${limit}). Faça upgrade para o plano Pro para criar mais workspaces.`,
+    }
+  }
 
   // Gera slug único com sufixo aleatório
   const baseSlug = generateSlug(name)

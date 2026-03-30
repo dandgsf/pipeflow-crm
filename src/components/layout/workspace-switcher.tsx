@@ -1,6 +1,6 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { Check, ChevronsUpDown, Plus, Loader2 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -14,11 +14,13 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { switchWorkspaceAction } from '@/lib/actions/workspace'
+import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog'
 import type { Workspace } from '@/types'
 
 interface WorkspaceSwitcherProps {
   workspaces: Workspace[]
   activeWorkspace: Workspace
+  canCreateWorkspace: boolean
 }
 
 function getInitials(name: string): string {
@@ -30,8 +32,9 @@ function getInitials(name: string): string {
     .join('')
 }
 
-export function WorkspaceSwitcher({ workspaces, activeWorkspace }: WorkspaceSwitcherProps) {
+export function WorkspaceSwitcher({ workspaces, activeWorkspace, canCreateWorkspace }: WorkspaceSwitcherProps) {
   const [isPending, startTransition] = useTransition()
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   function handleSwitch(workspaceId: string) {
     if (workspaceId === activeWorkspace.id) return
@@ -41,6 +44,7 @@ export function WorkspaceSwitcher({ workspaces, activeWorkspace }: WorkspaceSwit
   }
 
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger className="flex w-full items-center gap-2.5 rounded-lg border border-border bg-secondary/40 px-3 py-2 text-left transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         {/* Avatar do workspace */}
@@ -114,7 +118,10 @@ export function WorkspaceSwitcher({ workspaces, activeWorkspace }: WorkspaceSwit
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="gap-2.5 py-2 text-muted-foreground" disabled>
+        <DropdownMenuItem
+          className="gap-2.5 py-2 text-muted-foreground"
+          onClick={() => setDialogOpen(true)}
+        >
           <div className="flex h-7 w-7 items-center justify-center rounded-md border border-dashed border-border">
             <Plus className="h-3.5 w-3.5" />
           </div>
@@ -122,5 +129,12 @@ export function WorkspaceSwitcher({ workspaces, activeWorkspace }: WorkspaceSwit
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+    <CreateWorkspaceDialog
+      open={dialogOpen}
+      onOpenChange={setDialogOpen}
+      canCreate={canCreateWorkspace}
+    />
+    </>
   )
 }

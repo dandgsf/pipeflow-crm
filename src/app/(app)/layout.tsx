@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/navbar'
 import { DarkModeEnforcer } from '@/components/layout/dark-mode-enforcer'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getWorkspaceContext } from '@/lib/workspace'
+import { canCreateWorkspace } from '@/lib/limits'
 
 export const metadata: Metadata = {
   title: {
@@ -28,10 +29,12 @@ export default async function AppLayout({
 
   if (!activeWorkspace) redirect('/onboarding')
 
+  const { allowed: canCreate } = await canCreateWorkspace()
+
   const userName = user.user_metadata?.full_name as string | undefined
   const avatarUrl = user.user_metadata?.avatar_url as string | undefined
 
-  const sidebarData = { workspaces, activeWorkspace }
+  const sidebarData = { workspaces, activeWorkspace, canCreateWorkspace: canCreate }
 
   return (
     <div className="dark flex h-screen overflow-hidden bg-background text-foreground">

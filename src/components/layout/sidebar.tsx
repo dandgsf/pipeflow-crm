@@ -55,6 +55,7 @@ function NavLink({ href, label, icon: Icon, onClick }: NavLinkProps) {
 interface SidebarData {
   workspaces: Workspace[]
   activeWorkspace: Workspace
+  canCreateWorkspace: boolean
 }
 
 function NavContent({
@@ -93,6 +94,7 @@ function NavContent({
         <WorkspaceSwitcher
           workspaces={sidebarData.workspaces}
           activeWorkspace={sidebarData.activeWorkspace}
+          canCreateWorkspace={sidebarData.canCreateWorkspace}
         />
       </div>
     </div>
