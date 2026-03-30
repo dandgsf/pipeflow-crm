@@ -22,8 +22,9 @@ FASE 2 — BACKEND & INTEGRAÇÃO
   M7  Banco de Dados & Auth Real   → branch: feat/supabase-core
   M8  Leads & Pipeline — Dados     → branch: feat/leads-data
   M9  Workspace & Colaboração      → branch: feat/collaboration
-  M10 Monetização (Stripe)         → branch: feat/billing
-  M11 Deploy & Produção            → branch: feat/deploy
+  M10  Monetização (Stripe)          → branch: feat/billing-nextjs
+  M10½ Multi-Workspace              → branch: feat/multi-workspace
+  M11  Deploy & Produção            → branch: feat/deploy
 ```
 
 ---
@@ -579,6 +580,44 @@ feat(billing): Stripe checkout, webhook handler, plan limits enforcement, billin
 
 ---
 
+### M10½ — Multi-Workspace ✅
+
+**Branch:** `feat/multi-workspace` → mergeado em `main` (PR #12)
+**Objetivo:** Habilitar criação de múltiplos workspaces com limites por plano. Complementa M9 (colaboração) e M10 (billing).
+
+#### Regra de Negócio
+- **Free:** 1 workspace como admin (criado no onboarding)
+- **Pro:** Ilimitado (admin de ao menos 1 workspace Pro pode criar mais)
+- Cada novo workspace nasce no plano Free com seu próprio ciclo de billing
+
+#### Entregas
+
+**Limit Check**
+- [x] `src/lib/limits.ts` — `canCreateWorkspace()` (query admin memberships com join no plano)
+- [x] `src/lib/actions/workspace.ts` — guard server-side no `createWorkspaceAction`
+
+**UI**
+- [x] `src/components/workspace/create-workspace-dialog.tsx` — Dialog com form (Pro) ou prompt de upgrade (Free)
+- [x] `src/components/layout/workspace-switcher.tsx` — botão "Criar workspace" habilitado
+- [x] Propagação de `canCreateWorkspace` via sidebar → navbar → layout
+
+**Bug Fix**
+- [x] `src/app/api/webhooks/stripe/route.ts` — fix tipo `invoice.subscription` (Stripe SDK breaking change)
+
+**Verificação**
+- [x] Build limpo (`npm run build`, 17 rotas, zero erros TypeScript)
+- [ ] Free com 1 workspace: dialog mostra prompt de upgrade
+- [ ] Pro: dialog mostra form → cria workspace → redireciona para dashboard
+- [ ] Server-side rejeita criação quando limite excedido
+- [ ] Mobile: workspace switcher funciona com botão habilitado
+
+#### Commit Final
+```
+feat(workspace): enable multi-workspace creation with plan-based limits
+```
+
+---
+
 ### M11 — Deploy & Produção
 
 **Branch:** `feat/deploy`
@@ -641,6 +680,7 @@ feat(deploy): production deployment on Vercel, Supabase migrations applied, Stri
 | `feat/leads-data` | M8 | CRUD real leads + pipeline |
 | `feat/collaboration` | M9 | Convites + membros + roles |
 | `feat/billing-nextjs` | M10 | Stripe checkout + webhook + limites |
+| `feat/multi-workspace` | M10½ | Criação de múltiplos workspaces |
 | `feat/deploy` | M11 | Deploy produção Vercel |
 
 ---
@@ -657,8 +697,9 @@ feat/landing       → main
 feat/supabase-core → main  ← ponto de virada: dados reais
 feat/leads-data    → main
 feat/collaboration → main
-feat/billing-nextjs → main
-feat/deploy        → main  ← produção
+feat/billing-nextjs  → main
+feat/multi-workspace → main
+feat/deploy          → main  ← produção
 ```
 
 Cada merge deve passar em `npm run build` e `npm run lint` sem erros.
