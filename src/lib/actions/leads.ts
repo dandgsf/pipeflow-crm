@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getActiveWorkspace } from '@/lib/workspace'
+import { canAddLead } from '@/lib/limits'
 import type { LeadStatus } from '@/types'
 
 export interface LeadFormPayload {
@@ -25,6 +26,14 @@ export async function createLeadAction(payload: LeadFormPayload) {
 
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Nenhum workspace ativo.' }
+
+  // Verificar limite do plano
+  const { allowed, current, limit } = await canAddLead()
+  if (!allowed) {
+    return {
+      error: `Limite de ${limit} leads atingido (${current}/${limit}). Faça upgrade para o plano Pro.`,
+    }
+  }
 
   const { error } = await supabase.from('leads').insert({
     workspace_id: workspace.id,

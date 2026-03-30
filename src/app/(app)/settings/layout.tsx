@@ -6,6 +6,7 @@ export const metadata: Metadata = { title: 'Configurações' }
 const TABS = [
   { href: '/settings/workspace', label: 'Workspace' },
   { href: '/settings/members', label: 'Membros' },
+  { href: '/settings/billing', label: 'Assinatura' },
 ] as const
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {

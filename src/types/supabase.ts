@@ -22,21 +22,21 @@ export interface Database {
           id: string
           name: string
           slug: string
-          plan: 'free' | 'pro'
+          plan: 'free' | 'pro' | 'payment_failed'
           created_at: string
         }
         Insert: {
           id?: string
           name: string
           slug: string
-          plan?: 'free' | 'pro'
+          plan?: 'free' | 'pro' | 'payment_failed'
           created_at?: string
         }
         Update: {
           id?: string
           name?: string
           slug?: string
-          plan?: 'free' | 'pro'
+          plan?: 'free' | 'pro' | 'payment_failed'
           created_at?: string
         }
         Relationships: []
@@ -260,6 +260,49 @@ export interface Database {
         ]
       }
 
+      // ── subscriptions ───────────────────────────────────────
+      subscriptions: {
+        Row: {
+          id: string
+          workspace_id: string
+          plan: 'free' | 'pro' | 'payment_failed'
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          current_period_end: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          workspace_id: string
+          plan?: 'free' | 'pro' | 'payment_failed'
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          current_period_end?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          workspace_id?: string
+          plan?: 'free' | 'pro' | 'payment_failed'
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          current_period_end?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'subscriptions_workspace_id_fkey'
+            columns: ['workspace_id']
+            isOneToOne: true
+            referencedRelation: 'workspaces'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+
       // ── activities ──────────────────────────────────────────
       activities: {
         Row: {
@@ -313,48 +356,6 @@ export interface Database {
         ]
       }
 
-      // ── subscriptions ───────────────────────────────────────
-      subscriptions: {
-        Row: {
-          id: string
-          workspace_id: string
-          plan: 'free' | 'pro'
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          current_period_end: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          workspace_id: string
-          plan?: 'free' | 'pro'
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          current_period_end?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          workspace_id?: string
-          plan?: 'free' | 'pro'
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          current_period_end?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'subscriptions_workspace_id_fkey'
-            columns: ['workspace_id']
-            isOneToOne: true
-            referencedRelation: 'workspaces'
-            referencedColumns: ['id']
-          },
-        ]
-      }
     }
 
     Views: {
