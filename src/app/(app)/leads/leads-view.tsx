@@ -156,8 +156,8 @@ export function LeadsView({ initialLeads, members, currentUserId }: LeadsViewPro
 
       {/* Paginação */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>
+        <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground sm:flex-row sm:justify-between">
+          <span className="text-xs sm:text-sm">
             Página {safePage} de {totalPages} — {filteredLeads.length} leads
           </span>
           <div className="flex items-center gap-1">

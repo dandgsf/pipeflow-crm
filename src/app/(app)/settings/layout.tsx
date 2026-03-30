@@ -19,10 +19,12 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       </div>
 
       {/* Tab navigation */}
-      <nav className="flex gap-1 border-b border-[#1E1E22]">
-        {TABS.map((tab) => (
-          <SettingsTab key={tab.href} href={tab.href} label={tab.label} />
-        ))}
+      <nav className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-1 border-b border-[#1E1E22]">
+          {TABS.map((tab) => (
+            <SettingsTab key={tab.href} href={tab.href} label={tab.label} />
+          ))}
+        </div>
       </nav>
 
       {children}

@@ -49,7 +49,7 @@ export default async function AppLayout({
           }}
           sidebarData={sidebarData}
         />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto px-4 py-5 sm:p-6">{children}</main>
       </div>
     </div>
   )

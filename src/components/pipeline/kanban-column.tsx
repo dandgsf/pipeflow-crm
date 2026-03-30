@@ -39,7 +39,7 @@ export function KanbanColumn({
 
   return (
     <div
-      className="flex w-[272px] flex-none flex-col animate-in fade-in slide-in-from-bottom-3 duration-500 fill-mode-both"
+      className="flex w-[256px] flex-none snap-start flex-col animate-in fade-in slide-in-from-bottom-3 duration-500 fill-mode-both"
       style={{ animationDelay: `${animationDelay}ms` }}
     >
       {/* Header da coluna — editorial, sem glassmorphism */}

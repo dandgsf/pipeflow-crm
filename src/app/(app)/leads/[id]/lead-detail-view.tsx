@@ -61,18 +61,18 @@ export function LeadDetailView({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/leads"
-            className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+            className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'shrink-0')}
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div>
-            <h2 className="text-xl font-semibold tracking-tight">{lead.name}</h2>
+          <div className="min-w-0">
+            <h2 className="text-xl font-semibold tracking-tight truncate">{lead.name}</h2>
             {lead.company && (
-              <p className="text-sm text-muted-foreground">{lead.company}</p>
+              <p className="text-sm text-muted-foreground truncate">{lead.company}</p>
             )}
           </div>
         </div>
@@ -80,7 +80,7 @@ export function LeadDetailView({
           size="sm"
           variant="outline"
           onClick={() => setEditOpen(true)}
-          className="gap-1.5"
+          className="gap-1.5 self-start sm:self-auto shrink-0"
           disabled={isPending}
         >
           <Pencil className="h-3.5 w-3.5" />
@@ -98,7 +98,7 @@ export function LeadDetailView({
         {/* Coluna direita — atividades */}
         <div className="space-y-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardHeader className="flex flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle className="text-base">
                 Atividades
                 {activities.length > 0 && (
@@ -110,7 +110,7 @@ export function LeadDetailView({
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1.5"
+                className="gap-1.5 self-start sm:self-auto"
                 onClick={() => setActivityOpen(true)}
               >
                 <Plus className="h-3.5 w-3.5" />

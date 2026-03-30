@@ -231,10 +231,10 @@ export function KanbanBoard({
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      {/* Board — scroll horizontal */}
+      {/* Board — scroll horizontal, colunas responsivas */}
       <div
         className="flex gap-3 items-start px-1 pb-2"
-        style={{ minWidth: `${6 * 272 + 5 * 12}px` }}
+        style={{ minWidth: `${6 * 256 + 5 * 12}px` }}
       >
         {PIPELINE_STAGES.map((stage, index) => {
           const stageColor = STAGE_COLORS[stage.id]
@@ -271,7 +271,7 @@ export function KanbanBoard({
       >
         {activeDeal && (
           <div
-            className="rounded-lg border p-3 cursor-grabbing w-[272px]"
+            className="rounded-lg border p-3 cursor-grabbing w-[256px]"
             style={{
               backgroundColor: '#141416',
               borderColor: STAGE_COLORS[activeDeal.stage],
