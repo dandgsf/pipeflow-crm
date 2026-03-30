@@ -520,43 +520,51 @@ feat(collaboration): workspace member invites via Resend, role enforcement, sett
 
 ---
 
-### M10 — Monetização (Stripe)
+### M10 — Monetização (Stripe) ✅
 
-**Branch:** `feat/billing`
+**Branch:** `feat/billing-nextjs` → mergeado em `main` (PR #11)
 **Objetivo:** Planos Free e Pro com checkout, webhook e enforcement de limites.
 
 #### Setup Stripe
-- [ ] `src/lib/stripe.ts` — lazy singleton com `process.env.STRIPE_SECRET_KEY`
-- [ ] Criar produto "PipeFlow Pro" e preço R$49/mês no Stripe Dashboard
-- [ ] Configurar variáveis: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID`
+- [x] `src/lib/stripe.ts` — lazy singleton com `process.env.STRIPE_SECRET_KEY` (já existia do M0)
+- [x] Criar produto "PipeFlow Pro" e preço R$49/mês no Stripe Dashboard
+- [x] Configurar variáveis: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID`
 
 #### Checkout
-- [ ] Server Action `createCheckoutSession(workspaceId)` — cria Stripe Checkout Session
+- [x] Server Action `createCheckoutSessionAction()` em `src/lib/actions/billing.ts`
   - `success_url` → `/settings/billing?success=true`
   - `cancel_url` → `/settings/billing`
-  - `metadata: { workspaceId }`
-- [ ] Botão "Assinar Pro" na página `/settings/billing` chama a Server Action
+  - `metadata: { workspaceId, userId }`
+  - Busca ou cria `stripe_customer_id` com validação de customer existente
+- [x] Botão "Assinar Pro" na página `/settings/billing` chama a Server Action via `CheckoutButton`
 
-#### Webhook
-- [ ] `src/app/api/webhooks/stripe/route.ts` — Route Handler (não Server Action)
-- [ ] Verificar assinatura com `stripe.webhooks.constructEvent`
-- [ ] Eventos tratados:
-  - `checkout.session.completed` → atualiza `subscriptions.plan = 'pro'`
-  - `customer.subscription.deleted` → atualiza `subscriptions.plan = 'free'`
-  - `invoice.payment_failed` → logar (opcional: notificar por email)
-- [ ] `npx stripe listen --forward-to localhost:3000/api/webhooks/stripe` para dev
+#### Webhook (Route Handler — não Edge Function)
+- [x] `src/app/api/webhooks/stripe/route.ts` — Route Handler (não Server Action)
+- [x] Verificar assinatura HMAC com `stripe.webhooks.constructEvent`
+- [x] Supabase Admin com `SUPABASE_SERVICE_ROLE_KEY` (webhook não tem sessão de usuário)
+- [x] Eventos tratados:
+  - `checkout.session.completed` → upsert `subscriptions.plan = 'pro'` + `workspaces.plan = 'pro'`
+  - `invoice.payment_succeeded` → fallback para ativar Pro (resolve workspaceId via metadata ou customer_id)
+  - `customer.subscription.deleted` → update `subscriptions.plan = 'free'` + `workspaces.plan = 'free'`
+  - `invoice.payment_failed` → update `subscriptions.plan = 'payment_failed'`
+- [x] `npx stripe listen --forward-to localhost:3000/api/webhooks/stripe` para dev
 
 #### Enforcement de Limites
-- [ ] `src/lib/limits.ts` — helpers `canAddLead()`, `canAddMember()`
-- [ ] `createLead` — verifica `count(leads) < 50` se plano free
-- [ ] `inviteMember` — verifica `count(members) < 2` se plano free
-- [ ] UI: banner "Limite atingido — Faça upgrade para Pro" quando limite alcançado
+- [x] `src/lib/limits.ts` — `canAddLead()` (Free: 50) e `canAddMember()` (Free: 2)
+- [x] `createLeadAction` em `leads.ts` — verifica `canAddLead()` antes de inserir
+- [x] `inviteMemberAction` em `workspaces.ts` — usa `canAddMember()` centralizado
 
 #### Página de Billing (`/settings/billing`)
-- [ ] Card plano atual (Free ou Pro + data de renovação)
-- [ ] Card comparação de planos
-- [ ] Botão "Assinar Pro" ou "Gerenciar Assinatura" (Customer Portal)
-- [ ] Server Action `createPortalSession()` → redirect para Stripe Customer Portal
+- [x] Card plano atual (Free, Pro ou Payment Failed + data de renovação)
+- [x] Card comparação de planos (Free vs Pro com features)
+- [x] `CheckoutButton` — "Assinar Pro" (plano Free)
+- [x] `PortalButton` — "Gerenciar Assinatura" (plano Pro)
+- [x] Banner de sucesso (`?success=true`)
+- [x] Banner de alerta para `payment_failed` com link pro Portal
+- [x] Tab "Assinatura" no layout de settings
+
+#### Migrations
+- [x] `docs/migrations/012_add_payment_failed_plan.sql` — adiciona `payment_failed` ao CHECK constraint
 
 **Verificação**
 - [ ] Checkout completo → plano atualiza no Supabase
@@ -566,7 +574,7 @@ feat(collaboration): workspace member invites via Resend, role enforcement, sett
 
 #### Commit Final
 ```
-feat(billing): Stripe checkout, webhooks, plan limits enforcement, customer portal
+feat(billing): Stripe checkout, webhook handler, plan limits enforcement, billing page
 ```
 
 ---
@@ -632,7 +640,7 @@ feat(deploy): production deployment on Vercel, Supabase migrations applied, Stri
 | `feat/supabase-core` | M7 | Auth real + migrations + RLS |
 | `feat/leads-data` | M8 | CRUD real leads + pipeline |
 | `feat/collaboration` | M9 | Convites + membros + roles |
-| `feat/billing` | M10 | Stripe checkout + webhook |
+| `feat/billing-nextjs` | M10 | Stripe checkout + webhook + limites |
 | `feat/deploy` | M11 | Deploy produção Vercel |
 
 ---
@@ -649,7 +657,7 @@ feat/landing       → main
 feat/supabase-core → main  ← ponto de virada: dados reais
 feat/leads-data    → main
 feat/collaboration → main
-feat/billing       → main
+feat/billing-nextjs → main
 feat/deploy        → main  ← produção
 ```
 
