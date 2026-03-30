@@ -57,6 +57,7 @@ interface NavbarProps {
   sidebarData: {
     workspaces: Workspace[]
     activeWorkspace: Workspace
+    canCreateWorkspace: boolean
   }
 }
 

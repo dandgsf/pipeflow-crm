@@ -163,7 +163,7 @@ export async function POST(request: Request) {
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice
         const customerId = invoice.customer as string
-        const subscriptionId = invoice.subscription as string | null
+        const subscriptionId = (invoice as unknown as Record<string, unknown>).subscription as string | null
 
         if (!subscriptionId) {
           console.log('[stripe-webhook] invoice.payment_succeeded sem subscription — ignorando (one-off invoice)')

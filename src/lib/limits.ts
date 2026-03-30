@@ -5,6 +5,7 @@ import { getActiveWorkspace } from '@/lib/workspace'
 
 const FREE_LEAD_LIMIT = 50
 const FREE_MEMBER_LIMIT = 2
+const FREE_WORKSPACE_LIMIT = 1
 
 /**
  * Verifica se o workspace pode adicionar mais leads.
@@ -47,6 +48,48 @@ export async function canAddLead(workspaceId?: string): Promise<{
     allowed: current < FREE_LEAD_LIMIT,
     current,
     limit: FREE_LEAD_LIMIT,
+  }
+}
+
+/**
+ * Verifica se o usuário pode criar mais workspaces.
+ * Admin de ao menos 1 workspace Pro = ilimitado.
+ * Senão = máximo 1 workspace como admin.
+ */
+export async function canCreateWorkspace(): Promise<{
+  allowed: boolean
+  current: number
+  limit: number | null
+}> {
+  const supabase = await getSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { allowed: false, current: 0, limit: FREE_WORKSPACE_LIMIT }
+
+  // Buscar workspaces onde o usuário é ADMIN (com plano)
+  const { data: adminMemberships } = await supabase
+    .from('workspace_members')
+    .select('workspace_id, workspaces(plan)')
+    .eq('user_id', user.id)
+    .eq('role', 'admin')
+
+  if (!adminMemberships || adminMemberships.length === 0) {
+    return { allowed: true, current: 0, limit: FREE_WORKSPACE_LIMIT }
+  }
+
+  const current = adminMemberships.length
+  const hasProWorkspace = adminMemberships.some(
+    (m) => (m.workspaces as unknown as { plan: string } | null)?.plan === 'pro'
+  )
+
+  if (hasProWorkspace) {
+    return { allowed: true, current, limit: null }
+  }
+
+  return {
+    allowed: current < FREE_WORKSPACE_LIMIT,
+    current,
+    limit: FREE_WORKSPACE_LIMIT,
   }
 }
 
