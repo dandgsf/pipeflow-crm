@@ -6,10 +6,9 @@ import { getSupabaseServer } from '@/lib/supabase/server'
 import { getResend } from '@/lib/resend'
 import { isAdmin } from '@/lib/permissions'
 import { getActiveWorkspace } from '@/lib/workspace'
+import { canAddMember } from '@/lib/limits'
 import { renderWorkspaceInviteEmail } from '@/emails/workspace-invite'
 import type { MemberRole } from '@/types'
-
-const FREE_MEMBER_LIMIT = 2
 
 // ─── Atualizar workspace ──────────────────────────────────────────────────────
 
@@ -52,17 +51,11 @@ export async function inviteMemberAction(email: string, role: MemberRole) {
 
   const normalizedEmail = email.trim().toLowerCase()
 
-  // Limite do plano Free
-  if (workspace.plan === 'free') {
-    const { count } = await supabase
-      .from('workspace_members')
-      .select('id', { count: 'exact', head: true })
-      .eq('workspace_id', workspace.id)
-
-    if ((count ?? 0) >= FREE_MEMBER_LIMIT) {
-      return {
-        error: `O plano Free permite no máximo ${FREE_MEMBER_LIMIT} membros. Faça upgrade para Pro.`,
-      }
+  // Verificar limite do plano
+  const { allowed, current, limit } = await canAddMember()
+  if (!allowed) {
+    return {
+      error: `Limite de ${limit} membros atingido (${current}/${limit}). Faça upgrade para o plano Pro.`,
     }
   }
 
