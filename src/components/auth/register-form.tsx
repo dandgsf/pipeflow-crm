@@ -52,6 +52,8 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
+  const [resending, setResending] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -90,6 +92,27 @@ export function RegisterForm() {
     }
   }
 
+  async function handleResendEmail() {
+    setResending(true)
+    setResendSuccess(false)
+    try {
+      const supabase = getSupabaseClient()
+      const inviteToken = searchParams.get('invite')
+      const next = inviteToken ? `/invite/${inviteToken}` : '/onboarding'
+
+      await supabase.auth.resend({
+        type: 'signup',
+        email: form.getValues('email'),
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${next}`,
+        },
+      })
+      setResendSuccess(true)
+    } finally {
+      setResending(false)
+    }
+  }
+
   if (emailSent) {
     return (
       <div className="rounded-2xl border border-pf-border bg-pf-surface p-8 text-center">
@@ -104,14 +127,21 @@ export function RegisterForm() {
           Clique no link para ativar sua conta e continuar.
         </p>
         <p className="mt-4 text-xs text-pf-text-muted">
-          Não recebeu?{' '}
-          <button
-            type="button"
-            className="text-pf-accent hover:opacity-80 transition-opacity"
-            onClick={() => setEmailSent(false)}
-          >
-            Tentar novamente
-          </button>
+          {resendSuccess ? (
+            <span className="text-pf-accent">E-mail reenviado com sucesso!</span>
+          ) : (
+            <>
+              Não recebeu?{' '}
+              <button
+                type="button"
+                className="text-pf-accent hover:opacity-80 transition-opacity disabled:opacity-50"
+                onClick={handleResendEmail}
+                disabled={resending}
+              >
+                {resending ? 'Reenviando…' : 'Reenviar e-mail'}
+              </button>
+            </>
+          )}
         </p>
       </div>
     )
