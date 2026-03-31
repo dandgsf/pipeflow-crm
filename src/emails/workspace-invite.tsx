@@ -6,12 +6,25 @@ interface WorkspaceInviteEmailProps {
   expiresInDays?: number
 }
 
+/** Escape HTML special characters to prevent injection in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 /**
  * Retorna o HTML do e-mail de convite como string pura.
  * Não usa react-dom/server — compatível com Server Actions e Turbopack.
  */
 export function renderWorkspaceInviteEmail(props: WorkspaceInviteEmailProps): string {
-  const { workspaceName, inviterEmail, role, acceptUrl, expiresInDays = 7 } = props
+  const { workspaceName: rawWorkspace, inviterEmail: rawInviter, role, acceptUrl: rawUrl, expiresInDays = 7 } = props
+  const workspaceName = escapeHtml(rawWorkspace)
+  const inviterEmail = escapeHtml(rawInviter)
+  const acceptUrl = escapeHtml(rawUrl)
   const roleLabel = role === 'admin' ? 'Administrador' : 'Membro'
 
   return `<!DOCTYPE html>

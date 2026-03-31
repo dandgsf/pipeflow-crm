@@ -132,7 +132,7 @@ export function PipelineView({ initialDeals, leads, members, currentUserId }: Pi
         }
       />
 
-      <div className="flex-1 overflow-x-auto pb-4">
+      <div className="flex-1 overflow-x-auto pb-4 snap-x snap-mandatory sm:snap-none">
         <KanbanBoard
           deals={deals}
           onDealsChange={handleDealsChange}

@@ -92,7 +92,7 @@ export async function createPortalSessionAction() {
     .from('subscriptions')
     .select('stripe_customer_id')
     .eq('workspace_id', workspace.id)
-    .single()
+    .maybeSingle()
 
   if (!sub?.stripe_customer_id) {
     return { error: 'Nenhuma assinatura encontrada para este workspace.' }

@@ -170,22 +170,24 @@ export function DealCard({
     >
       <DealCardContent deal={deal} stageColor={stageColor} />
 
-      {/* Menu de ações — visível no hover */}
+      {/* Menu de ações — visível no hover/touch */}
       <div
         className={cn(
           'absolute right-2 top-2 transition-opacity duration-150',
-          hovered ? 'opacity-100' : 'opacity-0',
+          'sm:opacity-0 sm:group-hover:opacity-100',
+          hovered ? 'opacity-100' : 'opacity-100 sm:opacity-0',
         )}
         onMouseDown={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
       >
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex h-6 w-6 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-7 w-7 items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             style={{ backgroundColor: '#1A1A1E', color: '#8A8A8F' }}
             aria-label="Ações do negócio"
           >
-            <MoreHorizontal className="h-3.5 w-3.5" />
+            <MoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem onClick={() => onEdit(deal)}>

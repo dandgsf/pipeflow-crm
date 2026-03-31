@@ -39,9 +39,9 @@ export function LeadsFilters({ filters, onChange, members = [] }: LeadsFiltersPr
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       {/* Busca */}
-      <div className="relative min-w-[220px] flex-1">
+      <div className="relative w-full sm:min-w-[220px] sm:flex-1">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder="Buscar por nome ou empresa…"
@@ -58,7 +58,7 @@ export function LeadsFilters({ filters, onChange, members = [] }: LeadsFiltersPr
           onChange({ ...filters, status: (value ?? 'all') as LeadStatus | 'all' })
         }
       >
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-full sm:w-[160px]">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -77,7 +77,7 @@ export function LeadsFilters({ filters, onChange, members = [] }: LeadsFiltersPr
         value={filters.ownerId}
         onValueChange={(value) => onChange({ ...filters, ownerId: value ?? 'all' })}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder="Responsável" />
         </SelectTrigger>
         <SelectContent>

@@ -624,39 +624,48 @@ feat(workspace): enable multi-workspace creation with plan-based limits
 **Objetivo:** Aplicação em produção no Vercel + Supabase, estável e monitorável.
 
 #### Supabase em Produção
-- [ ] Executar todos os arquivos de `docs/migrations/` no SQL Editor do projeto de produção (Supabase Dashboard)
+- [x] Script consolidado: `docs/migrations/PRODUCTION_FULL_MIGRATION.sql` (pronto para colar no SQL Editor)
+- [ ] Executar `PRODUCTION_FULL_MIGRATION.sql` no SQL Editor do projeto de produção (Supabase Dashboard)
 - [ ] Verificar que RLS está habilitado em todas as tabelas (Table Editor → cada tabela → RLS enabled)
-- [ ] Configurar Supabase Auth: URL de redirecionamento de produção (Authentication → URL Configuration)
+- [ ] Configurar Supabase Auth → URL Configuration:
+  - Site URL: `https://pipeflow.vercel.app`
+  - Redirect URLs: `https://pipeflow.vercel.app/auth/callback`
 - [ ] Atualizar `src/types/supabase.ts` com tipos do projeto de produção (Dashboard → Settings → API → Generate types)
 
 #### Vercel
 - [ ] Conectar repositório GitHub ao Vercel
-- [ ] Configurar todas as variáveis de ambiente no dashboard Vercel:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+- [ ] Configurar variáveis de ambiente no dashboard Vercel:
+  - `NEXT_PUBLIC_SUPABASE_URL` (do projeto de produção)
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (do projeto de produção)
+  - `SUPABASE_SERVICE_ROLE_KEY` (do projeto de produção — usado apenas no webhook Stripe)
+  - `STRIPE_SECRET_KEY` (live ou test key do Stripe)
+  - `STRIPE_WEBHOOK_SECRET` (do webhook de produção — criar depois do deploy)
+  - `STRIPE_PRO_PRICE_ID` (ID do preço R$49/mês no Stripe)
   - `RESEND_API_KEY`
-  - `NEXT_PUBLIC_APP_URL` (URL de produção do Vercel)
-- [ ] Deploy inicial: `vercel --prod` ou via push na branch `main`
+  - `NEXT_PUBLIC_APP_URL` = `https://pipeflow.vercel.app`
+- [ ] Deploy inicial: merge `feat/deploy` → `main` (ou `vercel --prod`)
 - [ ] Verificar build sem erros no Vercel dashboard
 
 #### Stripe em Produção
-- [ ] Criar webhook no Stripe Dashboard apontando para `https://seu-app.vercel.app/api/webhooks/stripe`
-- [ ] Atualizar `STRIPE_WEBHOOK_SECRET` com o secret do webhook de produção
-- [ ] Testar checkout completo em produção (modo live ou test)
+- [ ] Criar webhook no Stripe Dashboard → `https://pipeflow.vercel.app/api/webhooks/stripe`
+  - Eventos: `checkout.session.completed`, `invoice.payment_succeeded`, `customer.subscription.deleted`, `invoice.payment_failed`
+- [ ] Copiar Signing Secret → atualizar `STRIPE_WEBHOOK_SECRET` no Vercel
+- [ ] Testar checkout completo em produção
 
 #### Resend em Produção
-- [ ] Verificar domínio de e-mail no Resend
+- [ ] Verificar domínio de e-mail no Resend (ou usar domínio de teste)
 - [ ] Testar envio de convite em produção
 
-#### Polish Final
-- [ ] Revisar todos os estados de loading (Skeleton, spinner)
-- [ ] Revisar todos os estados de erro (error.tsx, mensagens inline)
-- [ ] Revisar EmptyState em todas as listagens
-- [ ] Testar fluxo completo: registro → onboarding → leads → pipeline → invite → upgrade → manage
-- [ ] Testar em mobile (responsividade)
-- [ ] Verificar meta tags SEO na landing page
-- [ ] `npm run build` local sem warnings
+#### Verificações Já Completadas
+- [x] `npm run build` local — 16 rotas, zero erros TypeScript (Next.js 16.2.1 + Turbopack)
+- [x] Security headers configurados (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)
+- [x] `poweredByHeader: false` no next.config.ts
+- [x] Open redirect prevention no login-form e auth/callback
+- [x] Service role key isolada no webhook handler (único lugar correto)
+- [x] `.env*.local` no .gitignore
+- [x] Proxy protege rotas `/dashboard`, `/leads`, `/pipeline`, `/settings`
+- [x] RLS hardening: workspace_invites SELECT/UPDATE restritos, subscriptions INSERT admin-only
+- [x] create_workspace RPC usa auth.uid() (sem IDOR)
 
 #### Commit Final
 ```

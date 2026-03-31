@@ -34,7 +34,7 @@ const registerSchema = z
     password: z
       .string()
       .min(1, 'Senha é obrigatória')
-      .min(6, 'A senha deve ter pelo menos 6 caracteres'),
+      .min(8, 'A senha deve ter pelo menos 8 caracteres'),
     confirmPassword: z.string().min(1, 'Confirme a sua senha'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -52,6 +52,8 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
+  const [resending, setResending] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -90,6 +92,27 @@ export function RegisterForm() {
     }
   }
 
+  async function handleResendEmail() {
+    setResending(true)
+    setResendSuccess(false)
+    try {
+      const supabase = getSupabaseClient()
+      const inviteToken = searchParams.get('invite')
+      const next = inviteToken ? `/invite/${inviteToken}` : '/onboarding'
+
+      await supabase.auth.resend({
+        type: 'signup',
+        email: form.getValues('email'),
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${next}`,
+        },
+      })
+      setResendSuccess(true)
+    } finally {
+      setResending(false)
+    }
+  }
+
   if (emailSent) {
     return (
       <div className="rounded-2xl border border-pf-border bg-pf-surface p-8 text-center">
@@ -104,14 +127,21 @@ export function RegisterForm() {
           Clique no link para ativar sua conta e continuar.
         </p>
         <p className="mt-4 text-xs text-pf-text-muted">
-          Não recebeu?{' '}
-          <button
-            type="button"
-            className="text-pf-accent hover:opacity-80 transition-opacity"
-            onClick={() => setEmailSent(false)}
-          >
-            Tentar novamente
-          </button>
+          {resendSuccess ? (
+            <span className="text-pf-accent">E-mail reenviado com sucesso!</span>
+          ) : (
+            <>
+              Não recebeu?{' '}
+              <button
+                type="button"
+                className="text-pf-accent hover:opacity-80 transition-opacity disabled:opacity-50"
+                onClick={handleResendEmail}
+                disabled={resending}
+              >
+                {resending ? 'Reenviando…' : 'Reenviar e-mail'}
+              </button>
+            </>
+          )}
         </p>
       </div>
     )
@@ -194,7 +224,7 @@ export function RegisterForm() {
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Mínimo 8 caracteres"
                     autoComplete="new-password"
                     disabled={isLoading}
                     className="bg-pf-surface-2 border-pf-border text-pf-text placeholder:text-pf-text-muted focus-visible:ring-pf-accent focus-visible:border-pf-accent"

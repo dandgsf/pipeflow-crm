@@ -1,3 +1,4 @@
+import 'server-only'
 import Stripe from 'stripe'
 
 let stripeInstance: Stripe | null = null

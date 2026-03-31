@@ -35,26 +35,67 @@ export async function createWorkspaceAction(name: string) {
   const baseSlug = generateSlug(name)
   const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 6)}`
 
-  // RPC atômica: cria workspace + insere membro admin em uma transação.
-  // Se qualquer etapa falhar, o Postgres faz rollback automaticamente —
-  // sem risco de workspace órfão.
-  // Nota: supabase.ts gerado não inclui RPCs customizadas ainda.
-  // Usar `as unknown` para contornar o tipo restrito até regenerar os tipos.
+  // Tenta o RPC atômico primeiro (SECURITY DEFINER bypassa RLS).
+  // Se falhar (ex: função não existe ou problema de permissão),
+  // faz os INSERTs diretos como fallback.
   type WorkspaceRow = { workspace_id: string }
   const rpcResult = await (supabase as unknown as {
     rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: WorkspaceRow[] | null; error: unknown }>
   }).rpc('create_workspace', {
     p_name: name,
     p_slug: slug,
-    p_user_id: user.id,
   })
 
-  if (rpcResult.error || !rpcResult.data || rpcResult.data.length === 0) {
-    return { error: 'Não foi possível criar o workspace. Tente novamente.' }
+  let workspaceId: string
+
+  if (!rpcResult.error && rpcResult.data && rpcResult.data.length > 0) {
+    // RPC funcionou
+    workspaceId = rpcResult.data[0].workspace_id
+  } else {
+    // Fallback: INSERTs diretos (sem transação atômica, mas funcional)
+    console.warn('[create-workspace] RPC falhou, usando fallback direto:', JSON.stringify(rpcResult.error))
+
+    // 1. Criar workspace
+    const { data: ws, error: wsErr } = await supabase
+      .from('workspaces')
+      .insert({ name, slug })
+      .select('id')
+      .single()
+
+    if (wsErr || !ws) {
+      console.error('[create-workspace] INSERT workspaces falhou:', wsErr)
+      return { error: 'Não foi possível criar o workspace. Tente novamente.' }
+    }
+
+    workspaceId = ws.id
+
+    // 2. Adicionar criador como admin
+    const { error: memberErr } = await supabase
+      .from('workspace_members')
+      .insert({ workspace_id: workspaceId, user_id: user.id, role: 'admin' as const })
+
+    if (memberErr) {
+      console.error('[create-workspace] INSERT workspace_members falhou:', memberErr)
+      // Limpar workspace órfão
+      await supabase.from('workspaces').delete().eq('id', workspaceId)
+      return { error: 'Não foi possível criar o workspace. Tente novamente.' }
+    }
+
+    // 3. Criar subscription free (pode falhar se policy bloqueia —
+    //    nesse caso o workspace funciona, subscription será criada depois)
+    const { error: subErr } = await supabase
+      .from('subscriptions')
+      .insert({ workspace_id: workspaceId, plan: 'free' as const })
+
+    if (subErr) {
+      // Não fatal: workspace já existe e funciona.
+      // A subscription será criada no primeiro checkout ou pode ser inserida manualmente.
+      console.warn('[create-workspace] INSERT subscriptions falhou (não fatal):', subErr)
+    }
   }
 
   // Define como workspace ativo no cookie
-  await setActiveWorkspace(rpcResult.data[0].workspace_id)
+  await setActiveWorkspace(workspaceId)
 
   redirect('/dashboard')
 }

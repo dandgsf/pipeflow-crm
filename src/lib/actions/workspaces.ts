@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getResend } from '@/lib/resend'
 import { isAdmin } from '@/lib/permissions'
@@ -10,10 +11,20 @@ import { canAddMember } from '@/lib/limits'
 import { renderWorkspaceInviteEmail } from '@/emails/workspace-invite'
 import type { MemberRole } from '@/types'
 
+const idSchema = z.string().uuid()
+const roleSchema = z.enum(['admin', 'member'])
+const tokenSchema = z.string().min(1).max(128)
+
 // ─── Atualizar workspace ──────────────────────────────────────────────────────
 
 export async function updateWorkspaceAction(name: string) {
+  const parsed = z.string().min(2).max(100).safeParse(name)
+  if (!parsed.success) return { error: 'Nome inválido.' }
+
   const supabase = await getSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Workspace não encontrado.' }
 
@@ -41,6 +52,10 @@ export async function updateWorkspaceAction(name: string) {
 // ─── Convidar membro ──────────────────────────────────────────────────────────
 
 export async function inviteMemberAction(email: string, role: MemberRole) {
+  const parsedEmail = z.string().email().max(320).safeParse(email)
+  const parsedRole = roleSchema.safeParse(role)
+  if (!parsedEmail.success || !parsedRole.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Workspace não encontrado.' }
@@ -139,6 +154,9 @@ export async function inviteMemberAction(email: string, role: MemberRole) {
 // ─── Aceitar convite ──────────────────────────────────────────────────────────
 
 export async function acceptInviteAction(token: string) {
+  const parsedToken = tokenSchema.safeParse(token)
+  if (!parsedToken.success) return { error: 'Token inválido.' }
+
   const supabase = await getSupabaseServer()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -168,7 +186,6 @@ export async function acceptInviteAction(token: string) {
   if (invite.email !== user.email?.toLowerCase()) {
     return {
       error: 'Este convite foi enviado para outro endereço de e-mail.',
-      expectedEmail: invite.email,
     }
   }
 
@@ -215,6 +232,9 @@ export async function acceptInviteAction(token: string) {
 // ─── Remover membro ───────────────────────────────────────────────────────────
 
 export async function removeMemberAction(memberId: string) {
+  const parsedId = idSchema.safeParse(memberId)
+  if (!parsedId.success) return { error: 'ID inválido.' }
+
   const supabase = await getSupabaseServer()
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Workspace não encontrado.' }
@@ -263,6 +283,10 @@ export async function removeMemberAction(memberId: string) {
 // ─── Atualizar role de membro ─────────────────────────────────────────────────
 
 export async function updateMemberRoleAction(memberId: string, role: MemberRole) {
+  const parsedId = idSchema.safeParse(memberId)
+  const parsedRole = roleSchema.safeParse(role)
+  if (!parsedId.success || !parsedRole.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Workspace não encontrado.' }
@@ -308,6 +332,9 @@ export async function updateMemberRoleAction(memberId: string, role: MemberRole)
 // ─── Cancelar convite pendente ────────────────────────────────────────────────
 
 export async function cancelInviteAction(inviteId: string) {
+  const parsedId = idSchema.safeParse(inviteId)
+  if (!parsedId.success) return { error: 'ID inválido.' }
+
   const supabase = await getSupabaseServer()
   const workspace = await getActiveWorkspace()
   if (!workspace) return { error: 'Workspace não encontrado.' }

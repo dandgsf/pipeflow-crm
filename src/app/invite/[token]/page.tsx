@@ -85,7 +85,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
               <span className="font-medium text-[#C8C8C8]">{user.email}</span>, mas este convite
               foi enviado para{' '}
               <span className="font-medium text-[#CAFF33]">
-                {'expectedEmail' in result ? String(result.expectedEmail) : 'outro e-mail'}
+                outro e-mail
               </span>
               .
             </p>

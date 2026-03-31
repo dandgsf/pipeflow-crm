@@ -2,9 +2,27 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getActiveWorkspace } from '@/lib/workspace'
 import type { PipelineStage } from '@/types'
+
+const stageEnum = z.enum([
+  'novo_lead', 'contato_realizado', 'proposta_enviada',
+  'negociacao', 'fechado_ganho', 'fechado_perdido',
+])
+
+const dealSchema = z.object({
+  title: z.string().min(1).max(200),
+  lead_id: z.string().uuid(),
+  stage: stageEnum,
+  estimated_value: z.number().min(0).max(999_999_999).optional(),
+  owner_id: z.string().uuid().or(z.literal('')),
+  due_date: z.string().max(30).optional().default(''),
+  notes: z.string().max(5000).optional().default(''),
+})
+
+const idSchema = z.string().uuid()
 
 export interface DealFormPayload {
   title: string
@@ -17,6 +35,9 @@ export interface DealFormPayload {
 }
 
 export async function createDealAction(payload: DealFormPayload) {
+  const parsed = dealSchema.safeParse(payload)
+  if (!parsed.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -51,6 +72,10 @@ export async function createDealAction(payload: DealFormPayload) {
 }
 
 export async function updateDealAction(id: string, payload: DealFormPayload) {
+  const parsedId = idSchema.safeParse(id)
+  const parsed = dealSchema.safeParse(payload)
+  if (!parsedId.success || !parsed.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -81,6 +106,11 @@ export async function updateDealAction(id: string, payload: DealFormPayload) {
 }
 
 export async function moveDealAction(id: string, newStage: PipelineStage, newPosition: number) {
+  const parsedId = idSchema.safeParse(id)
+  const parsedStage = stageEnum.safeParse(newStage)
+  const parsedPos = z.number().int().min(0).safeParse(newPosition)
+  if (!parsedId.success || !parsedStage.success || !parsedPos.success) return { error: 'Dados inválidos.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -106,6 +136,9 @@ export async function moveDealAction(id: string, newStage: PipelineStage, newPos
 }
 
 export async function deleteDealAction(id: string) {
+  const parsedId = idSchema.safeParse(id)
+  if (!parsedId.success) return { error: 'ID inválido.' }
+
   const supabase = await getSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

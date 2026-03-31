@@ -29,7 +29,7 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(1, 'Senha é obrigatória')
-    .min(6, 'A senha deve ter pelo menos 6 caracteres'),
+    .min(8, 'A senha deve ter pelo menos 8 caracteres'),
 })
 
 type LoginValues = z.infer<typeof loginSchema>
@@ -71,7 +71,9 @@ export function LoginForm() {
         return
       }
 
-      const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
+      const rawRedirect = searchParams.get('redirectTo') ?? '/dashboard'
+      // Prevent open redirect: only allow relative paths on same origin
+      const redirectTo = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/dashboard'
       router.push(redirectTo)
       router.refresh()
     } finally {
