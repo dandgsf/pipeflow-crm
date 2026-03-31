@@ -6,7 +6,7 @@
 
 ## 1. Stripe Test Event (webhook health check)
 
-**Pré-requisito:** webhook configurado em `https://pipeflow.vercel.app/api/webhooks/stripe`
+**Pré-requisito:** webhook configurado em `https://pipeflow-crm.vercel.app/api/webhooks/stripe`
 
 ```
 Stripe Dashboard → Developers → Webhooks → selecione o endpoint
@@ -23,7 +23,7 @@ Stripe Dashboard → Developers → Webhooks → selecione o endpoint
 
 ## 2. Fluxo de Navegação Manual
 
-Abra `https://pipeflow.vercel.app` no browser.
+Abra `https://pipeflow-crm.vercel.app` no browser.
 
 ### 2.1 Landing Page
 - [ ] Landing carrega com dark mode, fontes corretas (Syne nos títulos, DM Sans no corpo)
@@ -113,7 +113,7 @@ Abra o Supabase Dashboard → Table Editor.
 ## 5. Testes Extras (se quiser ir além)
 
 ### Mobile
-- [ ] Abrir `https://pipeflow.vercel.app` no celular
+- [ ] Abrir `https://pipeflow-crm.vercel.app` no celular
 - [ ] Sidebar colapsa (hamburger menu)
 - [ ] Pipeline tem scroll horizontal funcional
 - [ ] Formulários são usáveis em tela pequena
