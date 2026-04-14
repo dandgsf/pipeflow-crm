@@ -34,6 +34,7 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
+!.env.local.example
 .env*.local
 .env.local
 
@@ -44,4 +45,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# Claude Code — local tooling, never commit
+.claude/settings.local.json
+.claude/skills/
+.claude/memory/
+
+# IDE
+.vscode/
