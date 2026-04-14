@@ -5,9 +5,45 @@
 
 ---
 
-## O que é
+## Para o Aluno — Por onde começar
 
-PipeFlow é um CRM visual para pequenas empresas, freelancers e times de vendas. Cada empresa tem um workspace isolado com:
+### 1. Crie seu PRD
+
+Antes de qualquer código, defina o produto que você vai construir:
+
+**[prd-claude-code.lovable.app](https://prd-claude-code.lovable.app/)**
+
+O framework vai te guiar na criação do seu `PRD.md`. Salve o resultado em `docs/PRD.md`.
+
+> Você pode usar o [docs/PRD.md](docs/PRD.md) deste repositório como referência — ele descreve o PipeFlow.
+
+### 2. Acompanhe as aulas
+
+Cada módulo tem um arquivo HTML com o conteúdo da aula e um `prompts.md` com os prompts prontos para o Claude Code.
+
+**[docs/aulas/](docs/aulas/)** ← comece aqui
+
+| Módulo | Conteúdo | Prompts |
+|---|---|---|
+| M1 — Planejamento & Setup | Setup do ambiente, Claude Code, AI Templates | [prompts.md](docs/aulas/m1-planejamento-setup/prompts.md) |
+| M2 — Desenvolvimento UI | App shell, auth, leads, kanban, dashboard, landing | [prompts.md](docs/aulas/m2-desenvolvimento/prompts.md) |
+| M3 — Backend & Integração | Supabase, migrations, RLS, auth real, colaboração | [prompts.md](docs/aulas/m3-backend-integracao/prompts.md) |
+| M4 — Pagamentos | Stripe checkout, webhook, billing, limites de plano | [prompts.md](docs/aulas/m4-pagamentos/prompts.md) |
+| M5 — Go-Live | Segurança, responsividade, deploy em produção | [prompts.md](docs/aulas/m5-golive-seguranca/prompts.md) |
+
+### 3. Use o ciclo de cada aula
+
+```
+Planejar → Construir → Revisar → Commit
+```
+
+Cole os prompts **em ordem** no Claude Code. Sempre comece com o Prompt 1 (planejamento + branch).
+
+---
+
+## O que é o PipeFlow
+
+CRM visual para pequenas empresas, freelancers e times de vendas. Cada empresa tem um workspace isolado com:
 
 - **Pipeline Kanban** com drag-and-drop entre etapas de venda
 - **Gestão de Leads** com perfil completo e histórico de atividades
@@ -65,8 +101,11 @@ Edite `.env.local` e preencha:
 
 ### 3. Configure o banco de dados
 
-Execute as migrations na ordem em `docs/migrations/` via Supabase SQL Editor ou CLI.  
-Para ambiente limpo, use `docs/migrations/PRODUCTION_FULL_MIGRATION.sql`.
+Execute as migrations via Supabase SQL Editor. Para ambiente limpo, use:
+
+```
+docs/migrations/PRODUCTION_FULL_MIGRATION.sql
+```
 
 ### 4. Rode o servidor
 
@@ -104,28 +143,20 @@ docs/
   PRD.md             # Requisitos do produto
   PLAN.md            # Plano de execução por milestones
   migrations/        # SQL migrations numeradas
+  aulas/             # Material das aulas (HTML + prompts por módulo)
 ```
 
 ---
 
-## Milestones
+## Documentação
 
-| # | Milestone | Branch |
-|---|---|---|
-| M0 | Setup & Configuração | `main` |
-| M1 | Design System & App Shell | `feat/app-shell` |
-| M2 | Auth & Onboarding (UI) | `feat/auth-ui` |
-| M3 | Leads — Telas & Componentes | `feat/leads-ui` |
-| M4 | Pipeline Kanban (UI) | `feat/pipeline-ui` |
-| M5 | Dashboard de Métricas (UI) | `feat/dashboard-ui` |
-| M6 | Landing Page | `feat/landing` |
-| M7 | Banco de Dados & Auth Real | `feat/supabase-core` |
-| M8 | Leads & Pipeline — Dados Reais | `feat/leads-data` |
-| M9 | Workspace & Colaboração | `feat/collaboration` |
-| M10 | Monetização (Stripe) | `feat/billing-nextjs` |
-| M11 | Deploy & Produção | `feat/deploy` |
-
-Detalhes de cada milestone: [docs/PLAN.md](docs/PLAN.md)
+| Arquivo | Descrição |
+|---|---|
+| [docs/PRD.md](docs/PRD.md) | Requisitos do produto |
+| [docs/PLAN.md](docs/PLAN.md) | Plano de execução por milestones |
+| [docs/aulas/](docs/aulas/) | Material das aulas com prompts por módulo |
+| [docs/migrations/](docs/migrations/) | SQL migrations numeradas |
+| [.env.local.example](.env.local.example) | Variáveis de ambiente necessárias |
 
 ---
 

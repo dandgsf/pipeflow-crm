@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo 3 — FASE 2: Backend & Integração | PipeFlow CRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --accent: #CAFF33;
+      --accent-dim: rgba(202, 255, 51, 0.10);
+      --accent-mid: rgba(202, 255, 51, 0.18);
+      --accent-glow: rgba(202, 255, 51, 0.06);
+      --bg: #0C0C0E;
+      --surface: #141416;
+      --surface-2: #1A1A1E;
+      --border: #2A2A2E;
+      --border-subtle: #1E1E22;
+      --text: #E8E8E8;
+      --text-sec: #8A8A8F;
+      --text-muted: #555559;
+      --cool: #5B7FFF;
+      --warm: #FF6B35;
+      --teal: #00B4D8;
+      --positive: #2ED573;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    ::selection { background: var(--accent); color: var(--bg); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 16px 24px;
+      background: rgba(12,12,14,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    nav .inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+
+    .nocode-logo { display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
+    .nocode-logo .nc-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--accent), #9ECC26);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.55rem; color: var(--bg);
+    }
+    .nocode-logo .nc-text { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--text); }
+    .nocode-logo .nc-text span { color: var(--text-muted); font-weight: 400; }
+
+    .nav-sep-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark {
+      width: 30px; height: 30px; background: var(--accent); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: var(--bg);
+    }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px; color: var(--text); }
+    .logo-text span { color: var(--text-muted); font-weight: 400; font-size: 13px; margin-left: 4px; }
+
+    .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+    .nav-powered { font-family: 'IBM Plex Mono', monospace; font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; }
+    .claude-logo { display: flex; align-items: center; gap: 0.4rem; }
+    .claude-logo-text { font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--text-sec); }
+
+    /* ===== CONTAINER ===== */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== HERO (full viewport, dramatic) ===== */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 80px; overflow: hidden;
+    }
+
+    .hero .orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 10s ease-in-out infinite; pointer-events: none; }
+    .hero .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(202,255,51,0.20), transparent 70%); top: -20%; left: -5%; }
+    .hero .orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(91,127,255,0.14), transparent 70%); bottom: -15%; right: -5%; animation-delay: -4s; }
+    .hero .orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(0,180,216,0.10), transparent 70%); top: 40%; right: 15%; animation-delay: -7s; }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(25px,-15px) scale(1.05); }
+      66% { transform: translate(-15px,10px) scale(0.97); }
+    }
+
+    .hero-tag { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 28px; position: relative; z-index: 2; }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+      line-height: 1.15; letter-spacing: -2px; color: var(--text-sec); margin-bottom: 24px;
+      position: relative; z-index: 2; max-width: 750px;
+    }
+    .hero h1 strong { color: var(--text); font-weight: 800; }
+    .hero h1 .highlight { color: var(--accent); }
+
+    .hero .subtitle { color: var(--text-sec); font-size: 1.15rem; z-index: 2; position: relative; max-width: 620px; line-height: 1.7; margin-bottom: 48px; }
+
+    /* ===== HERO STATS ===== */
+    .hero-stats {
+      display: flex; gap: 2px; border-radius: 14px; overflow: hidden;
+      position: relative; z-index: 2;
+    }
+
+    .hero-stat {
+      background: var(--surface); padding: 20px 36px; text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .hero-stat:first-child { border-radius: 14px 0 0 14px; }
+    .hero-stat:last-child { border-radius: 0 14px 14px 0; }
+
+    .hero-stat .stat-value {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      color: var(--accent); letter-spacing: -1px; line-height: 1;
+    }
+    .hero-stat .stat-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-top: 6px;
+    }
+
+    /* ===== FOLD ===== */
+    .fold { padding: 100px 0; border-top: 1px solid var(--border-subtle); }
+    .fold-header { text-align: center; margin-bottom: 56px; }
+    .fold-tag { font-family: 'IBM Plex Mono', monospace; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 14px; }
+    .fold-title { font-family: 'Syne', sans-serif; font-size: clamp(26px, 3.5vw, 42px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px; }
+    .fold-title em { font-style: normal; color: var(--accent); }
+    .fold-sub { font-size: 16px; color: var(--text-sec); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+    /* ===== COMPARISON CARDS ===== */
+    .comparison {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+      margin-bottom: 48px;
+    }
+
+    .compare-card {
+      background: var(--surface); border-radius: 16px; padding: 36px 32px;
+      position: relative; overflow: hidden;
+    }
+
+    .compare-card--dim {
+      opacity: 0.6;
+    }
+    .compare-card--dim .compare-card-title { color: var(--text-muted); }
+
+    .compare-card--glow {
+      border: 1px solid var(--accent-mid);
+      box-shadow: 0 0 60px rgba(202,255,51,0.04), inset 0 1px 0 rgba(202,255,51,0.08);
+    }
+    .compare-card--glow::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle, rgba(202,255,51,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .compare-card-badge {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; text-transform: uppercase;
+      letter-spacing: 0.15em; padding: 4px 12px; border-radius: 20px; display: inline-block;
+      margin-bottom: 20px;
+    }
+    .compare-card--dim .compare-card-badge {
+      background: rgba(138,138,143,0.12); color: var(--text-muted); border: 1px solid rgba(138,138,143,0.2);
+    }
+    .compare-card--glow .compare-card-badge {
+      background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-mid);
+    }
+
+    .compare-card-title {
+      font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+      letter-spacing: -0.3px; margin-bottom: 20px;
+    }
+    .compare-card--glow .compare-card-title { color: var(--text); }
+
+    .compare-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0; font-size: 0.92rem; color: var(--text-sec);
+    }
+
+    .compare-icon {
+      width: 22px; height: 22px; min-width: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 0.65rem;
+    }
+    .compare-icon--x {
+      background: rgba(138,138,143,0.10); color: var(--text-muted);
+    }
+    .compare-icon--check {
+      background: rgba(46,213,115,0.12); color: var(--positive);
+    }
+
+    /* ===== CYCLE REMINDER ===== */
+    .cycle-reminder { text-align: center; padding: 20px 0; margin: 32px 0; }
+    .cycle-reminder span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: -0.3px; }
+    .cycle-reminder .c-plan { color: var(--accent); }
+    .cycle-reminder .c-build { color: var(--cool); }
+    .cycle-reminder .c-test { color: var(--warm); }
+    .cycle-reminder .c-iter { color: var(--teal); }
+    .cycle-reminder .c-arrow { color: var(--border); margin: 0 4px; }
+
+    /* ===== TIMELINE CARDS ===== */
+    .timeline { position: relative; padding-left: 0; }
+
+    .timeline-card {
+      background: var(--surface); border: 1px solid var(--border-subtle); border-radius: 16px;
+      padding: 36px 36px 32px; margin-bottom: 20px; position: relative;
+      display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .timeline-card:hover {
+      border-color: var(--accent-mid);
+      box-shadow: 0 0 40px rgba(202,255,51,0.03);
+    }
+
+    .timeline-number {
+      font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800;
+      color: var(--accent); line-height: 1; letter-spacing: -2px;
+      opacity: 0.7; min-width: 56px; text-align: center;
+      padding-top: 4px;
+    }
+
+    .timeline-content h3 {
+      font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700;
+      letter-spacing: -0.3px; margin-bottom: 8px; color: var(--text);
+    }
+
+    .timeline-content p {
+      font-size: 0.92rem; color: var(--text-sec); line-height: 1.7; margin-bottom: 14px;
+    }
+
+    .timeline-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .timeline-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 500;
+      padding: 4px 12px; border-radius: 6px; letter-spacing: 0.02em;
+      background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(202,255,51,0.12);
+    }
+
+    /* ===== BUILD GRID ===== */
+    .build-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+      border-radius: 14px; overflow: hidden; margin-bottom: 40px;
+    }
+
+    .build-card {
+      background: var(--surface); padding: 32px 28px; position: relative;
+    }
+
+    .build-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+    .build-card:nth-child(1)::before { background: linear-gradient(90deg, var(--positive), transparent); }
+    .build-card:nth-child(2)::before { background: linear-gradient(90deg, var(--cool), transparent); }
+    .build-card:nth-child(3)::before { background: linear-gradient(90deg, var(--teal), transparent); }
+    .build-card:nth-child(4)::before { background: linear-gradient(90deg, var(--warm), transparent); }
+
+    .build-card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 14px;
+    }
+
+    .build-card:nth-child(1) .build-card-icon { background: rgba(46,213,115,0.10); }
+    .build-card:nth-child(2) .build-card-icon { background: rgba(91,127,255,0.10); }
+    .build-card:nth-child(3) .build-card-icon { background: rgba(0,180,216,0.10); }
+    .build-card:nth-child(4) .build-card-icon { background: rgba(255,107,53,0.10); }
+
+    .build-card h4 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; }
+    .build-card p { font-size: 14px; color: var(--text-sec); line-height: 1.6; }
+
+    /* ===== TAKEAWAY ===== */
+    .takeaway {
+      border: 1px solid var(--accent-mid); background: var(--accent-glow); border-radius: 14px;
+      padding: 48px 48px; text-align: center; margin-top: 56px; position: relative; overflow: hidden;
+    }
+    .takeaway::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .takeaway::after {
+      content: ''; position: absolute; bottom: -60px; left: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(91,127,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .takeaway p { font-size: 16px; color: var(--text-sec); max-width: 640px; margin: 0 auto; line-height: 1.8; position: relative; z-index: 1; }
+    .takeaway strong { color: var(--text); }
+    .takeaway .verbs { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--accent); font-size: 18px; display: block; margin-top: 16px; letter-spacing: -0.5px; }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 32px 0; text-align: center; margin-top: 60px; border-top: 1px solid var(--border-subtle); }
+    footer p { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--text-muted); }
+    footer .ft-accent { color: var(--accent); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { min-height: auto; padding: 120px 24px 60px; }
+      .hero h1 { font-size: 2rem; }
+      .hero .subtitle { font-size: 1rem; }
+      .hero-stats { flex-direction: column; border-radius: 14px; }
+      .hero-stat { border-radius: 0 !important; }
+      .hero-stat:first-child { border-radius: 14px 14px 0 0 !important; }
+      .hero-stat:last-child { border-radius: 0 0 14px 14px !important; }
+      .comparison { grid-template-columns: 1fr; }
+      .build-grid { grid-template-columns: 1fr; }
+      .timeline-card { grid-template-columns: 1fr; gap: 12px; padding: 24px 20px; }
+      .timeline-number { font-size: 1.8rem; text-align: left; }
+      .nav-right .nav-powered { display: none; }
+      .container { padding: 0 16px; }
+      .fold { padding: 60px 0; }
+      .fold-title { font-size: 1.6rem; }
+      .fold-sub { font-size: 0.9rem; }
+      .takeaway { padding: 32px 24px; }
+      nav { padding: 12px 16px; }
+      .nocode-logo .nc-text { display: none; }
+      .nav-sep-dot { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.5rem; letter-spacing: -1px; }
+      .hero { padding: 100px 16px 48px; }
+      .fold-title { font-size: 1.3rem; }
+      .hero-stat { padding: 14px 24px; }
+      .hero-stat .stat-value { font-size: 1.3rem; }
+      .compare-card { padding: 24px 20px; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in { opacity: 0; transform: translateY(20px); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--accent);
+      z-index: 200; transition: width 0.1s; box-shadow: 0 0 10px rgba(202,255,51,0.4);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="inner">
+      <div class="nav-left">
+        <a class="nocode-logo" href="#">
+          <div class="nc-icon">NC</div>
+          <div class="nc-text">NoCode <span>StartUp</span></div>
+        </a>
+        <div class="nav-sep-dot"></div>
+        <a class="logo" href="#">
+          <div class="logo-mark">PF</div>
+          <div class="logo-text">PipeFlow<span> | Módulo 3</span></div>
+        </a>
+      </div>
+      <div class="nav-right">
+        <span class="nav-powered">Desenvolvido com</span>
+        <span class="claude-logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span class="claude-logo-text">Claude Code</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+     DOBRA 1 — HERO (full viewport, dramatic)
+     ============================================================ -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-tag fade-in">// módulo_3_backend_integração</div>
+
+    <h1 class="fade-in">
+      De dados fake para <strong>dados <span class="highlight">reais.</span></strong>
+    </h1>
+
+    <p class="subtitle fade-in">
+      Tudo que a gente construiu na FASE 1 era visual. Agora conectamos com Supabase: banco de dados real, login real, dados que persistem. Essa é a virada.
+    </p>
+
+    <div class="hero-stats fade-in">
+      <div class="hero-stat">
+        <div class="stat-value">5</div>
+        <div class="stat-label">aulas</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-value">3</div>
+        <div class="stat-label">branches</div>
+      </div>
+      <div class="hero-stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">prático</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     DOBRA 2 — O QUE MUDA NA FASE 2
+     ============================================================ -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">O que muda na FASE 2</div>
+        <h2 class="fold-title">Fase 1 vs. <em>Fase 2</em></h2>
+        <p class="fold-sub">
+          A interface continua a mesma. O que muda é o motor por trás.
+        </p>
+      </div>
+
+      <div class="comparison fade-in">
+        <!-- LEFT: FASE 1 (dim) -->
+        <div class="compare-card compare-card--dim">
+          <div class="compare-card-badge">Concluída</div>
+          <div class="compare-card-title">FASE 1 — Interface</div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--x">&#x2715;</div>
+            <span>Dados mockados</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--x">&#x2715;</div>
+            <span>Login fake</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--x">&#x2715;</div>
+            <span>Pipeline local</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--x">&#x2715;</div>
+            <span>Workspace estático</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: FASE 2 (glow) -->
+        <div class="compare-card compare-card--glow">
+          <div class="compare-card-badge">Agora</div>
+          <div class="compare-card-title">FASE 2 — Backend Real</div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--check">&#x2713;</div>
+            <span>Supabase PostgreSQL</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--check">&#x2713;</div>
+            <span>Auth com sessão</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--check">&#x2713;</div>
+            <span>Pipeline persistente</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-icon compare-icon--check">&#x2713;</div>
+            <span>Multi-workspace</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cycle-reminder fade-in">
+        <span class="c-plan">Planejar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-build">Construir</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-test">Testar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-iter">Iterar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     DOBRA 3 — O MAPA DO MÓDULO
+     ============================================================ -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">O mapa do módulo</div>
+        <h2 class="fold-title">Cinco aulas. <em>Uma transformação.</em></h2>
+        <p class="fold-sub">
+          Cada aula constrói uma camada. No final, o PipeFlow tem fundação real, dados persistentes e colaboração entre membros.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-card fade-in">
+          <div class="timeline-number">01</div>
+          <div class="timeline-content">
+            <h3>Setup Supabase & Chaves</h3>
+            <p>Conectar o projeto com as credenciais. Browser client e server client com lazy singleton.</p>
+            <div class="timeline-tags">
+              <span class="timeline-tag">.env.local</span>
+              <span class="timeline-tag">client.ts</span>
+              <span class="timeline-tag">server.ts</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-card fade-in">
+          <div class="timeline-number">02</div>
+          <div class="timeline-content">
+            <h3>Migrations & Segurança RLS</h3>
+            <p>Criar todas as tabelas do banco e configurar Row Level Security. Cada workspace isolado.</p>
+            <div class="timeline-tags">
+              <span class="timeline-tag">6 tabelas</span>
+              <span class="timeline-tag">RLS</span>
+              <span class="timeline-tag">tipos TypeScript</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-card fade-in">
+          <div class="timeline-number">03</div>
+          <div class="timeline-content">
+            <h3>Auth Real & Proteção de Rotas</h3>
+            <p>Login e registro de verdade. Rotas protegidas. Onboarding cria workspace no banco.</p>
+            <div class="timeline-tags">
+              <span class="timeline-tag">login real</span>
+              <span class="timeline-tag">proxy.ts</span>
+              <span class="timeline-tag">workspace context</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-card fade-in">
+          <div class="timeline-number">04</div>
+          <div class="timeline-content">
+            <h3>Leads & Pipeline — Dados Reais</h3>
+            <p>Substituir todos os mocks por dados do Supabase. CRUD com Server Actions. Drag-and-drop persiste no banco.</p>
+            <div class="timeline-tags">
+              <span class="timeline-tag">Server Actions</span>
+              <span class="timeline-tag">CRUD real</span>
+              <span class="timeline-tag">drag persiste</span>
+              <span class="timeline-tag">dashboard real</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-card fade-in">
+          <div class="timeline-number">05</div>
+          <div class="timeline-content">
+            <h3>Workspace & Colaboração</h3>
+            <p>Convidar membros por email com Resend. Papéis admin e membro. Limites do plano Free.</p>
+            <div class="timeline-tags">
+              <span class="timeline-tag">Resend</span>
+              <span class="timeline-tag">convites por email</span>
+              <span class="timeline-tag">roles</span>
+              <span class="timeline-tag">limites do plano</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     DOBRA 4 — FERRAMENTAS DESTE MÓDULO
+     ============================================================ -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Ferramentas</div>
+        <h2 class="fold-title">O que entra em <em>cena</em></h2>
+      </div>
+
+      <div class="build-grid fade-in">
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F7E2;</div>
+          <h4>Supabase</h4>
+          <p>Banco de dados PostgreSQL + autenticação + RLS. O backend completo do PipeFlow.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F510;</div>
+          <h4>Supabase Auth</h4>
+          <p>Login, registro, sessões e proteção de rotas. Tudo integrado.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F5C4;</div>
+          <h4>Supabase Studio</h4>
+          <p>SQL Editor para aplicar migrations, Table Editor para verificar dados e Authentication para conferir usuários e políticas RLS.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x2709;</div>
+          <h4>Resend</h4>
+          <p>Envio de emails transacionais. Convites de colaboradores com template React.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x26A1;</div>
+          <h4>Claude Code</h4>
+          <p>O copiloto que vai criar tudo isso com prompts simples e diretos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     TAKEAWAY
+     ============================================================ -->
+  <section class="fold" style="border-top: none; padding-top: 0;">
+    <div class="container">
+      <div class="takeaway fade-in">
+        <p>
+          <strong>A FASE 1 construiu a experiência. A FASE 2 constrói a fundação.</strong><br>
+          Quando terminar essas 5 aulas, o PipeFlow vai ter banco real, login real, dados persistentes, drag-and-drop que salva no banco e colaboração com convites por email.<br>
+          <span class="verbs">Conectar. Proteger. Persistir. Colaborar.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.45rem;color:var(--bg);">NC</div>
+          <span style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);">NoCode <span style="color:var(--text-muted);font-weight:400;">StartUp</span></span>
+        </div>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <span class="ft-accent" style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;">PipeFlow CRM</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <div style="display:flex;align-items:center;gap:0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span style="font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;color:var(--text-sec);">Claude Code</span>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Do Zero ao App com Claude Code &middot; Engenharia de Produtos com IA</p>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+  </script>
+
+</body>
+</html>

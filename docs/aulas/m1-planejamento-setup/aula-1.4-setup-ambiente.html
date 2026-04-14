@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 1.4 — Configurando o Ambiente | PipeFlow CRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --accent: #CAFF33;
+      --accent-dim: rgba(202, 255, 51, 0.15);
+      --accent-glow: rgba(202, 255, 51, 0.08);
+      --bg: #0C0C0E;
+      --surface: #141416;
+      --surface-2: #1A1A1E;
+      --border: #2A2A2E;
+      --border-subtle: #1E1E22;
+      --text: #E8E8E8;
+      --text-sec: #8A8A8F;
+      --text-muted: #555559;
+      --positive: #2ED573;
+      --negative: #FF4757;
+      --cool: #5B7FFF;
+      --warm: #FF6B35;
+      --teal: #00B4D8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Noise texture */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    /* ===== TOP BAR (logos NoCode + Claude Code) ===== */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 150;
+      padding: 0.8rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12, 12, 14, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .top-bar-left,
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nocode-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .nocode-logo .nc-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent), #9ECC26);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.6rem;
+      color: var(--bg);
+      letter-spacing: -0.5px;
+    }
+
+    .nocode-logo .nc-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .nocode-logo .nc-text span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .claude-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .claude-logo svg {
+      flex-shrink: 0;
+    }
+
+    .claude-logo-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-sec);
+      letter-spacing: -0.2px;
+    }
+
+    .top-bar-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+      margin: 0 0.3rem;
+    }
+
+    .top-bar-powered {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-right: 0.3rem;
+    }
+
+    /* ===== FOOTER LOGOS ===== */
+    .footer-brands {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .footer-sep {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .hero .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(202, 255, 51, 0.18), transparent 70%);
+      top: -15%;
+      left: 5%;
+    }
+
+    .hero .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(91, 127, 255, 0.12), transparent 70%);
+      bottom: -10%;
+      right: 5%;
+      animation-delay: -4s;
+    }
+
+    @keyframes orbFloat {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(25px, -15px) scale(1.05);
+      }
+
+      66% {
+        transform: translate(-15px, 10px) scale(0.97);
+      }
+    }
+
+    .hero-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid rgba(202, 255, 51, 0.25);
+      border-radius: 100px;
+      background: rgba(202, 255, 51, 0.05);
+      position: relative;
+      z-index: 2;
+      margin-bottom: 2rem;
+    }
+
+    .hero-logo {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-logo .mark {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--bg);
+    }
+
+    .hero-logo .wordmark {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .hero-logo .wordmark span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.15;
+      z-index: 2;
+      position: relative;
+      max-width: 700px;
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent);
+    }
+
+    .hero .subtitle {
+      color: var(--text-sec);
+      font-size: 1.1rem;
+      z-index: 2;
+      position: relative;
+      margin-top: 1.2rem;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(12, 12, 14, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 1rem;
+    }
+
+    .nav-inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 1rem 1rem;
+      white-space: nowrap;
+      transition: color 0.2s, border-color 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ===== STEP SECTION ===== */
+    .step-section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .step-section:last-of-type {
+      border-bottom: none;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .step-number {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--bg);
+      background: var(--accent);
+      box-shadow: 0 4px 20px rgba(202, 255, 51, 0.2);
+    }
+
+    .step-meta {
+      flex: 1;
+    }
+
+    .step-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      margin-bottom: 0.3rem;
+    }
+
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .step-what {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.8rem;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-sec);
+    }
+
+    .step-what strong {
+      color: var(--text);
+    }
+
+    .step-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .step-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(202, 255, 51, 0.25);
+    }
+
+    .step-link svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ===== INSTRUCTIONS ===== */
+    .instructions {
+      counter-reset: instruction;
+    }
+
+    .instruction {
+      position: relative;
+      padding: 1rem 0 1rem 3.5rem;
+      border-left: 2px solid var(--border);
+      margin-left: 1rem;
+    }
+
+    .instruction::before {
+      counter-increment: instruction;
+      content: counter(instruction);
+      position: absolute;
+      left: -14px;
+      top: 1rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .instruction:last-child {
+      border-left-color: transparent;
+    }
+
+    .instruction p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .instruction .detail {
+      font-size: 0.95rem;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    .instruction .os-note {
+      display: inline-block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.15rem 0.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--cool);
+      margin-right: 0.3rem;
+    }
+
+    /* ===== CODE BLOCKS ===== */
+    .code-block {
+      background: #0A0A0C;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin: 0.8rem 0;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--accent);
+      line-height: 1.6;
+    }
+
+    .code-block .code-label {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ===== VERIFICATION BOX ===== */
+    .verify-box {
+      background: rgba(46, 213, 115, 0.06);
+      border: 1px solid rgba(46, 213, 115, 0.2);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .verify-box .v-icon {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      background: rgba(46, 213, 115, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--positive);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .verify-box p {
+      font-size: 0.95rem;
+      color: var(--positive);
+      line-height: 1.6;
+    }
+
+    .verify-box code {
+      font-family: 'IBM Plex Mono', monospace;
+      background: rgba(46, 213, 115, 0.1);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* ===== WARNING BOX ===== */
+    .warn-box {
+      background: rgba(255, 107, 53, 0.06);
+      border: 1px solid rgba(255, 107, 53, 0.2);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .warn-box .w-icon {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      background: rgba(255, 107, 53, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--warm);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .warn-box p {
+      font-size: 0.95rem;
+      color: var(--warm);
+      line-height: 1.6;
+    }
+
+    /* ===== TIP BOX ===== */
+    .tip-box {
+      background: rgba(91, 127, 255, 0.06);
+      border: 1px solid rgba(91, 127, 255, 0.2);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      margin: 1rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .tip-box .t-icon {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      background: rgba(91, 127, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cool);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .tip-box p {
+      font-size: 0.95rem;
+      color: var(--cool);
+      line-height: 1.6;
+    }
+
+    /* ===== QUOTE/SCRIPT ===== */
+    .script-quote {
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      background: rgba(202, 255, 51, 0.03);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: var(--text-sec);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* ===== CHECKLIST ===== */
+    .checklist {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 3rem 0;
+    }
+
+    .checklist h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 1rem;
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    .checklist-item .check {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: transparent;
+      font-size: 0.8rem;
+    }
+
+    .checklist-item .check:hover {
+      border-color: var(--accent);
+    }
+
+    .checklist-item .check.checked {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    .checklist-item .item-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 24px;
+    }
+
+    .checklist-item .item-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .checklist-item .item-verify {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    footer .footer-logo .mark {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: var(--bg);
+    }
+
+    footer .footer-logo .name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      z-index: 200;
+      transition: width 0.1s;
+      box-shadow: 0 0 10px rgba(202, 255, 51, 0.4);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    /* ===== PREVIOUSLY INSTALLED BADGE ===== */
+    .pre-installed-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(91, 127, 255, 0.08);
+      border: 1px solid rgba(91, 127, 255, 0.25);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      margin-bottom: 1.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--cool);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .pre-installed-badge .badge-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(91, 127, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--cool);
+    }
+
+    .pre-installed-notice {
+      background: rgba(91, 127, 255, 0.04);
+      border: 1px solid rgba(91, 127, 255, 0.15);
+      border-radius: 10px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    .pre-installed-notice strong {
+      color: var(--cool);
+    }
+
+    /* ===== INSTALL MODE TABS ===== */
+    .install-modes {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0 0.5rem;
+    }
+
+    .install-mode-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 0.45rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .install-mode-btn:hover {
+      border-color: var(--text-sec);
+      color: var(--text-sec);
+    }
+
+    .install-mode-btn.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .install-panel {
+      display: none;
+    }
+
+    .install-panel.active {
+      display: block;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 1.5rem 3rem;
+        min-height: 50vh;
+      }
+
+      .container {
+        padding: 0 1.2rem;
+      }
+
+      .step-header {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .step-number {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        font-size: 1.1rem;
+      }
+
+      .instruction {
+        padding-left: 2.5rem;
+      }
+
+      .checklist-item .item-verify {
+        display: none;
+      }
+
+      .nav a {
+        padding: 0.8rem 0.7rem;
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Bar — Logos NoCode StartUp + Claude Code -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <a class="nocode-logo" href="#">
+        <div class="nc-icon">NC</div>
+        <div class="nc-text">NoCode <span>StartUp</span></div>
+      </a>
+    </div>
+    <div class="top-bar-right">
+      <span class="top-bar-powered">Desenvolvido com</span>
+      <div class="top-bar-sep"></div>
+      <span class="claude-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z"
+            fill="#E87040" />
+          <path
+            d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z"
+            fill="#E87040" />
+          <path
+            d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z"
+            fill="#E87040" />
+        </svg>
+        <span class="claude-logo-text">Claude Code</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progressBar" style="top: 45px;"></div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="hero-badge">Módulo 01 &middot; Aula 1.4</div>
+
+    <div class="hero-logo">
+      <div class="mark">P</div>
+      <div class="wordmark">PipeFlow <span>CRM</span></div>
+    </div>
+
+    <h1>Configurando o <span class="highlight">Ambiente de Desenvolvimento</span></h1>
+
+    <p class="subtitle">
+      Passo a passo completo: instale cada ferramenta, crie todas as contas e deixe tudo pronto
+      para construir o PipeFlow CRM do zero.
+    </p>
+  </section>
+
+  <!-- ===== NAV ===== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#nodejs">Node.js</a>
+      <a href="#git">Git</a>
+      <a href="#github">GitHub</a>
+      <a href="#cursor">Cursor</a>
+      <a href="#claude-code">Claude Code</a>
+      <a href="#skills">AI Templates</a>
+      <a href="#supabase">Supabase</a>
+      <a href="#stripe">Stripe</a>
+      <a href="#resend">Resend</a>
+      <a href="#vercel">Vercel</a>
+      <a href="#checklist">Checklist</a>
+    </div>
+  </nav>
+
+  <!-- ===== CONTEÚDO ===== -->
+  <div class="container">
+
+    <!-- =============================== -->
+    <!-- ETAPAS 1-5: PREVIAMENTE INSTALADOS -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="nodejs">
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Previamente instalado</div>
+          <h2 class="step-title">Node.js &mdash; O Motor do JavaScript</h2>
+        </div>
+      </div>
+      <div class="pre-installed-badge"><span class="badge-icon">&#10003;</span> Instalado Previamente</div>
+      <div class="pre-installed-notice"><strong>Pré-requisito para qualquer projeto.</strong> Roda JavaScript fora do
+        navegador. Sem ele, nada funciona.</div>
+    </section>
+
+    <section class="step-section fade-in" id="git">
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Previamente instalado</div>
+          <h2 class="step-title">Git &mdash; A Máquina do Tempo do Código</h2>
+        </div>
+      </div>
+      <div class="pre-installed-badge"><span class="badge-icon">&#10003;</span> Instalado Previamente</div>
+      <div class="pre-installed-notice"><strong>Versionamento obrigatório.</strong> Salva o histórico de tudo que você
+        muda no projeto.</div>
+    </section>
+
+    <section class="step-section fade-in" id="github">
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Previamente instalado</div>
+          <h2 class="step-title">GitHub &mdash; Repositório do Projeto</h2>
+        </div>
+      </div>
+      <div class="pre-installed-badge"><span class="badge-icon">&#10003;</span> Conta criada Previamente</div>
+      <div class="pre-installed-notice"><strong>Nuvem do código.</strong> A cada push, o código sobe pro GitHub. A
+        Vercel puxa daqui pra fazer deploy.</div>
+    </section>
+
+    <section class="step-section fade-in" id="cursor">
+      <div class="step-header">
+        <div class="step-number">4</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Previamente instalado</div>
+          <h2 class="step-title">Cursor IDE &mdash; Onde a Gente Programa</h2>
+        </div>
+      </div>
+      <div class="pre-installed-badge"><span class="badge-icon">&#10003;</span> Instalado Previamente</div>
+      <div class="pre-installed-notice"><strong>Nosso quartel-general.</strong> IDE baseada no VS Code com IA integrada.
+        Terminal embutido.</div>
+    </section>
+
+    <section class="step-section fade-in" id="claude-code">
+      <div class="step-header">
+        <div class="step-number">5</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Previamente instalado</div>
+          <h2 class="step-title">Claude Code &mdash; O Cérebro da Operação</h2>
+        </div>
+      </div>
+      <div class="pre-installed-badge"><span class="badge-icon">&#10003;</span> Instalado Previamente</div>
+      <div class="pre-installed-notice"><strong>O motor do curso.</strong> Agente de terminal da Anthropic que escreve,
+        edita e publica código via prompts.</div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ETAPA 6: SKILLS, AGENTS & PLUGINS -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="skills">
+      <div class="step-header">
+        <div class="step-number">6</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--teal);">Skills, Agents &amp; Plugins</div>
+          <h2 class="step-title">AI Templates &mdash; Superpoderes do Claude Code</h2>
+        </div>
+      </div>
+
+      <div class="step-what">
+        <strong>O que é:</strong> O Claude Code sozinho já é poderoso, mas com <strong>skills</strong>,
+        <strong>agents</strong> e <strong>plugins</strong>
+        ele se torna imbatível. Skills ensinam boas práticas, agents são especialistas em domínios específicos, e
+        plugins conectam a serviços externos.
+        Vamos instalar tudo pelo <a href="https://www.aitmpl.com/" target="_blank" style="color: var(--accent);">AI
+          Templates (aitmpl.com)</a> &mdash; o marketplace de componentes para Claude Code.
+      </div>
+
+      <a href="https://www.aitmpl.com/" target="_blank" class="step-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        AI Templates (aitmpl.com)
+      </a>
+
+      <div class="instructions">
+
+        <!-- 6.1 — Onde o Claude Code guarda skills e agents -->
+        <div class="instruction">
+          <p><strong>Onde o Claude Code guarda as skills e agents?</strong></p>
+          <p class="detail" style="margin-bottom: 0.8rem;">O Claude Code usa dois diretórios diferentes dependendo do
+            escopo:</p>
+
+          <div class="step-what" style="margin-bottom: 0;">
+            <p style="margin-bottom: 0.8rem; color: var(--accent); font-weight: 600; font-size: 0.95rem;">Global &mdash;
+              disponível em TODOS os projetos</p>
+            <p style="margin-bottom: 0.3rem;">Diretório:</p>
+            <div class="code-block" style="margin-top: 0.3rem;">
+              <span class="code-label">Caminho</span>
+              <code>~/.claude/skills/&lt;nome-da-skill&gt;/SKILL.md</code>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Caminho</span>
+              <code>~/.claude/agents/&lt;nome-do-agent&gt;/agent.md</code>
+            </div>
+            <p class="detail" style="margin-top: 0.5rem;">
+              <span class="os-note">Windows</span> <code>%USERPROFILE%\.claude\</code> &nbsp;
+              <span class="os-note">Mac/Linux</span> <code>~/.claude/</code>
+            </p>
+            <p class="detail">Tudo que estiver aqui fica acessível <strong>em qualquer projeto</strong> que você abrir
+              no Claude Code.</p>
+          </div>
+
+          <div class="step-what" style="margin-top: 1rem; margin-bottom: 0;">
+            <p style="margin-bottom: 0.8rem; color: var(--teal); font-weight: 600; font-size: 0.95rem;">Local &mdash;
+              disponível SÓ neste projeto</p>
+            <p style="margin-bottom: 0.3rem;">Diretório (na raiz do projeto):</p>
+            <div class="code-block" style="margin-top: 0.3rem;">
+              <span class="code-label">Caminho</span>
+              <code>.claude/skills/&lt;nome-da-skill&gt;/SKILL.md</code>
+            </div>
+            <div class="code-block">
+              <span class="code-label">Caminho</span>
+              <code>.claude/agents/&lt;nome-do-agent&gt;/agent.md</code>
+            </div>
+            <p class="detail" style="margin-top: 0.5rem;">Tudo que estiver aqui fica acessível <strong>apenas dentro
+                deste repositório</strong>. Pode ser commitado no Git e compartilhado com o time.</p>
+          </div>
+        </div>
+
+        <!-- 6.2 — Instalação interativa -->
+        <div class="instruction">
+          <p>No terminal (fora do Claude Code), rode o AI Templates para instalar via marketplace:</p>
+          <div class="code-block">
+            <span class="code-label">Terminal</span>
+            <code>npx claude-code-templates@latest</code>
+          </div>
+          <p class="detail">Isso abre o marketplace onde você pode explorar e instalar componentes. Abaixo vamos
+            instalar cada um direto pelo terminal.</p>
+        </div>
+
+        <!-- 6.3 — Skills do projeto -->
+        <div class="instruction">
+          <p><strong>Instale as Skills do PipeFlow</strong> &mdash; cada uma ensina o Claude a ser melhor em uma área:
+          </p>
+
+          <p style="margin: 1rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 1 &mdash;
+            Frontend Design</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Cria interfaces distintas e production-grade. Foge da
+            estética genérica de IA.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx claude-code-templates@latest --agent development-team/frontend-developer --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-team/frontend-developer --yes --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 2
+            &mdash; Supabase Postgres Best Practices</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">40+ regras de otimização: query performance, RLS, connection
+            pooling, schema design.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx superpowers@latest install supabase-postgres-best-practices</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx superpowers@latest install supabase-postgres-best-practices --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 3
+            &mdash; Stripe Best Practices</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Padrões para integração Stripe: checkout flows, webhooks
+            seguros, subscriptions e idempotency.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx superpowers@latest install stripe-best-practices</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx superpowers@latest install stripe-best-practices --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 4
+            &mdash; Security Audit</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Auditoria de segurança com análise de RLS, vulnerabilidades,
+            validação de inputs e OWASP.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx superpowers@latest install supabase-security-audit</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx superpowers@latest install supabase-security-audit --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 5
+            &mdash; Micro SaaS Launcher</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Guia para lançar SaaS rápido: MVP scoping, pricing, launch
+            playbooks e tração inicial.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx superpowers@latest install micro-saas-launcher</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx superpowers@latest install micro-saas-launcher --local</code>
+          </div>
+        </div>
+
+        <!-- 6.4 — Agents do projeto -->
+        <div class="instruction">
+          <p><strong>Instale os Agents do PipeFlow</strong> &mdash; especialistas que trabalham junto com o Claude:</p>
+
+          <p style="margin: 1rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 1 &mdash;
+            Code Review</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Revisa código contra o plano original, padrões de qualidade,
+            bugs e vulnerabilidades.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/agents/)</span>
+            <code>npx claude-code-templates@latest --agent development-tools/code-reviewer --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/agents/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-tools/code-reviewer --yes --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 2
+            &mdash; Explore</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Explorador rápido de codebases: busca arquivos, padrões,
+            endpoints e arquitetura.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/agents/)</span>
+            <code>npx claude-code-templates@latest --agent development-team/frontend-developer --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/agents/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-team/frontend-developer --yes --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 3
+            &mdash; Plan</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Arquiteto que desenha planos de implementação e identifica
+            arquivos críticos.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/agents/)</span>
+            <code>npx claude-code-templates@latest --agent development-tools/code-reviewer --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/agents/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-tools/code-reviewer --yes --local</code>
+          </div>
+        </div>
+
+        <!-- 6.5 — Plugins (MCPs) do projeto -->
+        <div class="instruction">
+          <p><strong>Instale os Plugins (MCPs) do PipeFlow</strong> &mdash; integrações com serviços externos:</p>
+
+          <p style="margin: 1rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Plugin 1 &mdash;
+            Vercel</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Deploy, env vars, domains, logs e best practices de Next.js
+            automáticos.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/settings.json)</span>
+            <code>npx claude-code-templates@latest --mcp development/github-integration --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/settings.json do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --mcp development/github-integration --yes --local</code>
+          </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Plugin 2
+            &mdash; Stripe</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Acesso direto à API Stripe: explica erros, test cards e best
+            practices de pagamento.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/settings.json)</span>
+            <code>npx claude-code-templates@latest --mcp database/postgresql-integration --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/settings.json do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --mcp database/postgresql-integration --yes --local</code>
+          </div>
+        </div>
+
+        <!-- 6.6 — Verificação -->
+        <div class="instruction">
+          <p>Verificação &mdash; rode o health check para confirmar tudo:</p>
+          <div class="code-block">
+            <span class="code-label">Terminal</span>
+            <code>npx claude-code-templates@latest --health-check</code>
+          </div>
+          <div class="verify-box">
+            <div class="v-icon">&#10003;</div>
+            <p>Se aparecer tudo verde, skills, agents e plugins estão instalados e prontos.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <div class="w-icon">!</div>
+        <p><strong>Resumo dos diretórios:</strong><br>
+          &bull; <strong>Global</strong> = <code>~/.claude/skills/</code> e <code>~/.claude/agents/</code> &mdash; vale
+          pra TODOS os projetos<br>
+          &bull; <strong>Local</strong> = <code>.claude/skills/</code> e <code>.claude/agents/</code> (na raiz do
+          projeto) &mdash; vale SÓ pra esse projeto<br>
+          &bull; <strong>MCPs/Plugins</strong> = configurados em <code>~/.claude/settings.json</code> (global) ou
+          <code>.claude/settings.json</code> (local)</p>
+      </div>
+
+      <div class="tip-box">
+        <div class="t-icon">i</div>
+        <p><strong>Dica:</strong> Você pode explorar mais de 600 componentes no marketplace em
+          <a href="https://www.aitmpl.com/" target="_blank" style="color: var(--cool);">aitmpl.com</a>.
+          Ao longo do curso, a gente pode instalar mais conforme necessidade.
+        </p>
+      </div>
+
+      <div class="script-quote">
+        "Agora o Claude Code não está sozinho. Ele tem skills que ensinam boas práticas, agents que revisam e planejam,
+        e plugins que conectam direto no Stripe e na Vercel. Percebe a diferença? Global vale pra tudo, local vale só
+        pra esse projeto."
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ETAPA 7: SUPABASE               -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="supabase">
+      <div class="step-header">
+        <div class="step-number">7</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Conta online</div>
+          <h2 class="step-title">Supabase &mdash; Banco de Dados</h2>
+        </div>
+      </div>
+
+      <div class="step-what">
+        <strong>O que é:</strong> Supabase é o nosso banco de dados + autenticação + segurança.
+        Tudo num lugar só, com plano gratuito generoso. Usa PostgreSQL por baixo dos panos.
+      </div>
+
+      <a href="https://supabase.com/dashboard/sign-up" target="_blank" class="step-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        Criar conta no Supabase
+      </a>
+
+      <div class="instructions">
+        <div class="instruction">
+          <p>Acesse o link e clique em <strong>"Sign Up with GitHub"</strong></p>
+          <p class="detail">Mais prático, já que você criou a conta na Etapa 3.</p>
+        </div>
+
+        <div class="instruction">
+          <p>Autorize o acesso do Supabase ao seu GitHub</p>
+        </div>
+
+        <div class="instruction">
+          <p>Você cai no dashboard &rarr; clique em <strong>"New Project"</strong></p>
+        </div>
+
+        <div class="instruction">
+          <p>Preencha os dados do projeto:</p>
+          <p class="detail">&bull; <strong>Name:</strong> <code>pipeflow-crm</code></p>
+          <p class="detail">&bull; <strong>Database Password:</strong> crie uma senha forte (anote em lugar seguro!)</p>
+          <p class="detail">&bull; <strong>Region:</strong> escolha <strong>South America (São Paulo)</strong> para
+            menor latência</p>
+        </div>
+
+        <div class="instruction">
+          <p>Clique em <strong>"Create new project"</strong> e aguarde 1-2 minutos</p>
+          <div class="verify-box">
+            <div class="v-icon">&#10003;</div>
+            <p>Projeto criado! Anote a <strong>URL</strong> e a <strong>anon key</strong> em
+              <code>Settings &rarr; API</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="script-quote">
+        "Supabase criado. Banco de dados PostgreSQL rodando. A gente vai configurar as tabelas no módulo 3."
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ETAPA 8: STRIPE                 -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="stripe">
+      <div class="step-header">
+        <div class="step-number">8</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--warm);">Conta online</div>
+          <h2 class="step-title">Stripe &mdash; Pagamentos</h2>
+        </div>
+      </div>
+
+      <div class="step-what">
+        <strong>O que é:</strong> Stripe é o processador de pagamentos. Checkout, assinaturas, webhooks &mdash; tudo
+        passa por ele.
+        Vamos usar exclusivamente em modo teste (sem dinheiro real).
+      </div>
+
+      <a href="https://dashboard.stripe.com/register" target="_blank" class="step-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        Criar conta no Stripe
+      </a>
+
+      <div class="instructions">
+        <div class="instruction">
+          <p>Acesse o link e preencha: <strong>email &rarr; nome completo &rarr; país (Brasil) &rarr; senha</strong></p>
+        </div>
+
+        <div class="instruction">
+          <p>Confirme o email clicando no link enviado</p>
+        </div>
+
+        <div class="instruction">
+          <p>No dashboard, você já está em <strong>modo teste</strong></p>
+          <p class="detail">Aparece "Test mode" no topo com um toggle roxo. Isso é exatamente o que queremos!</p>
+        </div>
+
+        <div class="instruction">
+          <p>Vá em <strong>"Developers"</strong> (menu lateral) &rarr; <strong>"API keys"</strong></p>
+          <p class="detail">Anote duas chaves:</p>
+          <p class="detail">&bull; <strong>Publishable key</strong> &mdash; começa com <code>pk_test_...</code></p>
+          <p class="detail">&bull; <strong>Secret key</strong> &mdash; começa com <code>sk_test_...</code> (clique em
+            "Reveal test key" para ver)</p>
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <div class="w-icon">!</div>
+        <p><strong>Importante:</strong> NÃO ative o modo live enquanto estiver no curso. Tudo será em modo teste. Nenhum
+          dinheiro real vai circular.</p>
+      </div>
+
+      <div class="script-quote">
+        "Stripe criado, modo teste ativo. Nenhum dinheiro real vai circular enquanto a gente desenvolve."
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ETAPA 9: RESEND                 -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="resend">
+      <div class="step-header">
+        <div class="step-number">9</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--teal);">Conta online</div>
+          <h2 class="step-title">Resend &mdash; Emails Transacionais</h2>
+        </div>
+      </div>
+
+      <div class="step-what">
+        <strong>O que é:</strong> Resend envia emails transacionais (convites de membros, confirmações).
+        Interface moderna, API simples. Plano free: 3.000 emails/mês.
+      </div>
+
+      <a href="https://resend.com/signup" target="_blank" class="step-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        Criar conta no Resend
+      </a>
+
+      <div class="instructions">
+        <div class="instruction">
+          <p>Acesse o link e clique em <strong>"Sign up with GitHub"</strong></p>
+          <p class="detail">Mais rápido, aproveita a conta que já criamos.</p>
+        </div>
+
+        <div class="instruction">
+          <p>Autorize o acesso</p>
+        </div>
+
+        <div class="instruction">
+          <p>No dashboard, vá em <strong>"API Keys"</strong> (menu lateral)</p>
+        </div>
+
+        <div class="instruction">
+          <p>Clique em <strong>"Create API Key"</strong>:</p>
+          <p class="detail">&bull; <strong>Name:</strong> <code>pipeflow-crm</code></p>
+          <p class="detail">&bull; <strong>Permission:</strong> Full access</p>
+          <p class="detail">&bull; <strong>Domain:</strong> Sending (padrão)</p>
+        </div>
+
+        <div class="instruction">
+          <p>Copie a API key gerada (começa com <code>re_...</code>)</p>
+          <div class="warn-box">
+            <div class="w-icon">!</div>
+            <p><strong>Atenção:</strong> Essa chave só aparece UMA VEZ! Cole imediatamente num bloco de notas e salve.
+            </p>
+          </div>
+          <div class="tip-box">
+            <div class="t-icon">i</div>
+            <p>O Resend dá um domínio gratuito para testes: <code>onboarding@resend.dev</code>. Perfeito pra começar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="script-quote">
+        "Resend criado, API key salva. Vamos usar isso lá no módulo de convites de membros."
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- ETAPA 10: VERCEL                -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="vercel">
+      <div class="step-header">
+        <div class="step-number">10</div>
+        <div class="step-meta">
+          <div class="step-tag" style="color: var(--cool);">Conta online</div>
+          <h2 class="step-title">Vercel &mdash; Deploy e Hospedagem</h2>
+        </div>
+      </div>
+
+      <div class="step-what">
+        <strong>O que é:</strong> Vercel é onde o app vai ficar online. A cada push no GitHub, ela faz deploy
+        automaticamente.
+        Literalmente: deu push, tá no ar em 30 segundos.
+      </div>
+
+      <a href="https://vercel.com/signup" target="_blank" class="step-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        Criar conta na Vercel
+      </a>
+
+      <div class="instructions">
+        <div class="instruction">
+          <p>Acesse o link e clique em <strong>"Continue with GitHub"</strong></p>
+        </div>
+
+        <div class="instruction">
+          <p>Autorize o acesso</p>
+        </div>
+
+        <div class="instruction">
+          <p>Escolha o plano <strong>Hobby</strong> (gratuito)</p>
+          <p class="detail">Perfeito pro curso. Inclui deploy ilimitado, HTTPS automático e domínio .vercel.app</p>
+          <div class="verify-box">
+            <div class="v-icon">&#10003;</div>
+            <p>Você cai no dashboard. Não precisa criar projeto agora &mdash; faremos quando conectar ao repositório.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="script-quote">
+        "Vercel criada. Quando a gente fizer o primeiro deploy, é literalmente clicar em 'Import from GitHub' e pronto."
+      </div>
+    </section>
+
+    <!-- =============================== -->
+    <!-- CHECKLIST FINAL                 -->
+    <!-- =============================== -->
+    <section class="step-section fade-in" id="checklist">
+      <div class="checklist">
+        <h2>Checklist Final &mdash; Tudo Instalado?</h2>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">01</span>
+          <span class="item-name">Node.js</span>
+          <span class="item-verify"><code>node --version</code> mostra v20+</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">02</span>
+          <span class="item-name">Git</span>
+          <span class="item-verify"><code>git --version</code> mostra v2+</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">03</span>
+          <span class="item-name">GitHub</span>
+          <span class="item-verify">Conta criada, email confirmado</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">04</span>
+          <span class="item-name">Cursor IDE</span>
+          <span class="item-verify">Abre normalmente, terminal funciona</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">05</span>
+          <span class="item-name">Claude Code</span>
+          <span class="item-verify"><code>claude</code> abre e está autenticado</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">06</span>
+          <span class="item-name">AI Templates</span>
+          <span class="item-verify">5 skills + 3 agents + 2 plugins</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">07</span>
+          <span class="item-name">Supabase</span>
+          <span class="item-verify">Projeto pipeflow-crm criado</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">08</span>
+          <span class="item-name">Stripe</span>
+          <span class="item-verify">Modo teste, API keys anotadas</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">09</span>
+          <span class="item-name">Resend</span>
+          <span class="item-verify">API key copiada e salva</span>
+        </div>
+
+        <div class="checklist-item" onclick="this.querySelector('.check').classList.toggle('checked')">
+          <div class="check">&#10003;</div>
+          <span class="item-num">10</span>
+          <span class="item-name">Vercel</span>
+          <span class="item-verify">Conta criada via GitHub</span>
+        </div>
+      </div>
+
+      <div class="script-quote" style="margin-top: 2rem;">
+        "Ambiente 100% pronto. Tudo instalado, todas as contas criadas, chaves anotadas. Agora vamos entender o
+        CLAUDE.md &mdash; o arquivo que vai dar superpoderes pro Claude Code dentro do nosso projeto."
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="footer-brands">
+      <!-- NoCode StartUp -->
+      <div class="footer-brand-item">
+        <div
+          style="width:22px;height:22px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.5rem;color:var(--bg);">
+          NC</div>
+        <span style="font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;color:var(--text);">NoCode <span
+            style="color:var(--text-muted);font-weight:400;">StartUp</span></span>
+      </div>
+
+      <div class="footer-sep"></div>
+
+      <!-- PipeFlow CRM -->
+      <div class="footer-brand-item">
+        <div
+          style="width:22px;height:22px;background:var(--accent);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.55rem;color:var(--bg);">
+          P</div>
+        <span style="font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:600;color:var(--text);">PipeFlow <span
+            style="color:var(--text-muted);font-weight:400;">CRM</span></span>
+      </div>
+
+      <div class="footer-sep"></div>
+
+      <!-- Claude Code -->
+      <div class="footer-brand-item">
+        <span class="claude-logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z"
+              fill="#E87040" />
+            <path
+              d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z"
+              fill="#E87040" />
+            <path
+              d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z"
+              fill="#E87040" />
+          </svg>
+          <span class="claude-logo-text" style="font-size:0.8rem;">Claude Code</span>
+        </span>
+      </div>
+    </div>
+
+    <p>Módulo 1 &middot; Aula 1.4 &mdash; Configurando o Ambiente de Desenvolvimento</p>
+    <p
+      style="margin-top: 0.3rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--text-muted);">
+      Do Zero ao App com Claude Code &middot; Engenharia de Produtos com IA
+    </p>
+  </footer>
+
+  <script>
+    // Progress bar
+    window.addEventListener('scroll', () => {
+      const scrollTop = document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (scrollTop / scrollHeight) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    });
+
+    // Fade-in observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Active nav highlight
+    const sections = document.querySelectorAll('.step-section');
+    const navLinks = document.querySelectorAll('.nav a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (scrollY >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

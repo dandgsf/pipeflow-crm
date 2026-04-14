@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 2.5 — Dashboard de Métricas (UI) | PipeFlow CRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --accent: #CAFF33;
+      --accent-dim: rgba(202, 255, 51, 0.10);
+      --accent-mid: rgba(202, 255, 51, 0.18);
+      --accent-glow: rgba(202, 255, 51, 0.06);
+      --bg: #0C0C0E;
+      --surface: #141416;
+      --surface-2: #1A1A1E;
+      --border: #2A2A2E;
+      --border-subtle: #1E1E22;
+      --text: #E8E8E8;
+      --text-sec: #8A8A8F;
+      --text-muted: #555559;
+      --cool: #5B7FFF;
+      --warm: #FF6B35;
+      --teal: #00B4D8;
+      --positive: #2ED573;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.8;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999;
+    }
+
+    ::selection { background: var(--accent); color: var(--bg); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ===== NAV ===== */
+    nav { position: fixed; top: 0; width: 100%; z-index: 100; padding: 16px 24px; background: rgba(12,12,14,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+    nav .inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+    .nocode-logo { display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
+    .nocode-logo .nc-icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), #9ECC26); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.55rem; color: var(--bg); }
+    .nocode-logo .nc-text { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--text); }
+    .nocode-logo .nc-text span { color: var(--text-muted); font-weight: 400; }
+    .nav-sep-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark { width: 30px; height: 30px; background: var(--accent); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: var(--bg); }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px; color: var(--text); }
+    .logo-text span { color: var(--text-muted); font-weight: 400; font-size: 13px; margin-left: 4px; }
+    .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+    .nav-powered { font-family: 'IBM Plex Mono', monospace; font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; }
+    .claude-logo { display: flex; align-items: center; gap: 0.4rem; }
+    .claude-logo-text { font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--text-sec); }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== HERO ===== */
+    .hero { position: relative; min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 60px; overflow: hidden; }
+    .hero .orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 10s ease-in-out infinite; pointer-events: none; }
+    .hero .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(202,255,51,0.18), transparent 70%); top: -15%; left: 5%; }
+    .hero .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(91,127,255,0.12), transparent 70%); bottom: -10%; right: 5%; animation-delay: -4s; }
+    @keyframes orbFloat { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(25px,-15px) scale(1.05); } 66% { transform: translate(-15px,10px) scale(0.97); } }
+    .hero-tag { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 28px; position: relative; z-index: 2; }
+    .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(32px, 4.5vw, 48px); font-weight: 700; line-height: 1.2; letter-spacing: -1.5px; color: var(--text-sec); margin-bottom: 20px; position: relative; z-index: 2; max-width: 700px; }
+    .hero h1 strong { color: var(--text); font-weight: 800; }
+    .hero h1 .highlight { color: var(--accent); }
+    .hero .subtitle { color: var(--text-sec); font-size: 1.1rem; z-index: 2; position: relative; max-width: 580px; line-height: 1.7; }
+
+    /* ===== FOLD ===== */
+    .fold { padding: 80px 0; border-top: 1px solid var(--border-subtle); }
+    .fold-header { text-align: center; margin-bottom: 48px; }
+    .fold-tag { font-family: 'IBM Plex Mono', monospace; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 14px; }
+    .fold-title { font-family: 'Syne', sans-serif; font-size: clamp(26px, 3.5vw, 38px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px; }
+    .fold-title em { font-style: normal; color: var(--accent); }
+    .fold-sub { font-size: 16px; color: var(--text-sec); max-width: 580px; margin: 0 auto; line-height: 1.7; }
+
+    /* ===== METRIC CARDS VISUAL ===== */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+      border-radius: 14px; overflow: hidden; margin-bottom: 40px;
+    }
+
+    .metric-card {
+      background: var(--surface); padding: 28px 24px; text-align: center;
+      position: relative;
+    }
+
+    .metric-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+    .metric-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent), transparent); }
+    .metric-card:nth-child(2)::before { background: linear-gradient(90deg, var(--cool), transparent); }
+    .metric-card:nth-child(3)::before { background: linear-gradient(90deg, var(--teal), transparent); }
+    .metric-card:nth-child(4)::before { background: linear-gradient(90deg, var(--positive), transparent); }
+
+    .metric-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin: 0 auto 12px;
+    }
+
+    .metric-card:nth-child(1) .metric-icon { background: var(--accent-dim); }
+    .metric-card:nth-child(2) .metric-icon { background: rgba(91,127,255,0.10); }
+    .metric-card:nth-child(3) .metric-icon { background: rgba(0,180,216,0.10); }
+    .metric-card:nth-child(4) .metric-icon { background: rgba(46,213,115,0.10); }
+
+    .metric-value {
+      font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+      letter-spacing: -1px; margin-bottom: 4px;
+    }
+
+    .metric-card:nth-child(1) .metric-value { color: var(--accent); }
+    .metric-card:nth-child(2) .metric-value { color: var(--cool); }
+    .metric-card:nth-child(3) .metric-value { color: var(--teal); }
+    .metric-card:nth-child(4) .metric-value { color: var(--positive); }
+
+    .metric-label {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    /* ===== DASHBOARD SECTIONS ===== */
+    .dash-sections {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+      border-radius: 14px; overflow: hidden; margin-bottom: 40px;
+    }
+
+    .dash-section {
+      background: var(--surface); padding: 32px 28px; position: relative;
+    }
+
+    .dash-section::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+    .dash-section:nth-child(1)::before { background: linear-gradient(90deg, var(--cool), transparent); }
+    .dash-section:nth-child(2)::before { background: linear-gradient(90deg, var(--warm), transparent); }
+
+    .dash-section h4 {
+      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+      letter-spacing: -0.3px; margin-bottom: 12px;
+    }
+
+    .dash-section p { font-size: 14px; color: var(--text-sec); line-height: 1.6; }
+
+    /* Funnel bar preview */
+    .funnel-bars { margin-top: 16px; }
+    .funnel-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .funnel-bar-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); min-width: 80px; }
+    .funnel-bar-track { flex: 1; height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; }
+    .funnel-bar-fill { height: 100%; border-radius: 4px; }
+    .funnel-bar:nth-child(1) .funnel-bar-fill { width: 100%; background: var(--cool); }
+    .funnel-bar:nth-child(2) .funnel-bar-fill { width: 75%; background: var(--teal); }
+    .funnel-bar:nth-child(3) .funnel-bar-fill { width: 50%; background: #CE93D8; }
+    .funnel-bar:nth-child(4) .funnel-bar-fill { width: 35%; background: var(--warm); }
+    .funnel-bar:nth-child(5) .funnel-bar-fill { width: 60%; background: var(--positive); }
+
+    /* ===== PROMPT BLOCKS ===== */
+    .prompt-block { background: #0A0A0C; border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; margin: 1rem 0; overflow-x: auto; position: relative; }
+    .prompt-block .prompt-label { position: absolute; top: 0.5rem; right: 0.8rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .prompt-block code { font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; color: var(--accent); line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .prompt-num { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; margin-top: 24px; }
+    .prompt-num:first-child { margin-top: 0; }
+    .prompt-desc { font-size: 15px; color: var(--text-sec); margin-bottom: 8px; line-height: 1.6; }
+
+    /* ===== TIP ===== */
+    .tip-box { background: rgba(91,127,255,0.06); border: 1px solid rgba(91,127,255,0.2); border-radius: 10px; padding: 1rem 1.3rem; margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 0.8rem; }
+    .tip-box .t-icon { width: 24px; height: 24px; min-width: 24px; border-radius: 50%; background: rgba(91,127,255,0.15); display: flex; align-items: center; justify-content: center; color: var(--cool); font-size: 0.8rem; margin-top: 2px; }
+    .tip-box p { font-size: 0.95rem; color: var(--cool); line-height: 1.6; }
+
+    /* ===== CYCLE ===== */
+    .cycle-reminder { text-align: center; padding: 20px 0; margin: 32px 0; }
+    .cycle-reminder span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: -0.3px; }
+    .cycle-reminder .c-plan { color: var(--accent); }
+    .cycle-reminder .c-build { color: var(--cool); }
+    .cycle-reminder .c-test { color: var(--warm); }
+    .cycle-reminder .c-iter { color: var(--teal); }
+    .cycle-reminder .c-arrow { color: var(--border); margin: 0 4px; }
+
+    /* ===== TAKEAWAY ===== */
+    .takeaway { border: 1px solid var(--accent-mid); background: var(--accent-glow); border-radius: 14px; padding: 36px 40px; text-align: center; margin-top: 48px; position: relative; overflow: hidden; }
+    .takeaway::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%); pointer-events: none; }
+    .takeaway p { font-size: 16px; color: var(--text-sec); max-width: 600px; margin: 0 auto; line-height: 1.8; position: relative; z-index: 1; }
+    .takeaway strong { color: var(--text); }
+    .takeaway .verbs { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--accent); font-size: 17px; }
+
+    /* ===== COPY BUTTON ===== */
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .copy-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { background: rgba(46,213,115,0.12); color: #2ED573; border-color: #2ED573; }
+    .copy-btn svg { width: 12px; height: 12px; }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 32px 0; text-align: center; margin-top: 60px; border-top: 1px solid var(--border-subtle); }
+    footer p { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--text-muted); }
+    footer .ft-accent { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .hero { min-height: auto; padding: 120px 24px 60px; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-sections { grid-template-columns: 1fr; }
+      .nav-right .nav-powered { display: none; }
+      .container { padding: 0 16px; }
+      .fold { padding: 48px 0; }
+      .fold-title { font-size: 1.6rem; }
+      .fold-sub { font-size: 0.9rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero .sub { font-size: 0.95rem; }
+      .prompt-block { padding: 0.8rem 1rem; display: flex; flex-direction: column; }
+      .prompt-block code { font-size: 0.78rem; }
+      .copy-btn { position: relative; top: auto; right: auto; margin-bottom: 8px; align-self: flex-start; }
+      nav { padding: 12px 16px; }
+      .nocode-logo .nc-text { display: none; }
+      .nav-sep-dot { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.5rem; }
+      .hero { padding: 100px 16px 48px; }
+      .fold-title { font-size: 1.3rem; }
+      .prompt-num { font-size: 12px; }
+      .prompt-desc { font-size: 13px; }
+    }
+
+    .fade-in { opacity: 0; transform: translateY(20px); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 200; transition: width 0.1s; box-shadow: 0 0 10px rgba(202,255,51,0.4); }
+  </style>
+</head>
+
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="inner">
+      <div class="nav-left">
+        <a class="nocode-logo" href="#">
+          <div class="nc-icon">NC</div>
+          <div class="nc-text">NoCode <span>StartUp</span></div>
+        </a>
+        <div class="nav-sep-dot"></div>
+        <a class="logo" href="#">
+          <div class="logo-mark">PF</div>
+          <div class="logo-text">PipeFlow<span> | Aula 2.5</span></div>
+        </a>
+      </div>
+      <div class="nav-right">
+        <span class="nav-powered">Desenvolvido com</span>
+        <span class="claude-logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span class="claude-logo-text">Claude Code</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="hero-tag fade-in">// aula_2.5_dashboard_metricas</div>
+    <h1 class="fade-in">
+      O que importa, de cara.<br><strong><span class="highlight">Métricas e gráficos.</span></strong>
+    </h1>
+    <p class="subtitle fade-in">
+      Dashboard com cards de métricas, gráfico de funil e lista de negócios próximos. Tudo mockado, tudo visual.
+    </p>
+  </section>
+
+  <!-- DOBRA 2 — METRICAS VISUAIS -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">O que essa aula constrói</div>
+        <h2 class="fold-title">4 métricas. 1 gráfico. <em>Visão completa.</em></h2>
+        <p class="fold-sub">
+          O dashboard é a primeira coisa que o usuário vê ao entrar. Precisa mostrar o que importa em segundos.
+        </p>
+      </div>
+
+      <!-- Metric cards -->
+      <div class="metrics-grid fade-in">
+        <div class="metric-card">
+          <div class="metric-icon">&#x1F465;</div>
+          <div class="metric-value">47</div>
+          <div class="metric-label">Total de Leads</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">&#x1F4BC;</div>
+          <div class="metric-value">12</div>
+          <div class="metric-label">Negócios Abertos</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">&#x1F4B0;</div>
+          <div class="metric-value">R$ 95.500</div>
+          <div class="metric-label">Valor Pipeline</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">&#x1F4C8;</div>
+          <div class="metric-value">32%</div>
+          <div class="metric-label">Taxa Conversão</div>
+        </div>
+      </div>
+
+      <!-- Dashboard sections -->
+      <div class="dash-sections fade-in">
+        <div class="dash-section">
+          <h4>Gráfico de Funil</h4>
+          <p>Quantos negócios existem em cada etapa do pipeline. Mostra onde o processo de vendas está concentrado.</p>
+          <div class="funnel-bars">
+            <div class="funnel-bar">
+              <span class="funnel-bar-label">Novo Lead</span>
+              <div class="funnel-bar-track"><div class="funnel-bar-fill"></div></div>
+            </div>
+            <div class="funnel-bar">
+              <span class="funnel-bar-label">Contato</span>
+              <div class="funnel-bar-track"><div class="funnel-bar-fill"></div></div>
+            </div>
+            <div class="funnel-bar">
+              <span class="funnel-bar-label">Proposta</span>
+              <div class="funnel-bar-track"><div class="funnel-bar-fill"></div></div>
+            </div>
+            <div class="funnel-bar">
+              <span class="funnel-bar-label">Negociação</span>
+              <div class="funnel-bar-track"><div class="funnel-bar-fill"></div></div>
+            </div>
+            <div class="funnel-bar">
+              <span class="funnel-bar-label">Ganho</span>
+              <div class="funnel-bar-track"><div class="funnel-bar-fill"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dash-section">
+          <h4>Negócios Próximos</h4>
+          <p>Lista dos negócios com prazo mais próximo. Ajuda o vendedor a priorizar o que precisa de atenção agora.</p>
+        </div>
+      </div>
+
+      <div class="tip-box fade-in">
+        <div class="t-icon">i</div>
+        <p>Os gráficos usam a biblioteca <strong>Recharts</strong>. Assim como o @dnd-kit, o Claude Code instala e configura tudo. Você só descreve o que quer ver no gráfico.</p>
+      </div>
+
+      <div class="cycle-reminder fade-in">
+        <span class="c-plan">Planejar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-build">Construir</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-test">Testar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-iter">Iterar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOBRA 3 — PROMPTS + TAKEAWAY -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Os prompts da aula</div>
+        <h2 class="fold-title">Dashboard em <em>3 prompts</em></h2>
+      </div>
+
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 01 — Planejamento</div>
+        <p class="prompt-desc">Branch e alinhamento.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Leia o CLAUDE.md e o PLAN.md. Estamos na aula 2.5 — Dashboard de Métricas UI. Crie uma branch pra essa feature e me descreva o que vai implementar.</code>
+        </div>
+      </div>
+
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 02 — Construção</div>
+        <p class="prompt-desc">Tudo que o dashboard precisa.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Implemente o Dashboard conforme o PLAN.md com dados fake:
+
+- 4 cards de métricas: Total de Leads, Negócios Abertos, Valor do Pipeline (R$), Taxa de Conversão (%)
+- Gráfico de funil mostrando negócios por etapa do pipeline (Recharts)
+- Tabela com os negócios mais próximos do prazo
+- Dados mockados mas realistas
+- Esse é o /dashboard — a primeira tela após o login</code>
+        </div>
+      </div>
+
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 03 — Revisão e commit</div>
+        <p class="prompt-desc">Validar e salvar.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Revise o dashboard. Verifica se os cards mostram valores, se o gráfico renderiza, se a tabela de negócios aparece. Faz o commit, abre PR pra main, faz merge e deleta a branch.</code>
+        </div>
+      </div>
+
+      <div class="takeaway fade-in">
+        <p>
+          <strong>Dashboard pronto. Métricas, gráfico e tabela.</strong><br>
+          O usuário entra e vê tudo de relance: quantos leads, quanto dinheiro no pipeline, qual a taxa de conversão.<br>
+          Dados fake por enquanto — na FASE 2, conecta ao banco e os números ficam reais.<br>
+          <span class="verbs">Números que contam a história do negócio.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.45rem;color:var(--bg);">NC</div>
+          <span style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);">NoCode <span style="color:var(--text-muted);font-weight:400;">StartUp</span></span>
+        </div>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <span class="ft-accent" style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;">PipeFlow CRM</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <div style="display:flex;align-items:center;gap:0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span style="font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;color:var(--text-sec);">Claude Code</span>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Do Zero ao App com Claude Code &middot; Engenharia de Produtos com IA</p>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+  </script>
+
+<script>
+function copyCode(btn) {
+  const block = btn.closest('.code-block, .prompt-block');
+  const code = block.querySelector('code');
+  navigator.clipboard.writeText(code.textContent.trim()).then(() => {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

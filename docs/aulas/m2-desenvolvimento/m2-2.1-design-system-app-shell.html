@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 2.1 — Design System & App Shell | PipeFlow CRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --accent: #CAFF33;
+      --accent-dim: rgba(202, 255, 51, 0.10);
+      --accent-mid: rgba(202, 255, 51, 0.18);
+      --accent-glow: rgba(202, 255, 51, 0.06);
+      --bg: #0C0C0E;
+      --surface: #141416;
+      --surface-2: #1A1A1E;
+      --border: #2A2A2E;
+      --border-subtle: #1E1E22;
+      --text: #E8E8E8;
+      --text-sec: #8A8A8F;
+      --text-muted: #555559;
+      --cool: #5B7FFF;
+      --warm: #FF6B35;
+      --teal: #00B4D8;
+      --positive: #2ED573;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 16px 24px;
+      background: rgba(12, 12, 14, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    nav .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nocode-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+    }
+
+    .nocode-logo .nc-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent), #9ECC26);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.55rem;
+      color: var(--bg);
+    }
+
+    .nocode-logo .nc-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .nocode-logo .nc-text span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .nav-sep-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      color: var(--bg);
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .logo-text span {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 13px;
+      margin-left: 4px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .claude-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .claude-logo-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-sec);
+      letter-spacing: -0.2px;
+    }
+
+    .nav-powered {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: 120px 24px 80px;
+      overflow: hidden;
+    }
+
+    .hero .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: orbFloat 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .hero .orb-1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(202, 255, 51, 0.14), transparent 70%);
+      top: -15%;
+      left: 5%;
+    }
+
+    .hero .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(91, 127, 255, 0.10), transparent 70%);
+      bottom: -10%;
+      right: 5%;
+      animation-delay: -4s;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(25px, -15px) scale(1.05); }
+      66% { transform: translate(-15px, 10px) scale(0.97); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+      color: var(--text-sec);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 strong {
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-sec);
+      max-width: 620px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 8px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-sec);
+    }
+
+    .hero-stat.accent {
+      border-color: var(--accent-mid);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* ===== FOLD SECTIONS ===== */
+    .fold {
+      padding: 80px 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .fold-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .fold-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .fold-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(26px, 3.5vw, 38px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .fold-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .fold-sub {
+      font-size: 16px;
+      color: var(--text-sec);
+      max-width: 580px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===== GIT CARDS (3-column) ===== */
+    .git-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 48px;
+    }
+
+    .git-card {
+      background: var(--surface);
+      padding: 36px 28px;
+      position: relative;
+    }
+
+    .git-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+
+    .git-card:nth-child(1)::before {
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .git-card:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--cool), transparent);
+    }
+
+    .git-card:nth-child(3)::before {
+      background: linear-gradient(90deg, var(--teal), transparent);
+    }
+
+    .git-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .git-card:nth-child(1) .git-card-icon {
+      background: var(--accent-dim);
+    }
+
+    .git-card:nth-child(2) .git-card-icon {
+      background: rgba(91, 127, 255, 0.10);
+    }
+
+    .git-card:nth-child(3) .git-card-icon {
+      background: rgba(0, 180, 216, 0.10);
+    }
+
+    .git-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .git-card:nth-child(1) h3 { color: var(--accent); }
+    .git-card:nth-child(2) h3 { color: var(--cool); }
+    .git-card:nth-child(3) h3 { color: var(--teal); }
+
+    .git-card p {
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .git-card p strong {
+      color: var(--text);
+    }
+
+    /* Git visual: timeline */
+    .git-visual {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .timeline-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .timeline-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .timeline-line {
+      width: 20px;
+      height: 2px;
+      flex-shrink: 0;
+    }
+
+    .timeline-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .timeline-label.active {
+      color: var(--accent);
+    }
+
+    .timeline-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--warm);
+      margin-left: auto;
+    }
+
+    /* Branch visual */
+    .branch-visual {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 20px 16px;
+      margin-top: 12px;
+      position: relative;
+    }
+
+    .branch-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .branch-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .branch-segment {
+      height: 3px;
+      border-radius: 2px;
+      flex: 1;
+    }
+
+    .branch-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* PR visual */
+    .pr-visual {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .pr-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .pr-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .pr-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    /* Key point box */
+    .key-point {
+      border: 1px solid var(--accent-mid);
+      background: var(--accent-glow);
+      border-radius: 14px;
+      padding: 32px 36px;
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .key-point::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .key-point p {
+      font-size: 16px;
+      color: var(--text-sec);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .key-point strong {
+      color: var(--text);
+    }
+
+    .key-point .highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Where to track — 2 cards */
+    .track-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .track-card {
+      background: var(--surface);
+      padding: 32px 28px;
+      position: relative;
+    }
+
+    .track-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+
+    .track-card:first-child::before {
+      background: linear-gradient(90deg, var(--cool), transparent);
+    }
+
+    .track-card:last-child::before {
+      background: linear-gradient(90deg, var(--warm), transparent);
+    }
+
+    .track-card-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+
+    .track-card:first-child .track-card-label { color: var(--cool); }
+    .track-card:last-child .track-card-label { color: var(--warm); }
+
+    .track-card h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .track-card p {
+      font-size: 14px;
+      color: var(--text-sec);
+      line-height: 1.6;
+    }
+
+    /* ===== APP SHELL PREVIEW ===== */
+    .shell-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .shell-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .shell-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .shell-layout {
+      display: flex;
+      min-height: 320px;
+    }
+
+    .shell-sidebar {
+      width: 200px;
+      background: var(--bg);
+      border-right: 1px solid var(--border-subtle);
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+
+    .shell-sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      margin-bottom: 24px;
+    }
+
+    .shell-sidebar-logo .mark {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      color: var(--bg);
+    }
+
+    .shell-sidebar-logo .name {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .shell-ws {
+      margin: 0 12px 20px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--text-sec);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .shell-ws-arrow {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .shell-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--text-sec);
+      cursor: default;
+      transition: background 0.15s;
+    }
+
+    .shell-nav-item:hover {
+      background: var(--surface);
+    }
+
+    .shell-nav-item.active {
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-right: 2px solid var(--accent);
+    }
+
+    .shell-nav-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .shell-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .shell-topbar-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .shell-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cool);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .shell-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .shell-placeholder {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* ===== PROMPTS ===== */
+    .prompt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .prompt-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .prompt-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--surface-2);
+    }
+
+    .prompt-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .prompt-bar h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .prompt-body {
+      padding: 20px 24px;
+    }
+
+    .code-block {
+      background: #0A0A0C;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      margin: 0;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    .code-block code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .code-block .code-label {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .prompt-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* ===== FEATURES 3-GRID ===== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      padding: 32px 24px;
+      position: relative;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+    }
+
+    .feature-card:nth-child(1)::before {
+      background: linear-gradient(90deg, var(--cool), transparent);
+    }
+
+    .feature-card:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .feature-card:nth-child(3)::before {
+      background: linear-gradient(90deg, var(--teal), transparent);
+    }
+
+    .feature-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card:nth-child(1) .feature-card-icon {
+      background: rgba(91, 127, 255, 0.10);
+    }
+
+    .feature-card:nth-child(2) .feature-card-icon {
+      background: var(--accent-dim);
+    }
+
+    .feature-card:nth-child(3) .feature-card-icon {
+      background: rgba(0, 180, 216, 0.10);
+    }
+
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+
+    .feature-card:nth-child(1) h3 { color: var(--cool); }
+    .feature-card:nth-child(2) h3 { color: var(--accent); }
+    .feature-card:nth-child(3) h3 { color: var(--teal); }
+
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    .feature-card p strong {
+      color: var(--text);
+    }
+
+    /* Folder structure visual */
+    .folder-visual {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      line-height: 2;
+    }
+
+    .folder-line {
+      color: var(--text-muted);
+    }
+
+    .folder-line .folder-name {
+      color: var(--cool);
+    }
+
+    .folder-line .folder-desc {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+
+    /* Dark mode visual */
+    .dm-visual {
+      display: flex;
+      gap: 2px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .dm-half {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+    }
+
+    .dm-dark {
+      background: #0A0A0C;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 8px 0 0 8px;
+    }
+
+    .dm-light {
+      background: #F5F5F5;
+      color: #333;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* Workspace switcher visual */
+    .ws-visual {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 14px;
+    }
+
+    .ws-dropdown {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .ws-option {
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-sec);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .ws-option:last-child {
+      border-bottom: none;
+    }
+
+    .ws-option.selected {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .ws-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: rgba(0, 180, 216, 0.15);
+      color: var(--teal);
+    }
+
+    /* ===== TAKEAWAY ===== */
+    .takeaway {
+      border: 1px solid var(--accent-mid);
+      background: var(--accent-glow);
+      border-radius: 14px;
+      padding: 36px 40px;
+      text-align: center;
+      margin-top: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .takeaway::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .takeaway p {
+      font-size: 16px;
+      color: var(--text-sec);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.8;
+      position: relative;
+      z-index: 1;
+    }
+
+    .takeaway strong {
+      color: var(--text);
+    }
+
+    .takeaway .verbs {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 17px;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 32px 0;
+      text-align: center;
+      margin-top: 60px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    footer p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    footer .ft-accent {
+      color: var(--accent);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .fold { padding: 48px 0; }
+      .fold-title { font-size: 1.6rem; }
+      .fold-sub { font-size: 0.9rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero .sub { font-size: 0.95rem; }
+      .hero {
+        min-height: auto;
+        padding: 120px 24px 60px;
+      }
+      .prompt-bar { padding: 12px 16px; flex-wrap: wrap; }
+      .prompt-body { padding: 16px; }
+      .code-block { padding: 0.8rem 1rem; display: flex; flex-direction: column; }
+      .code-block code { font-size: 0.78rem; }
+      .prompt-desc { font-size: 12px; }
+      .copy-btn { position: relative; top: auto; right: auto; margin-bottom: 8px; align-self: flex-start; }
+
+      .git-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .track-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .shell-sidebar {
+        display: none;
+      }
+
+      nav { padding: 12px 16px; }
+      .nocode-logo .nc-text { display: none; }
+      .nav-sep-dot { display: none; }
+
+      .nav-left .logo .logo-text span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.5rem; }
+      .hero { padding: 100px 16px 48px; }
+      .fold-title { font-size: 1.3rem; }
+      .prompt-bar h4 { font-size: 13px; }
+      .prompt-badge { font-size: 9px; padding: 2px 8px; }
+      .hero-stats {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .anim {
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .d1 { animation-delay: 0.1s; }
+    .d2 { animation-delay: 0.2s; }
+    .d3 { animation-delay: 0.3s; }
+    .d4 { animation-delay: 0.4s; }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    /* ===== COPY BUTTON ===== */
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .copy-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { background: rgba(46,213,115,0.12); color: #2ED573; border-color: #2ED573; }
+    .copy-btn svg { width: 12px; height: 12px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="inner">
+      <div class="nav-left">
+        <a class="nocode-logo" href="#">
+          <div class="nc-icon">NC</div>
+          <div class="nc-text">NoCode <span>StartUp</span></div>
+        </a>
+        <div class="nav-sep-dot"></div>
+        <a class="logo" href="#">
+          <div class="logo-mark">PF</div>
+          <div class="logo-text">PipeFlow<span> | Aula 2.1</span></div>
+        </a>
+      </div>
+      <div class="nav-right">
+        <span class="nav-powered">Desenvolvido com</span>
+        <span class="claude-logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span class="claude-logo-text">Claude Code</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+     HERO
+     ============================================================ -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="hero-inner">
+      <div class="hero-tag anim">// modulo_2 &mdash; desenvolvimento_com_claude_code</div>
+
+      <h1 class="anim d1">
+        O esqueleto do app.<br><strong>Visual primeiro.</strong>
+      </h1>
+
+      <p class="hero-sub anim d2">
+        FASE 1: toda a interface com dados fake. Zero banco de dados, zero API key.
+        O produto ganha forma antes de tocar em backend.
+      </p>
+
+      <div class="hero-stats anim d3">
+        <div class="hero-stat accent">Fase 1</div>
+        <div class="hero-stat">6 aulas</div>
+        <div class="hero-stat">100% visual</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     FOLD 1 — GIT: A MÁQUINA DO TEMPO
+     ============================================================ -->
+  <section class="fold fade-in">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Conceito fundamental</div>
+        <h2 class="fold-title">Git: a <em>máquina do tempo</em> do projeto</h2>
+        <p class="fold-sub">
+          Antes de começar a construir, entenda como o Git protege seu trabalho.
+          Três conceitos. Três analogias. Zero complicação.
+        </p>
+      </div>
+
+      <!-- 3 Git cards -->
+      <div class="git-cards">
+
+        <!-- Card 1: Commits -->
+        <div class="git-card">
+          <div class="git-card-icon">&#x1F4F8;</div>
+          <h3>Commits = Fotos do Projeto</h3>
+          <p>
+            Cada commit é uma <strong>foto do projeto naquele momento</strong>.
+            Se algo quebrar, volta pra foto anterior. Simples assim.
+          </p>
+          <div class="git-visual">
+            <div class="timeline-row">
+              <div class="timeline-dot" style="background: var(--accent);"></div>
+              <div class="timeline-line" style="background: var(--accent);"></div>
+              <span class="timeline-label">commit 1 &mdash; "layout criado"</span>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-dot" style="background: var(--accent);"></div>
+              <div class="timeline-line" style="background: var(--accent);"></div>
+              <span class="timeline-label">commit 2 &mdash; "sidebar pronta"</span>
+            </div>
+            <div class="timeline-row">
+              <div class="timeline-dot" style="background: var(--warm);"></div>
+              <div class="timeline-line" style="background: var(--warm);"></div>
+              <span class="timeline-label">commit 3 &mdash; "algo quebrou"</span>
+              <span class="timeline-back">&#8592; volta pro 2</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Branches -->
+        <div class="git-card">
+          <div class="git-card-icon">&#x1F33F;</div>
+          <h3>Branches = Rascunhos Isolados</h3>
+          <p>
+            <strong>main</strong> = versão publicada.
+            <strong>Branch</strong> = rascunho separado.
+            Se o rascunho der errado, a versão publicada continua intacta.
+          </p>
+          <div class="branch-visual">
+            <div class="branch-line">
+              <span class="branch-tag" style="background: var(--accent-dim); color: var(--accent);">main</span>
+              <div class="branch-segment" style="background: var(--accent); opacity: 0.4;"></div>
+              <div class="branch-segment" style="background: var(--accent); opacity: 0.4;"></div>
+              <div class="branch-segment" style="background: var(--accent); opacity: 0.4;"></div>
+            </div>
+            <div class="branch-line" style="padding-left: 60px;">
+              <span class="branch-tag" style="background: rgba(91,127,255,0.1); color: var(--cool);">feature</span>
+              <div class="branch-segment" style="background: var(--cool); opacity: 0.4;"></div>
+              <div class="branch-segment" style="background: var(--cool); opacity: 0.4;"></div>
+            </div>
+            <div style="text-align: center; margin-top: 8px;">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--teal);">&#8593; merge de volta</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Pull Request -->
+        <div class="git-card">
+          <div class="git-card-icon">&#x2705;</div>
+          <h3>Pull Request = Pedido de Aprovação</h3>
+          <p>
+            Rascunho pronto? Abra um <strong>Pull Request</strong> &mdash;
+            é um pedido pra juntar o rascunho de volta na versão estável.
+          </p>
+          <div class="pr-visual">
+            <div class="pr-step">
+              <div class="pr-icon" style="background: rgba(91,127,255,0.15); color: var(--cool);">&#x1F4DD;</div>
+              <span>1. Cria a branch e desenvolve</span>
+            </div>
+            <div class="pr-step">
+              <div class="pr-icon" style="background: rgba(0,180,216,0.15); color: var(--teal);">&#x1F50D;</div>
+              <span>2. Abre o PR pra revisão</span>
+            </div>
+            <div class="pr-step">
+              <div class="pr-icon" style="background: var(--accent-dim); color: var(--accent);">&#x2705;</div>
+              <span>3. Aprova e faz o merge na main</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key point -->
+      <div class="key-point">
+        <p>
+          Quem faz tudo isso? <strong>O Claude Code.</strong>
+          Você pede em português. Ele executa.
+          O pensamento é: <span class="highlight">isolar &rarr; salvar progresso &rarr; revisar &rarr; integrar.</span>
+        </p>
+      </div>
+
+      <!-- Where to track -->
+      <div class="fold-header" style="margin-bottom: 32px;">
+        <div class="fold-tag">Onde acompanhar?</div>
+      </div>
+
+      <div class="track-cards">
+        <div class="track-card">
+          <div class="track-card-label">No Cursor (IDE)</div>
+          <h4>Controle de código-fonte</h4>
+          <p>
+            Na barra lateral, o ícone de controle de código-fonte (parece uma ramificação).
+            Ali você vê arquivos alterados, commits e a branch atual.
+          </p>
+        </div>
+        <div class="track-card">
+          <div class="track-card-label">No GitHub</div>
+          <h4>Pull Requests e histórico</h4>
+          <p>
+            Quando o Claude Code faz push e abre o PR, tudo aparece no GitHub:
+            commits, arquivos alterados, e você pode aprovar.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     FOLD 2 — O QUE VAMOS CONSTRUIR
+     ============================================================ -->
+  <section class="fold fade-in">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Preview da aula</div>
+        <h2 class="fold-title">O que vamos <em>construir</em></h2>
+        <p class="fold-sub">
+          O esqueleto visual do PipeFlow: sidebar, barra superior, navegação entre páginas
+          e seletor de workspace. Tudo com dados fake.
+        </p>
+      </div>
+
+      <!-- App Shell Preview -->
+      <div class="shell-preview">
+        <div class="shell-titlebar">
+          <div class="shell-dot" style="background: #FF5F57;"></div>
+          <div class="shell-dot" style="background: #FEBC2E;"></div>
+          <div class="shell-dot" style="background: #28C840;"></div>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); margin-left: 12px;">localhost:3000</span>
+        </div>
+        <div class="shell-layout">
+          <!-- Sidebar -->
+          <div class="shell-sidebar">
+            <div class="shell-sidebar-logo">
+              <div class="mark">P</div>
+              <div class="name">PipeFlow</div>
+            </div>
+            <div class="shell-ws">
+              <span>Minha Empresa</span>
+              <span class="shell-ws-arrow">&#9662;</span>
+            </div>
+            <div class="shell-nav-item active">
+              <span class="shell-nav-icon">&#x25A6;</span>
+              <span>Dashboard</span>
+            </div>
+            <div class="shell-nav-item">
+              <span class="shell-nav-icon">&#x1F465;</span>
+              <span>Leads</span>
+            </div>
+            <div class="shell-nav-item">
+              <span class="shell-nav-icon">&#x25B6;</span>
+              <span>Pipeline</span>
+            </div>
+            <div class="shell-nav-item">
+              <span class="shell-nav-icon">&#x2699;</span>
+              <span>Configurações</span>
+            </div>
+          </div>
+          <!-- Main -->
+          <div class="shell-main">
+            <div class="shell-topbar">
+              <div class="shell-topbar-title">Dashboard</div>
+              <div class="shell-avatar">DF</div>
+            </div>
+            <div class="shell-content">
+              <div class="shell-placeholder">
+                &#x2592;&#x2592;&#x2592; conteúdo das próximas aulas &#x2592;&#x2592;&#x2592;<br>
+                <span style="font-size: 11px; color: var(--text-muted);">leads, pipeline, gráficos...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     FOLD 3 — OS PROMPTS DA AULA
+     ============================================================ -->
+  <section class="fold fade-in">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Na prática</div>
+        <h2 class="fold-title">Os prompts que você vai <em>usar</em></h2>
+        <p class="fold-sub">
+          Quatro prompts. Copie, cole no Claude Code e acompanhe o resultado.
+          O ciclo completo: planejar, construir, revisar, integrar.
+        </p>
+      </div>
+
+      <div class="prompt-list">
+
+        <!-- Prompt 1 -->
+        <div class="prompt-item">
+          <div class="prompt-bar">
+            <div class="prompt-badge">Prompt 1</div>
+            <h4>Planejamento + Branch</h4>
+          </div>
+          <div class="prompt-body">
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+              <code>Leia o CLAUDE.md e o PLAN.md. Estamos na aula 2.1 — Design System e App Shell.
+Crie uma branch pra essa feature e me descreva o que vai implementar.</code>
+            </div>
+            <p class="prompt-desc">O Claude lê o plano do projeto, cria uma branch separada e descreve o que vai fazer antes de começar.</p>
+          </div>
+        </div>
+
+        <!-- Prompt 2 -->
+        <div class="prompt-item">
+          <div class="prompt-bar">
+            <div class="prompt-badge">Prompt 2</div>
+            <h4>Execução</h4>
+          </div>
+          <div class="prompt-body">
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+              <code>Implemente o esqueleto visual do PipeFlow conforme o PLAN.md:
+sidebar com menu de navegação, barra superior, seletor de workspace com dados fake,
+dark mode como padrão, e componentes base que vamos reutilizar nas próximas aulas.
+Sidebar que vira menu hamburguer no celular.</code>
+            </div>
+            <p class="prompt-desc">Um único prompt e o Claude Code constrói toda a estrutura visual. Sidebar, topbar, workspace switcher, dark mode, responsivo.</p>
+          </div>
+        </div>
+
+        <!-- Prompt 3 -->
+        <div class="prompt-item">
+          <div class="prompt-bar">
+            <div class="prompt-badge">Prompt 3</div>
+            <h4>Revisão</h4>
+          </div>
+          <div class="prompt-body">
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+              <code>Revise o que você criou. Confere se a sidebar funciona em mobile, se a navegação troca entre as páginas e se o dark mode ta aplicado direitinho.</code>
+            </div>
+            <p class="prompt-desc">O Claude revisa o próprio trabalho: checa responsividade, navegação e visual antes de você testar.</p>
+          </div>
+        </div>
+
+        <!-- Prompt 4 -->
+        <div class="prompt-item">
+          <div class="prompt-bar">
+            <div class="prompt-badge">Prompt 4</div>
+            <h4>Commit + PR</h4>
+          </div>
+          <div class="prompt-body">
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+              <code>Faça o commit dessa feature, abra um PR pra main, faça o merge e delete a branch.</code>
+            </div>
+            <p class="prompt-desc">Git completo pelo Claude Code: commit, push, Pull Request, merge e limpeza. Você só acompanha.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     FOLD 4 — DESTAQUES VISUAIS
+     ============================================================ -->
+  <section class="fold fade-in">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Destaques técnicos</div>
+        <h2 class="fold-title">Três conceitos que o Claude Code <em>aplica</em></h2>
+        <p class="fold-sub">
+          Route groups, dark mode e workspace switcher.
+          Explicados de forma simples &mdash; sem jargão.
+        </p>
+      </div>
+
+      <div class="features-grid">
+
+        <!-- Route Groups -->
+        <div class="feature-card">
+          <div class="feature-card-icon">&#x1F4C2;</div>
+          <h3>Route Groups</h3>
+          <p>
+            As <strong>pastas com parênteses</strong> organizam as rotas sem afetar a URL.
+            Cada grupo define seu layout.
+          </p>
+          <div class="folder-visual">
+            <div class="folder-line">&nbsp;&nbsp;app/</div>
+            <div class="folder-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="folder-name">(app)/</span> <span class="folder-desc">&larr; área logada com sidebar</span></div>
+            <div class="folder-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="folder-name">(auth)/</span> <span class="folder-desc">&larr; telas de login</span></div>
+            <div class="folder-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="folder-name">(marketing)/</span> <span class="folder-desc">&larr; landing page</span></div>
+          </div>
+        </div>
+
+        <!-- Dark Mode -->
+        <div class="feature-card">
+          <div class="feature-card-icon">&#x1F319;</div>
+          <h3>Dark Mode</h3>
+          <p>
+            O app usa <strong>dark mode</strong>. A landing page usa light mode.
+            Cada route group define seu visual.
+          </p>
+          <div class="dm-visual">
+            <div class="dm-half dm-dark">
+              (app)/<br>dark mode
+            </div>
+            <div class="dm-half dm-light">
+              (marketing)/<br>light mode
+            </div>
+          </div>
+        </div>
+
+        <!-- Workspace Switcher -->
+        <div class="feature-card">
+          <div class="feature-card-icon">&#x1F3E2;</div>
+          <h3>Workspace Switcher</h3>
+          <p>
+            Troca de empresa sem sair do app. <strong>Dados fake por enquanto</strong>
+            &mdash; na FASE 2, conecta com o banco.
+          </p>
+          <div class="ws-visual">
+            <div class="ws-dropdown">
+              <div class="ws-option selected">
+                <span>Minha Empresa</span>
+                <span style="color: var(--accent); font-size: 12px;">&#10003;</span>
+              </div>
+              <div class="ws-option">
+                <span>Outra Empresa</span>
+                <span class="ws-badge">fake</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     TAKEAWAY
+     ============================================================ -->
+  <section class="fold fade-in">
+    <div class="container">
+      <div class="takeaway">
+        <p>
+          <strong>Essa aula é o esqueleto.</strong><br>
+          Sidebar, navbar, dark mode, navegação. Tudo visual, zero backend.<br>
+          Esse é o poder da FASE 1 &mdash; o produto ganha forma antes de complicar.<br><br>
+          <span class="verbs">Planejar &rarr; Construir &rarr; Testar &rarr; Integrar</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
+        <!-- NoCode StartUp -->
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.45rem;color:var(--bg);">NC</div>
+          <span style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);">NoCode <span style="color:var(--text-muted);font-weight:400;">StartUp</span></span>
+        </div>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <!-- PipeFlow -->
+        <span class="ft-accent" style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;">PipeFlow CRM</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <!-- Claude Code -->
+        <div style="display:flex;align-items:center;gap:0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span style="font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;color:var(--text-sec);">Claude Code</span>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Do Zero ao App com Claude Code &middot; Engenharia de Produtos com IA</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll-triggered fade-in animation
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    faders.forEach(el => observer.observe(el));
+  </script>
+
+  <script>
+  function copyCode(btn) {
+    const block = btn.closest('.code-block, .prompt-block');
+    const code = block.querySelector('code');
+    navigator.clipboard.writeText(code.textContent.trim()).then(() => {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+  </script>
+
+</body>
+
+</html>

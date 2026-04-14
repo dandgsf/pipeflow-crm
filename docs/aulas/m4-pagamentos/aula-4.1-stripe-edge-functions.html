@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 4.1 — Stripe via Edge Functions | PipeFlow CRM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --accent: #CAFF33;
+      --accent-dim: rgba(202, 255, 51, 0.10);
+      --accent-mid: rgba(202, 255, 51, 0.18);
+      --accent-glow: rgba(202, 255, 51, 0.06);
+      --bg: #0C0C0E;
+      --surface: #141416;
+      --surface-2: #1A1A1E;
+      --border: #2A2A2E;
+      --border-subtle: #1E1E22;
+      --text: #E8E8E8;
+      --text-sec: #8A8A8F;
+      --text-muted: #555559;
+      --cool: #5B7FFF;
+      --warm: #FF6B35;
+      --teal: #00B4D8;
+      --positive: #2ED573;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    ::selection { background: var(--accent); color: var(--bg); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 16px 24px;
+      background: rgba(12,12,14,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    nav .inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 1rem; }
+
+    .nocode-logo { display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
+    .nocode-logo .nc-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--accent), #9ECC26);
+      border-radius: 6px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.55rem; color: var(--bg);
+    }
+    .nocode-logo .nc-text { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--text); }
+    .nocode-logo .nc-text span { color: var(--text-muted); font-weight: 400; }
+
+    .nav-sep-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark {
+      width: 30px; height: 30px; background: var(--accent); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: var(--bg);
+    }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 16px; color: var(--text); }
+    .logo-text span { color: var(--text-muted); font-weight: 400; font-size: 13px; margin-left: 4px; }
+
+    .nav-right { display: flex; align-items: center; gap: 0.6rem; }
+    .nav-powered { font-family: 'IBM Plex Mono', monospace; font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; }
+    .claude-logo { display: flex; align-items: center; gap: 0.4rem; }
+    .claude-logo-text { font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--text-sec); }
+
+    /* ===== CONTAINER ===== */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; min-height: 60vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 60px; overflow: hidden;
+    }
+
+    .hero .orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 10s ease-in-out infinite; pointer-events: none; }
+    .hero .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(202,255,51,0.18), transparent 70%); top: -15%; left: 5%; }
+    .hero .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(91,127,255,0.12), transparent 70%); bottom: -10%; right: 5%; animation-delay: -4s; }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(25px,-15px) scale(1.05); }
+      66% { transform: translate(-15px,10px) scale(0.97); }
+    }
+
+    .hero-tag { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 28px; position: relative; z-index: 2; }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif; font-size: clamp(32px, 4.5vw, 48px); font-weight: 700;
+      line-height: 1.2; letter-spacing: -1.5px; color: var(--text-sec); margin-bottom: 20px;
+      position: relative; z-index: 2; max-width: 700px;
+    }
+    .hero h1 strong { color: var(--text); font-weight: 800; }
+    .hero h1 .highlight { color: var(--accent); }
+
+    .hero .subtitle { color: var(--text-sec); font-size: 1.1rem; z-index: 2; position: relative; max-width: 580px; line-height: 1.7; }
+
+    /* ===== FOLD ===== */
+    .fold { padding: 80px 0; border-top: 1px solid var(--border-subtle); }
+    .fold-header { text-align: center; margin-bottom: 48px; }
+    .fold-tag { font-family: 'IBM Plex Mono', monospace; font-size: 14px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 14px; }
+    .fold-title { font-family: 'Syne', sans-serif; font-size: clamp(26px, 3.5vw, 38px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 14px; }
+    .fold-title em { font-style: normal; color: var(--accent); }
+    .fold-sub { font-size: 16px; color: var(--text-sec); max-width: 580px; margin: 0 auto; line-height: 1.7; }
+
+    /* ===== BUILD GRID ===== */
+    .build-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+      border-radius: 14px; overflow: hidden; margin-bottom: 40px;
+    }
+
+    .build-card {
+      background: var(--surface); padding: 32px 28px; position: relative;
+    }
+
+    .build-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+    .build-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent), transparent); }
+    .build-card:nth-child(2)::before { background: linear-gradient(90deg, var(--cool), transparent); }
+    .build-card:nth-child(3)::before { background: linear-gradient(90deg, var(--teal), transparent); }
+    .build-card:nth-child(4)::before { background: linear-gradient(90deg, var(--warm), transparent); }
+
+    .build-card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 14px;
+    }
+
+    .build-card:nth-child(1) .build-card-icon { background: var(--accent-dim); }
+    .build-card:nth-child(2) .build-card-icon { background: rgba(91,127,255,0.10); }
+    .build-card:nth-child(3) .build-card-icon { background: rgba(0,180,216,0.10); }
+    .build-card:nth-child(4) .build-card-icon { background: rgba(255,107,53,0.10); }
+
+    .build-card h4 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; }
+    .build-card p { font-size: 14px; color: var(--text-sec); line-height: 1.6; }
+
+    /* ===== PROMPT BLOCKS ===== */
+    .prompt-block {
+      background: #0A0A0C; border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.2rem 1.4rem; margin: 1rem 0; overflow-x: auto; position: relative;
+    }
+    .prompt-block .prompt-label {
+      position: absolute; top: 0.5rem; right: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .prompt-block code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; color: var(--accent);
+      line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+    }
+
+    .prompt-num { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; margin-top: 24px; }
+    .prompt-num:first-child { margin-top: 0; }
+    .prompt-desc { font-size: 15px; color: var(--text-sec); margin-bottom: 8px; line-height: 1.6; }
+
+    /* ===== TIP / WARN ===== */
+    .tip-box {
+      background: rgba(91,127,255,0.06); border: 1px solid rgba(91,127,255,0.2); border-radius: 10px;
+      padding: 1rem 1.3rem; margin: 1.5rem 0; display: flex; align-items: flex-start; gap: 0.8rem;
+    }
+    .tip-box .t-icon {
+      width: 24px; height: 24px; min-width: 24px; border-radius: 50%;
+      background: rgba(91,127,255,0.15); display: flex; align-items: center; justify-content: center;
+      color: var(--cool); font-size: 0.8rem; margin-top: 2px;
+    }
+    .tip-box p { font-size: 0.95rem; color: var(--cool); line-height: 1.6; }
+
+    /* ===== CYCLE REMINDER ===== */
+    .cycle-reminder { text-align: center; padding: 20px 0; margin: 32px 0; }
+    .cycle-reminder span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: -0.3px; }
+    .cycle-reminder .c-plan { color: var(--accent); }
+    .cycle-reminder .c-build { color: var(--cool); }
+    .cycle-reminder .c-test { color: var(--warm); }
+    .cycle-reminder .c-iter { color: var(--teal); }
+    .cycle-reminder .c-arrow { color: var(--border); margin: 0 4px; }
+
+    /* ===== TAKEAWAY ===== */
+    .takeaway {
+      border: 1px solid var(--accent-mid); background: var(--accent-glow); border-radius: 14px;
+      padding: 36px 40px; text-align: center; margin-top: 48px; position: relative; overflow: hidden;
+    }
+    .takeaway::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .takeaway p { font-size: 16px; color: var(--text-sec); max-width: 600px; margin: 0 auto; line-height: 1.8; position: relative; z-index: 1; }
+    .takeaway strong { color: var(--text); }
+    .takeaway .verbs { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--accent); font-size: 17px; }
+
+    /* ===== FOOTER ===== */
+    footer { padding: 32px 0; text-align: center; margin-top: 60px; border-top: 1px solid var(--border-subtle); }
+    footer p { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--text-muted); }
+    footer .ft-accent { color: var(--accent); }
+
+    /* ===== COPY BUTTON ===== */
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-sec);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .copy-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { background: rgba(46,213,115,0.12); color: #2ED573; border-color: #2ED573; }
+    .copy-btn svg { width: 12px; height: 12px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { min-height: auto; padding: 120px 24px 60px; }
+      .build-grid { grid-template-columns: 1fr; }
+      .nav-right .nav-powered { display: none; }
+      .container { padding: 0 16px; }
+      .fold { padding: 48px 0; }
+      .fold-title { font-size: 1.6rem; }
+      .fold-sub { font-size: 0.9rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero .sub { font-size: 0.95rem; }
+      .prompt-block { padding: 0.8rem 1rem; display: flex; flex-direction: column; }
+      .prompt-block code { font-size: 0.78rem; }
+      .copy-btn { position: relative; top: auto; right: auto; margin-bottom: 8px; align-self: flex-start; }
+      nav { padding: 12px 16px; }
+      .nocode-logo .nc-text { display: none; }
+      .nav-sep-dot { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 1.5rem; }
+      .hero { padding: 100px 16px 48px; }
+      .fold-title { font-size: 1.3rem; }
+      .prompt-num { font-size: 12px; }
+      .prompt-desc { font-size: 13px; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .fade-in { opacity: 0; transform: translateY(20px); }
+    .fade-in.visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease, transform 0.6s ease; }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; background: var(--accent);
+      z-index: 200; transition: width 0.1s; box-shadow: 0 0 10px rgba(202,255,51,0.4);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="inner">
+      <div class="nav-left">
+        <a class="nocode-logo" href="#">
+          <div class="nc-icon">NC</div>
+          <div class="nc-text">NoCode <span>StartUp</span></div>
+        </a>
+        <div class="nav-sep-dot"></div>
+        <a class="logo" href="#">
+          <div class="logo-mark">PF</div>
+          <div class="logo-text">PipeFlow<span> | Aula 4.1</span></div>
+        </a>
+      </div>
+      <div class="nav-right">
+        <span class="nav-powered">Desenvolvido com</span>
+        <span class="claude-logo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span class="claude-logo-text">Claude Code</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+     DOBRA 1 — HERO
+     ============================================================ -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="hero-tag fade-in">// aula_4.1_stripe_edge_functions</div>
+
+    <h1 class="fade-in">
+      Checkout, webhook e planos.<br><strong>O CRM começa a <span class="highlight">faturar.</span></strong>
+    </h1>
+
+    <p class="subtitle fade-in">
+      O Stripe cuida do pagamento. Uma Edge Function do Supabase recebe a confirmação e ativa o plano automaticamente. Separação limpa: Next.js cuida da interface, Supabase cuida do dinheiro.
+    </p>
+  </section>
+
+  <!-- ============================================================
+     DOBRA 2 — O QUE VAMOS CONSTRUIR
+     ============================================================ -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">O que essa aula constrói</div>
+        <h2 class="fold-title">Quatro peças. <em>Receita ativada.</em></h2>
+        <p class="fold-sub">
+          Checkout via Stripe, webhook via Edge Function, limites por plano e portal do cliente. Tudo que um SaaS precisa pra cobrar.
+        </p>
+      </div>
+
+      <div class="build-grid fade-in">
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F4B3;</div>
+          <h4>Stripe Checkout</h4>
+          <p>Botão 'Assinar Pro' redireciona pro Stripe. Eles hospedam o pagamento — cartão, Pix, tudo pronto.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x26A1;</div>
+          <h4>Edge Function (Webhook)</h4>
+          <p>Quando o Stripe confirma o pagamento, manda um POST pra Edge Function do Supabase. Ela ativa o plano no banco.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F512;</div>
+          <h4>Limites de Plano</h4>
+          <p>Free: 50 leads e 2 membros. Pro: ilimitado. A função canAddLead() e canAddMember() controlam tudo.</p>
+        </div>
+        <div class="build-card">
+          <div class="build-card-icon">&#x1F39B;&#xFE0F;</div>
+          <h4>Customer Portal</h4>
+          <p>Página pronta do Stripe pra gerenciar assinatura. Trocar cartão, cancelar, nota fiscal — sem código extra.</p>
+        </div>
+      </div>
+
+      <div class="cycle-reminder fade-in">
+        <span class="c-plan">Planejar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-build">Construir</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-test">Testar</span>
+        <span class="c-arrow">&#x2192;</span>
+        <span class="c-iter">Iterar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+     DOBRA 3 — PROMPTS + TAKEAWAY
+     ============================================================ -->
+  <section class="fold">
+    <div class="container">
+      <div class="fold-header">
+        <div class="fold-tag">Os prompts da aula</div>
+        <h2 class="fold-title">Do planejamento <em>ao deploy</em></h2>
+      </div>
+
+      <!-- Prompt 1 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 01 — Planejamento</div>
+        <p class="prompt-desc">Criar a branch e alinhar com o Claude o que vai ser feito.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Leia o CLAUDE.md e o PLAN.md. Estamos na aula 4.1 — Monetização com Stripe via Supabase Edge Functions. Crie a branch feat/billing e me descreva o que vai implementar.</code>
+        </div>
+      </div>
+
+      <!-- Prompt 2 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 02 — Chaves do Stripe</div>
+        <p class="prompt-desc">Configurar as variáveis de ambiente do Stripe.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Adicione no .env.local as chaves do Stripe:
+STRIPE_SECRET_KEY=[cola aqui]
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=[cola aqui]
+STRIPE_PRO_PRICE_ID=[cola aqui]</code>
+        </div>
+      </div>
+
+      <!-- Prompt 3 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 03 — Checkout (Server Action)</div>
+        <p class="prompt-desc">Implementar o checkout do Stripe usando Server Action do Next.js.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Implemente o checkout do Stripe usando Server Action:
+- Server Action createCheckoutSession() em src/app/actions/stripe.ts
+- Cria uma Checkout Session com o STRIPE_PRO_PRICE_ID
+- Passa workspace_id e user_id como metadata
+- success_url e cancel_url apontando pra /settings/billing
+- Retorna a URL do Stripe pro frontend redirecionar</code>
+        </div>
+      </div>
+
+      <!-- Prompt 4 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 04 — Edge Function (Webhook)</div>
+        <p class="prompt-desc">Criar a Edge Function do Supabase para receber eventos do Stripe.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Crie a Edge Function do Supabase para o webhook do Stripe:
+1. npx supabase init (se ainda não inicializado)
+2. npx supabase functions new stripe-webhook
+3. Implemente supabase/functions/stripe-webhook/index.ts:
+   - Verificar assinatura do Stripe (STRIPE_WEBHOOK_SECRET)
+   - checkout.session.completed → ativar plano Pro (upsert subscriptions)
+   - customer.subscription.deleted → voltar pro Free
+   - invoice.payment_failed → marcar como payment_failed
+   - Usar service_role key pra acessar o banco
+   - É Deno, não Node.js. Usar Deno.serve() e imports de https://esm.sh/</code>
+        </div>
+      </div>
+
+      <!-- Prompt 5 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 05 — Secrets e Teste Local</div>
+        <p class="prompt-desc">Configurar secrets e testar o webhook localmente com Stripe CLI.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Configure os secrets da Edge Function:
+npx supabase secrets set STRIPE_SECRET_KEY=sk_test_... STRIPE_WEBHOOK_SECRET=whsec_...
+
+Para testar local:
+npx supabase functions serve stripe-webhook --env-file supabase/.env.local
+stripe listen --forward-to http://127.0.0.1:54321/functions/v1/stripe-webhook</code>
+        </div>
+      </div>
+
+      <!-- Prompt 6 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 06 — Limites e Billing Page</div>
+        <p class="prompt-desc">Implementar limites de plano e a página de cobrança.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Implemente os limites de plano e a página de cobrança:
+- Plano Free: máximo 50 leads e 2 membros. Mostrar aviso ao atingir limite.
+- Página /settings/billing com plano atual, comparação Free vs Pro, botão assinar
+- Botão "Gerenciar Assinatura" abre o Customer Portal do Stripe
+- canAddLead() e canAddMember() em src/lib/limits.ts</code>
+        </div>
+      </div>
+
+      <!-- Prompt 7 -->
+      <div class="fade-in">
+        <div class="prompt-num">Prompt 07 — Deploy e Commit</div>
+        <p class="prompt-desc">Deploy da Edge Function, commit final e merge.</p>
+        <div class="prompt-block">
+          <button class="copy-btn" onclick="copyCode(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Copiar</button>
+          <code>Faça o deploy da Edge Function (npx supabase functions deploy stripe-webhook), commit, PR pra main, merge e delete a branch.</code>
+        </div>
+      </div>
+
+      <div class="tip-box fade-in">
+        <div class="t-icon">i</div>
+        <p>O webhook roda no Supabase, não no Next.js. Vantagem: fica perto do banco, roda independente do front, e a chave secreta do Stripe nunca precisa ir pro Vercel.</p>
+      </div>
+
+      <!-- Takeaway -->
+      <div class="takeaway fade-in">
+        <p>
+          <strong>CRM monetizado.</strong><br>
+          Checkout via Server Action, webhook via Edge Function, limites de plano, Customer Portal.<br>
+          Na próxima aula: auditoria de segurança antes do deploy.<br>
+          <span class="verbs">Stripe configurado. Receita ativada.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.4rem;">
+          <div style="width:20px;height:20px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.45rem;color:var(--bg);">NC</div>
+          <span style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;color:var(--text);">NoCode <span style="color:var(--text-muted);font-weight:400;">StartUp</span></span>
+        </div>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <span class="ft-accent" style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:600;">PipeFlow CRM</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--border);display:inline-block;"></span>
+        <div style="display:flex;align-items:center;gap:0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.604 8.516c-.104-.36-.584-.36-.688 0l-.78 2.692a.356.356 0 01-.244.244l-2.692.78c-.36.104-.36.584 0 .688l2.692.78c.116.034.21.128.244.244l.78 2.692c.104.36.584.36.688 0l.78-2.692a.356.356 0 01.244-.244l2.692-.78c.36-.104.36-.584 0-.688l-2.692-.78a.356.356 0 01-.244-.244l-.78-2.692z" fill="#E87040"/>
+            <path d="M9.156 4.26c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183L9.156 4.26z" fill="#E87040"/>
+            <path d="M8.156 14.76c-.078-.27-.438-.27-.516 0l-.585 2.019a.267.267 0 01-.183.183l-2.019.585c-.27.078-.27.438 0 .516l2.019.585c.087.025.158.096.183.183l.585 2.019c.078.27.438.27.516 0l.585-2.019a.267.267 0 01.183-.183l2.019-.585c.27-.078.27-.438 0-.516l-2.019-.585a.267.267 0 01-.183-.183l-.585-2.019z" fill="#E87040"/>
+          </svg>
+          <span style="font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;color:var(--text-sec);">Claude Code</span>
+        </div>
+      </div>
+      <p style="font-size:0.8rem;">Do Zero ao App com Claude Code &middot; Engenharia de Produtos com IA</p>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', function() {
+      var h = document.documentElement;
+      var pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+    });
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); });
+  </script>
+
+  <script>
+  var copySvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  var checkSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+  function copyCode(btn) {
+    var block = btn.closest('.code-block, .prompt-block');
+    var code = block.querySelector('code');
+    navigator.clipboard.writeText(code.textContent.trim()).then(function() {
+      btn.textContent = '';
+      var svgContainer = document.createElement('span');
+      svgContainer.insertAdjacentHTML('afterbegin', checkSvg);
+      btn.appendChild(svgContainer.firstChild);
+      btn.appendChild(document.createTextNode('Copiado!'));
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = '';
+        var svgContainer2 = document.createElement('span');
+        svgContainer2.insertAdjacentHTML('afterbegin', copySvg);
+        btn.appendChild(svgContainer2.firstChild);
+        btn.appendChild(document.createTextNode('Copiar'));
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+  </script>
+
+</body>
+</html>
