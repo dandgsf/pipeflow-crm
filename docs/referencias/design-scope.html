@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PipeFlow CRM — Escopo de Design Visual</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #CAFF33;
+    --accent-dim: rgba(202,255,51,0.15);
+    --accent-glow: rgba(202,255,51,0.08);
+    --bg: #0C0C0E;
+    --surface: #141416;
+    --surface-2: #1A1A1E;
+    --border: #2A2A2E;
+    --border-subtle: #1E1E22;
+    --text: #E8E8E8;
+    --text-sec: #8A8A8F;
+    --text-muted: #555559;
+    --positive: #2ED573;
+    --negative: #FF4757;
+    --cool: #5B7FFF;
+    --warm: #FF6B35;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== HERO ===== */
+  .doc-hero {
+    position: relative;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+  .doc-hero .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 10s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .doc-hero .orb-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(202,255,51,0.2), transparent 70%);
+    top: -10%; left: 10%;
+  }
+  .doc-hero .orb-2 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(91,127,255,0.15), transparent 70%);
+    bottom: -10%; right: 10%;
+    animation-delay: -4s;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(25px,-15px) scale(1.05); }
+    66% { transform: translate(-15px,10px) scale(0.97); }
+  }
+
+  .doc-hero .logo {
+    position: relative;
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    z-index: 2;
+    margin-bottom: 0.5rem;
+  }
+  .doc-hero .logo span { color: var(--accent); }
+  .doc-hero .logo .flow-line {
+    position: absolute;
+    bottom: -4px; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+    animation: flowPulse 3s ease-in-out infinite;
+  }
+  @keyframes flowPulse {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+    50% { opacity: 1; transform: scaleX(1); }
+  }
+
+  .doc-hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    z-index: 2;
+    position: relative;
+    margin-top: 1rem;
+  }
+  .doc-hero .subtitle {
+    color: var(--text-sec);
+    font-size: 1.05rem;
+    z-index: 2;
+    position: relative;
+    margin-top: 0.5rem;
+    max-width: 600px;
+  }
+  .doc-hero .meta-bar {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    z-index: 2;
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .doc-hero .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--text-sec);
+  }
+  .doc-hero .meta-item .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .hero-wave {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 200%;
+    animation: waveScroll 14s linear infinite;
+  }
+  @keyframes waveScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ===== NAV ===== */
+  .doc-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(12,12,14,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0.8rem 2rem;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .doc-nav a {
+    color: var(--text-sec);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .doc-nav a:hover { color: var(--accent); }
+
+  /* ===== SECTIONS ===== */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  section {
+    padding: 4rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .section-desc {
+    color: var(--text-sec);
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    max-width: 700px;
+  }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    gap: 1rem;
+  }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  @media (max-width: 768px) {
+    .card-grid-2, .card-grid-3, .card-grid-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(202,255,51,0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(202,255,51,0.06);
+  }
+  .card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .card p {
+    color: var(--text-sec);
+    font-size: 0.87rem;
+    line-height: 1.6;
+  }
+  .card .icon {
+    width: 36px; height: 36px;
+    background: var(--accent-dim);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+
+  /* ===== DEMO BLOCKS ===== */
+  .demo-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .demo-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .demo-label .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--positive);
+    animation: livePulse 2s ease-in-out infinite;
+  }
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .demo-body {
+    padding: 1.5rem;
+  }
+
+  /* ===== HERO DEMO ===== */
+  .hero-demo {
+    position: relative;
+    height: 280px;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--bg) 0%, #0a1a0a 50%, var(--bg) 100%);
+  }
+  .hero-demo .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .hero-demo .h-orb1 {
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(202,255,51,0.22), transparent 70%);
+    top: 10%; left: 15%;
+  }
+  .hero-demo .h-orb2 {
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(91,127,255,0.18), transparent 70%);
+    top: 25%; right: 15%;
+    animation-delay: -3s;
+  }
+  .hero-demo .h-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding-top: 45px;
+  }
+  .hero-demo .h-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+  .hero-demo .h-content h3 span { color: var(--accent); }
+  .hero-demo .h-content p {
+    color: var(--text-sec);
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+  }
+  .hero-demo .h-btn {
+    display: inline-block;
+    margin-top: 0.8rem;
+    padding: 8px 22px;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+  .hero-demo .h-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(202,255,51,0.35);
+  }
+  .hero-demo svg.wave {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 200%; height: 50px;
+    animation: waveScroll 12s linear infinite;
+  }
+  .hero-demo svg.wave-2 {
+    height: 35px; opacity: 0.4;
+    animation: waveScroll 18s linear infinite reverse;
+    bottom: 8px;
+  }
+
+  /* ===== CASES DEMO ===== */
+  .cases-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .case-card {
+    flex: 1;
+    min-width: 180px;
+    background: rgba(20,20,22,0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    text-align: center;
+    animation: caseFloat 3.5s ease-in-out infinite;
+    transition: border-color 0.3s;
+  }
+  .case-card:nth-child(2) { animation-delay: -1.2s; }
+  .case-card:nth-child(3) { animation-delay: -2.4s; }
+  .case-card:hover { border-color: rgba(202,255,51,0.3); }
+  .case-card .big-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .case-card .case-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 0.2rem;
+  }
+  .case-card .case-company {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  @keyframes caseFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ===== LOGO DEMO ===== */
+  .logo-showcase {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+  }
+  .logo-variant {
+    text-align: center;
+  }
+  .logo-variant .logo-render {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    position: relative;
+    display: inline-block;
+  }
+  .logo-variant .logo-render span { color: var(--accent); }
+  .logo-variant .logo-render .fl {
+    position: absolute;
+    bottom: -3px; left: 0; width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+    animation: flowPulse 3s ease-in-out infinite;
+  }
+  .logo-variant .variant-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.8rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .logo-big { font-size: 2.8rem; }
+  .logo-med { font-size: 1.6rem; }
+  .logo-sm { font-size: 1rem; }
+
+  /* ===== GLASS CARDS DEMO ===== */
+  .glass-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+  }
+  @media (max-width: 768px) {
+    .glass-row { grid-template-columns: 1fr 1fr; }
+  }
+  .glass-card {
+    background: rgba(26,26,30,0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(202,255,51,0.08);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+  }
+  .glass-card:hover {
+    border-color: rgba(202,255,51,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(202,255,51,0.08);
+  }
+  .glass-card .gl-label {
+    font-size: 0.72rem;
+    color: var(--text-sec);
+    margin-bottom: 0.2rem;
+  }
+  .glass-card .gl-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .glass-card .gl-delta {
+    font-size: 0.72rem;
+    color: var(--positive);
+    margin-top: 0.2rem;
+  }
+
+  /* ===== TABLE ===== */
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  .spec-table th, .spec-table td {
+    text-align: left;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.88rem;
+  }
+  .spec-table th {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .spec-table td { color: var(--text-sec); }
+  .spec-table td:first-child { color: var(--text); font-weight: 500; }
+  .spec-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .badge-green { background: rgba(46,213,115,0.15); color: var(--positive); }
+  .badge-accent { background: var(--accent-dim); color: var(--accent); }
+  .badge-blue { background: rgba(91,127,255,0.15); color: var(--cool); }
+  .badge-orange { background: rgba(255,107,53,0.15); color: var(--warm); }
+
+  /* ===== CHECKLIST ===== */
+  .checklist {
+    list-style: none;
+  }
+  .checklist li {
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-sec);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+  .checklist li::before {
+    content: "";
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .checklist li.done::before {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ===== CODE BLOCK ===== */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-sec);
+    overflow-x: auto;
+    line-height: 1.8;
+    margin: 0.8rem 0;
+  }
+  .code-block .hl { color: var(--accent); }
+  .code-block .cm { color: var(--text-muted); }
+  .code-block .str { color: var(--cool); }
+  .code-block .fn { color: var(--warm); }
+
+  /* ===== ANIMATION SPEC ===== */
+  .anim-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  @media (max-width: 768px) {
+    .anim-grid { grid-template-columns: 1fr; }
+  }
+  .anim-spec {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+  }
+  .anim-spec h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .anim-spec code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .anim-spec p {
+    font-size: 0.82rem;
+    color: var(--text-sec);
+    margin-top: 0.3rem;
+  }
+
+  /* ===== PIPELINE COLORS ===== */
+  .pipeline-stages {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .stage {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.12;
+    border-radius: 8px;
+  }
+  .stage-1 { color: #3B82F6; border: 1px solid rgba(59,130,246,0.3); }
+  .stage-1::before { background: #3B82F6; }
+  .stage-2 { color: #06B6D4; border: 1px solid rgba(6,182,212,0.3); }
+  .stage-2::before { background: #06B6D4; }
+  .stage-3 { color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+  .stage-3::before { background: #F59E0B; }
+  .stage-4 { color: #F97316; border: 1px solid rgba(249,115,22,0.3); }
+  .stage-4::before { background: #F97316; }
+  .stage-5 { color: #22C55E; border: 1px solid rgba(34,197,94,0.3); }
+  .stage-5::before { background: #22C55E; }
+  .stage-6 { color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+  .stage-6::before { background: #EF4444; }
+
+  /* ===== SCOPE BOUNDARY ===== */
+  .scope-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  @media (max-width: 768px) {
+    .scope-split { grid-template-columns: 1fr; }
+  }
+  .scope-in, .scope-out {
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+  .scope-in {
+    background: rgba(46,213,115,0.05);
+    border: 1px solid rgba(46,213,115,0.2);
+  }
+  .scope-out {
+    background: rgba(255,71,87,0.05);
+    border: 1px solid rgba(255,71,87,0.2);
+  }
+  .scope-in h4 { color: var(--positive); }
+  .scope-out h4 { color: var(--negative); }
+  .scope-in h4, .scope-out h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+  .scope-in ul, .scope-out ul {
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--text-sec);
+  }
+  .scope-in li, .scope-out li { padding: 0.25rem 0; }
+  .scope-in li::before { content: "+ "; color: var(--positive); font-weight: 700; }
+  .scope-out li::before { content: "- "; color: var(--negative); font-weight: 700; }
+
+  /* ===== FOOTER ===== */
+  .doc-footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .doc-footer .logo-footer {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+  .doc-footer .logo-footer span { color: var(--accent); }
+  .doc-footer .logo-footer .fl {
+    position: absolute;
+    bottom: -3px; left: 0; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    border-radius: 2px;
+    animation: flowPulse 3s ease-in-out infinite;
+  }
+  .doc-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  /* ===== SVG WAVE SEPARATOR ===== */
+  .wave-sep {
+    width: 100%;
+    height: 40px;
+    margin: 0;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<header class="doc-hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="logo">Pipe<span>Flow</span><div class="flow-line"></div></div>
+  <h1>Escopo de Design Visual</h1>
+  <p class="subtitle">Documento de especificacao completa das melhorias visuais do PipeFlow CRM. Abordagem "Flow Elegante" — CSS puro, zero dependencias extras, performance maxima.</p>
+  <div class="meta-bar">
+    <div class="meta-item"><div class="dot"></div> Versao 1.0</div>
+    <div class="meta-item"><div class="dot"></div> 14 Mar 2026</div>
+    <div class="meta-item"><div class="dot"></div> CSS Puro + SVG</div>
+    <div class="meta-item"><div class="dot"></div> 0kb extras</div>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 2400 50" preserveAspectRatio="none" style="position:absolute;bottom:0;left:0;width:200%;height:40px;animation:waveScroll 14s linear infinite;">
+    <path d="M0,25 C200,50 400,0 600,25 C800,50 1000,0 1200,25 C1400,50 1600,0 1800,25 C2000,50 2200,0 2400,25 L2400,50 L0,50 Z" fill="rgba(202,255,51,0.06)"/>
+  </svg>
+</header>
+
+<!-- ==================== NAV ==================== -->
+<nav class="doc-nav">
+  <a href="#visao-geral">Visao Geral</a>
+  <a href="#landing-page">Landing Page</a>
+  <a href="#cases">Cases de Sucesso</a>
+  <a href="#logo">Logo</a>
+  <a href="#crm">Area CRM</a>
+  <a href="#animacoes">Animacoes</a>
+  <a href="#cores">Cores e Tipografia</a>
+  <a href="#stack">Stack Tecnico</a>
+  <a href="#escopo">Escopo</a>
+  <a href="#arquivos">Arquivos</a>
+</nav>
+
+<!-- ==================== 1. VISAO GERAL ==================== -->
+<section id="visao-geral">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">01 — Visao Geral</div>
+      <div class="section-title">O que estamos fazendo</div>
+      <p class="section-desc">Melhorias exclusivamente visuais no PipeFlow CRM. Nenhuma funcionalidade sera alterada — apenas a camada grafica para tornar o produto mais atrativo e profissional.</p>
+    </div>
+
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <div class="icon">~</div>
+        <h4>Ondas e Gradientes</h4>
+        <p>Animacoes fluidas que remetem ao conceito de "flow" e pipeline, criando identidade visual unica.</p>
+      </div>
+      <div class="card">
+        <div class="icon">0</div>
+        <h4>Zero Dependencias</h4>
+        <p>Tudo implementado com CSS puro, SVG inline e Intersection Observer nativo. Nenhuma lib extra.</p>
+      </div>
+      <div class="card">
+        <div class="icon">60</div>
+        <h4>60fps Garantido</h4>
+        <p>Animacoes otimizadas usando transform e opacity — propriedades que rodam na GPU sem causar reflow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2. LANDING PAGE ==================== -->
+<section id="landing-page">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">02 — Landing Page</div>
+      <div class="section-title">Hero Section Reimaginada</div>
+      <p class="section-desc">O hero ganha vida com gradientes animados, orbs flutuantes e ondas SVG. A sensacao e de um pipeline em movimento constante.</p>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-label"><div class="live-dot"></div> Preview ao vivo — Hero</div>
+      <div class="hero-demo">
+        <div class="orb h-orb1"></div>
+        <div class="orb h-orb2"></div>
+        <div class="h-content">
+          <h3>Gerencie seu pipeline<br>com <span>fluidez</span></h3>
+          <p>CRM inteligente para equipes que fecham negocios</p>
+          <a href="#" class="h-btn" onclick="event.preventDefault()">Comecar Gratis &rarr;</a>
+        </div>
+        <svg class="wave" viewBox="0 0 2400 50" preserveAspectRatio="none">
+          <path d="M0,25 C200,50 400,0 600,25 C800,50 1000,0 1200,25 C1400,50 1600,0 1800,25 C2000,50 2200,0 2400,25 L2400,50 L0,50 Z" fill="rgba(202,255,51,0.07)"/>
+        </svg>
+        <svg class="wave wave-2" viewBox="0 0 2400 35" preserveAspectRatio="none">
+          <path d="M0,17 C150,35 300,0 450,17 C600,35 750,0 900,17 C1050,35 1200,0 1350,17 C1500,35 1650,0 1800,17 C1950,35 2100,0 2250,17 L2400,17 L2400,35 L0,35 Z" fill="rgba(91,127,255,0.05)"/>
+        </svg>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Elementos do Hero</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Gradient Orbs</h4>
+        <p>2 circulos com radial-gradient (accent + cool), blur(60px) e animacao <code>orbFloat</code> — flutuam suavemente mudando posicao e escala em loop de 8-10s.</p>
+      </div>
+      <div class="card">
+        <h4>SVG Waves</h4>
+        <p>2 camadas de ondas SVG na base do hero. Primeira em accent (7% opacidade), segunda em cool (5% opacidade). Animacao <code>waveScroll</code> infinita com velocidades diferentes (12s e 18s).</p>
+      </div>
+      <div class="card">
+        <h4>CTA com Glow</h4>
+        <p>Botao principal com hover que adiciona <code>box-shadow: 0 0 30px rgba(accent, 0.3)</code> e <code>translateY(-2px)</code>. Sensacao de botao que "acende".</p>
+      </div>
+      <div class="card">
+        <h4>Separadores entre Secoes</h4>
+        <p>SVG wave inline entre cada secao da LP, com opacidade sutil (~5-8%). Cria transicoes suaves em vez de cortes bruscos.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Secao de Features (ajustes)</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Animacao de Entrada</h4>
+        <p>Cada feature card aparece com <code>fade-in + slide-up</code> ao entrar no viewport. Detectado via Intersection Observer nativo. Delay stagger de 100ms entre cards.</p>
+      </div>
+      <div class="card">
+        <h4>Hover Aprimorado</h4>
+        <p>Hover nos cards muda <code>border-color</code> para accent (25% opacidade) e aplica <code>translateY(-4px)</code> com sombra sutil. Transicao de 0.3s.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3. CASES DE SUCESSO ==================== -->
+<section id="cases">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">03 — Cases de Sucesso</div>
+      <div class="section-title">Secao Nova: Metricas que Convencem</div>
+      <p class="section-desc">Secao com dados concretos para cativar novos compradores. Cards com metricas grandes, counter animado e nomes de empresas ficticias.</p>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-label"><div class="live-dot"></div> Preview ao vivo — Cases (passe o mouse)</div>
+      <div class="demo-body">
+        <div class="cases-row">
+          <div class="case-card">
+            <div class="big-number">+47%</div>
+            <div class="case-label">Taxa de Conversao</div>
+            <div class="case-company">NexTech Solutions</div>
+          </div>
+          <div class="case-card">
+            <div class="big-number">3.2x</div>
+            <div class="case-label">Mais Leads Qualificados</div>
+            <div class="case-company">Orbita Digital</div>
+          </div>
+          <div class="case-card">
+            <div class="big-number">-62%</div>
+            <div class="case-label">Tempo de Ciclo de Venda</div>
+            <div class="case-company">CloudBridge Inc.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Especificacoes</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Counter Animado</h4>
+        <p>Numeros contam de 0 ate o valor final quando o card entra no viewport. Implementado com JS vanilla (~20 linhas) + Intersection Observer. Duracao: 1.5s com easing ease-out.</p>
+      </div>
+      <div class="card">
+        <h4>Cards Glassmorphism</h4>
+        <p><code>backdrop-filter: blur(10px)</code> + borda translucida. Flutuacao sutil alternada (animacao <code>caseFloat</code> com delays diferentes). Hover intensifica a borda accent.</p>
+      </div>
+      <div class="card">
+        <h4>Posicionamento</h4>
+        <p>Inserida entre a secao de Features e a secao de Pricing. Titulo: "Resultados Reais" ou "Empresas que Transformaram seu Pipeline".</p>
+      </div>
+      <div class="card">
+        <h4>Dados Ficticios</h4>
+        <p>3 empresas com nomes criveis + segmento + 1 metrica principal cada. Dados realistas mas ficticios para demonstrar valor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 4. LOGO ==================== -->
+<section id="logo">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">04 — Logo</div>
+      <div class="section-title">Lettering com Fluxo</div>
+      <p class="section-desc">Nova logo tipografica substituindo o "P" quadrado atual. Lettering "PipeFlow" em Syne com linha fluida animada conectando as letras.</p>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-label"><div class="live-dot"></div> Preview ao vivo — Logo em 3 tamanhos</div>
+      <div class="demo-body">
+        <div class="logo-showcase">
+          <div class="logo-variant">
+            <div class="logo-render logo-big">Pipe<span>Flow</span><div class="fl"></div></div>
+            <div class="variant-label">Hero / Splash</div>
+          </div>
+          <div class="logo-variant">
+            <div class="logo-render logo-med">Pipe<span>Flow</span><div class="fl"></div></div>
+            <div class="variant-label">Navbar / Sidebar</div>
+          </div>
+          <div class="logo-variant">
+            <div class="logo-render logo-sm">Pipe<span>Flow</span><div class="fl"></div></div>
+            <div class="variant-label">Footer / Favicon</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid card-grid-2" style="margin-top:1rem;">
+      <div class="card">
+        <h4>Composicao</h4>
+        <p>"Pipe" em branco (#E8E8E8) + "Flow" em accent (#CAFF33). Fonte Syne, weight 800. Linha curva SVG na base com gradiente <code>transparent → accent → transparent</code>.</p>
+      </div>
+      <div class="card">
+        <h4>Animacao da Linha</h4>
+        <p>Pulsacao sutil: <code>scaleX(0.5) → scaleX(1)</code> com <code>opacity 0.3 → 1</code>, loop de 3s ease-in-out. Apenas decorativa, nao distrai.</p>
+      </div>
+      <div class="card">
+        <h4>Implementacao</h4>
+        <p>Componente React reutilizavel <code>&lt;Logo size="lg|md|sm" /&gt;</code>. SVG inline para a linha. Usado em: navbar da LP, sidebar do CRM, footer, paginas de auth.</p>
+      </div>
+      <div class="card">
+        <h4>Substitui</h4>
+        <p>Remove o quadrado verde com "P" usado atualmente na navbar e footer. Todas as instancias do logo antigo serao atualizadas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5. AREA CRM ==================== -->
+<section id="crm">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">05 — Area CRM</div>
+      <div class="section-title">Dashboard, Pipeline e Leads</div>
+      <p class="section-desc">Elementos fluidos moderados dentro da area do cliente. Glassmorphism, animacoes de entrada e hover effects — sem distrair o trabalho.</p>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-label"><div class="live-dot"></div> Preview ao vivo — Cards de Metricas (passe o mouse)</div>
+      <div class="demo-body">
+        <div class="glass-row">
+          <div class="glass-card">
+            <div class="gl-label">Total Leads</div>
+            <div class="gl-value">1,284</div>
+            <div class="gl-delta">&uarr; 12% este mes</div>
+          </div>
+          <div class="glass-card">
+            <div class="gl-label">Deals Abertos</div>
+            <div class="gl-value">R$ 847K</div>
+            <div class="gl-delta">&uarr; 8% esta semana</div>
+          </div>
+          <div class="glass-card">
+            <div class="gl-label">Taxa Conversao</div>
+            <div class="gl-value">34.2%</div>
+            <div class="gl-delta">&uarr; 5.1% vs anterior</div>
+          </div>
+          <div class="glass-card">
+            <div class="gl-label">Ciclo Medio</div>
+            <div class="gl-value">18 dias</div>
+            <div class="gl-delta">&darr; 3 dias menos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Dashboard</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Cards Glassmorphism</h4>
+        <p><code>backdrop-filter: blur(12px)</code> + borda <code>rgba(accent, 0.08)</code>. Hover: <code>translateY(-4px)</code> + borda accent (30%) + box-shadow glow sutil.</p>
+      </div>
+      <div class="card">
+        <h4>Animacao Stagger</h4>
+        <p>Cards entram com <code>fade-in + slide-up</code> em sequencia. Delays: 0ms, 100ms, 200ms, 300ms. Duracao: 0.4s ease-out.</p>
+      </div>
+      <div class="card">
+        <h4>Header com Gradiente</h4>
+        <p>Radial gradient sutil de accent com 3% opacidade no topo da pagina. Decorativo — nao interfere na leitura.</p>
+      </div>
+      <div class="card">
+        <h4>Graficos Recharts</h4>
+        <p>Animacao de entrada padrao do Recharts (ja existente) mantida. Sem mudancas nos graficos em si.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Pipeline (Kanban)</h3>
+    <div class="pipeline-stages">
+      <div class="stage stage-1">New Lead</div>
+      <div class="stage stage-2">Contacted</div>
+      <div class="stage stage-3">Proposal Sent</div>
+      <div class="stage stage-4">Negotiation</div>
+      <div class="stage stage-5">Closed Won</div>
+      <div class="stage stage-6">Closed Lost</div>
+    </div>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Colunas com Stagger</h4>
+        <p>Cada coluna do kanban entra com delay sequencial. Efeito: o board "monta" da esquerda para a direita.</p>
+      </div>
+      <div class="card">
+        <h4>Deal Cards Hover</h4>
+        <p>Hover nos cards de deal: borda com cor do estagio atual + <code>translateY(-2px)</code> + sombra colorida sutil.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Leads e Demais Paginas</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Tabela com Hover Suave</h4>
+        <p>Rows com <code>transition: background 0.2s</code>. Hover muda para <code>surface-2</code>. Sutil e funcional.</p>
+      </div>
+      <div class="card">
+        <h4>Entrada de Pagina</h4>
+        <p>Todo conteudo principal de cada pagina entra com <code>opacity: 0→1</code> + <code>translateY(8px→0)</code> em 0.3s. Aplicado no wrapper do layout.</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Sidebar</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <h4>Logo Atualizada</h4>
+        <p>Substitui o "P" quadrado pela nova logo <code>&lt;Logo size="md" /&gt;</code> no topo da sidebar.</p>
+      </div>
+      <div class="card">
+        <h4>Item Ativo</h4>
+        <p>Item de navegacao ativo ganha gradiente accent sutil como background (<code>linear-gradient(90deg, rgba(accent,0.1), transparent)</code>).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 6. ANIMACOES ==================== -->
+<section id="animacoes">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">06 — Catalogo de Animacoes</div>
+      <div class="section-title">Especificacoes Tecnicas</div>
+      <p class="section-desc">Todas as animacoes usam apenas CSS @keyframes e transitions. Propriedades animadas: transform e opacity (GPU-accelerated, sem reflow).</p>
+    </div>
+
+    <div class="anim-grid">
+      <div class="anim-spec">
+        <h5>orbFloat</h5>
+        <code>@keyframes</code> <code>10s</code> <code>ease-in-out</code> <code>infinite</code>
+        <p>Movimento organico dos gradient orbs. Combina translate + scale para simular flutuacao natural.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>waveScroll</h5>
+        <code>@keyframes</code> <code>12-18s</code> <code>linear</code> <code>infinite</code>
+        <p>Translada SVG wave horizontalmente em loop. 2 camadas com velocidades diferentes criam profundidade.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>flowPulse</h5>
+        <code>@keyframes</code> <code>3s</code> <code>ease-in-out</code> <code>infinite</code>
+        <p>Pulsacao da linha da logo. ScaleX 0.5→1 + opacity 0.3→1. Sutil e elegante.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>caseFloat</h5>
+        <code>@keyframes</code> <code>3.5s</code> <code>ease-in-out</code> <code>infinite</code>
+        <p>Flutuacao dos case cards. TranslateY 0→-6px. Delays alternados entre cards.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>fadeSlideUp</h5>
+        <code>@keyframes</code> <code>0.4s</code> <code>ease-out</code> <code>forwards</code>
+        <p>Entrada de elementos. Opacity 0→1 + translateY(15px→0). Triggered por Intersection Observer.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>counterUp</h5>
+        <code>JS vanilla</code> <code>1.5s</code> <code>ease-out</code>
+        <p>Contagem animada de numeros nos cases. ~20 linhas de JS. RequestAnimationFrame + Intersection Observer.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>Hover: Cards</h5>
+        <code>transition</code> <code>0.3s</code> <code>ease</code>
+        <p>TranslateY(-4px) + border-color accent + box-shadow glow. Aplicado em cards de metricas, features e cases.</p>
+      </div>
+      <div class="anim-spec">
+        <h5>Hover: CTA Button</h5>
+        <code>transition</code> <code>0.2-0.3s</code> <code>ease</code>
+        <p>TranslateY(-2px) + box-shadow 30px glow accent (30% opacidade). Efeito de "acender".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 7. CORES E TIPOGRAFIA ==================== -->
+<section id="cores">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">07 — Cores e Tipografia</div>
+      <div class="section-title">Sistema Visual Existente (mantido)</div>
+      <p class="section-desc">O sistema de cores e fontes atual e mantido integralmente. As melhorias visuais usam as mesmas variaveis CSS ja definidas.</p>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:0 0 0.8rem;font-size:1.1rem;">Paleta de Cores</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1.5rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#CAFF33;"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Accent</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#CAFF33</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#0C0C0E;border:1px solid var(--border);"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Background</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#0C0C0E</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#141416;"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Surface</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#141416</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#5B7FFF;"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Cool</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#5B7FFF</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#2ED573;"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Positive</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#2ED573</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.8rem;">
+        <div style="width:24px;height:24px;border-radius:6px;background:#FF4757;"></div>
+        <div><div style="font-size:0.8rem;font-weight:600;">Negative</div><div style="font-size:0.7rem;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;">#FF4757</div></div>
+      </div>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:0 0 0.8rem;font-size:1.1rem;">Tipografia</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Uso</th><th>Fonte</th><th>Peso</th><th>Exemplo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Headings / Display</td><td>Syne</td><td>700-800</td><td style="font-family:'Syne',sans-serif;font-weight:800;">Pipeline com Fluidez</td></tr>
+        <tr><td>Body / UI</td><td>DM Sans</td><td>300-700</td><td style="font-family:'DM Sans',sans-serif;">Gerencie leads e negocios</td></tr>
+        <tr><td>Codigo / Tecnico</td><td>IBM Plex Mono</td><td>400-600</td><td style="font-family:'IBM Plex Mono',monospace;">sk_test_51N...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== 8. STACK TECNICO ==================== -->
+<section id="stack">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">08 — Stack Tecnico</div>
+      <div class="section-title">Decisoes de Implementacao</div>
+      <p class="section-desc">Abordagem "Flow Elegante" — maximo impacto visual com minimo impacto tecnico.</p>
+    </div>
+
+    <table class="spec-table">
+      <thead>
+        <tr><th>Aspecto</th><th>Decisao</th><th>Impacto</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Animacoes</td>
+          <td>CSS <code>@keyframes</code> + <code>transition</code></td>
+          <td><span class="badge badge-green">0kb</span></td>
+        </tr>
+        <tr>
+          <td>Scroll Detection</td>
+          <td>Intersection Observer (API nativa do browser)</td>
+          <td><span class="badge badge-green">0kb</span></td>
+        </tr>
+        <tr>
+          <td>Counter Animation</td>
+          <td>JS vanilla (~20 linhas, requestAnimationFrame)</td>
+          <td><span class="badge badge-green">~0.5kb</span></td>
+        </tr>
+        <tr>
+          <td>Ondas / Waves</td>
+          <td>SVG inline estatico com CSS animation</td>
+          <td><span class="badge badge-green">~1kb SVG</span></td>
+        </tr>
+        <tr>
+          <td>Glassmorphism</td>
+          <td><code>backdrop-filter: blur()</code> CSS nativo</td>
+          <td><span class="badge badge-green">0kb</span></td>
+        </tr>
+        <tr>
+          <td>Logo</td>
+          <td>Componente React com SVG inline</td>
+          <td><span class="badge badge-green">~0.3kb</span></td>
+        </tr>
+        <tr>
+          <td>Novas dependencias</td>
+          <td><strong>Nenhuma</strong></td>
+          <td><span class="badge badge-accent">0 libs</span></td>
+        </tr>
+        <tr>
+          <td>Bundle size total adicionado</td>
+          <td>CSS + SVG + JS vanilla</td>
+          <td><span class="badge badge-accent">~2kb</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Performance</h3>
+    <div class="card-grid card-grid-3">
+      <div class="card">
+        <h4>GPU Accelerated</h4>
+        <p>Todas as animacoes usam <code>transform</code> e <code>opacity</code> — propriedades composited pela GPU sem causar layout/paint.</p>
+      </div>
+      <div class="card">
+        <h4>60fps Target</h4>
+        <p>Nenhuma animacao causa reflow. Tudo roda no compositor thread do browser. Testavel via DevTools Performance tab.</p>
+      </div>
+      <div class="card">
+        <h4>Reduced Motion</h4>
+        <p>Media query <code>prefers-reduced-motion</code> desabilita todas as animacoes para usuarios com sensibilidade a movimento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 9. ESCOPO ==================== -->
+<section id="escopo">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">09 — Escopo e Limites</div>
+      <div class="section-title">O que Muda vs. O que Nao Muda</div>
+    </div>
+
+    <div class="scope-split">
+      <div class="scope-in">
+        <h4>Dentro do Escopo</h4>
+        <ul>
+          <li>Hero da LP com gradientes animados e waves</li>
+          <li>Nova secao de Cases de Sucesso com metricas</li>
+          <li>Nova logo tipografica "PipeFlow"</li>
+          <li>SVG waves entre secoes da LP</li>
+          <li>Animacoes de entrada (fade+slide) nas features</li>
+          <li>Glassmorphism nos cards do dashboard</li>
+          <li>Hover effects aprimorados em cards/botoes</li>
+          <li>Animacao stagger nos cards de metricas</li>
+          <li>Animacao stagger nas colunas do kanban</li>
+          <li>Hover colorido nos deal cards do pipeline</li>
+          <li>Gradiente sutil no header do dashboard</li>
+          <li>Hover suave nas rows da tabela de leads</li>
+          <li>Animacao de entrada em todas as paginas</li>
+          <li>Gradiente no item ativo da sidebar</li>
+          <li>Counter animado nos numeros dos cases</li>
+          <li>Suporte a prefers-reduced-motion</li>
+        </ul>
+      </div>
+      <div class="scope-out">
+        <h4>Fora do Escopo</h4>
+        <ul>
+          <li>Logica de negocio / hooks / API routes</li>
+          <li>Autenticacao e middleware</li>
+          <li>Integracao Stripe (pagamentos)</li>
+          <li>CRUD de leads, deals, membros</li>
+          <li>Drag-and-drop do pipeline (dnd-kit)</li>
+          <li>Estrutura de rotas e navegacao</li>
+          <li>Schema do banco de dados (Supabase)</li>
+          <li>Adicao de novas dependencias ao package.json</li>
+          <li>Mudancas no sistema de cores existente</li>
+          <li>Mudancas nas fontes existentes</li>
+          <li>Alteracoes no .env ou configuracoes</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 10. ARQUIVOS ==================== -->
+<section id="arquivos">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">10 — Mapa de Arquivos</div>
+      <div class="section-title">Arquivos Afetados</div>
+      <p class="section-desc">Lista completa de arquivos que serao criados ou modificados neste escopo.</p>
+    </div>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:0 0 0.8rem;font-size:1.1rem;">Novos Arquivos</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Arquivo</th><th>Descricao</th><th>Tipo</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src/components/shared/logo.tsx</code></td>
+          <td>Componente Logo reutilizavel com 3 tamanhos</td>
+          <td><span class="badge badge-green">Novo</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/landing/success-cases.tsx</code></td>
+          <td>Secao de cases de sucesso com metricas e counter</td>
+          <td><span class="badge badge-green">Novo</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/landing/wave-separator.tsx</code></td>
+          <td>Componente SVG wave para separar secoes</td>
+          <td><span class="badge badge-green">Novo</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/shared/animate-on-scroll.tsx</code></td>
+          <td>Wrapper de animacao com Intersection Observer</td>
+          <td><span class="badge badge-green">Novo</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:'Syne',sans-serif;margin:1.5rem 0 0.8rem;font-size:1.1rem;">Arquivos Modificados</h3>
+    <table class="spec-table">
+      <thead>
+        <tr><th>Arquivo</th><th>Mudancas</th><th>Tipo</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src/app/page.tsx</code></td>
+          <td>Hero com orbs + waves, integrar cases, wave separators, logo nova</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/app/globals.css</code></td>
+          <td>Keyframes (orbFloat, waveScroll, flowPulse, etc), glassmorphism utilities, page-enter animation</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/layout/sidebar.tsx</code></td>
+          <td>Trocar logo "P" pela nova, gradiente no item ativo</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/layout/header.tsx</code></td>
+          <td>Gradiente sutil no background</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/app/(dashboard)/layout.tsx</code></td>
+          <td>Wrapper de animacao de entrada de pagina</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/app/(dashboard)/dashboard/page.tsx</code></td>
+          <td>Glassmorphism nos MetricsCards, stagger animation</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/dashboard/metrics-cards.tsx</code></td>
+          <td>Classes glassmorphism + hover effects</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/pipeline/kanban-column.tsx</code></td>
+          <td>Animacao stagger de entrada</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/pipeline/deal-card.tsx</code></td>
+          <td>Hover com cor do estagio + sombra</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/components/leads/leads-table.tsx</code></td>
+          <td>Hover suave nas rows</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/app/(auth)/login/page.tsx</code></td>
+          <td>Logo atualizada</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+        <tr>
+          <td><code>src/app/(auth)/signup/page.tsx</code></td>
+          <td>Logo atualizada</td>
+          <td><span class="badge badge-blue">Modificado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="doc-footer">
+  <div class="logo-footer">Pipe<span>Flow</span><div class="fl"></div></div>
+  <p>Design Scope v1.0 &mdash; 14 Mar 2026</p>
+  <p style="margin-top:0.3rem;">Abordagem Flow Elegante &bull; CSS Puro &bull; Zero Dependencias &bull; 60fps</p>
+</footer>
+
+</body>
+</html>

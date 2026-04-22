@@ -67,6 +67,14 @@
 
 ---
 
+## Arquivos de Referência
+
+| Arquivo                                               | Descrição                                                                          |
+|-------------------------------------------------------|------------------------------------------------------------------------------------|
+| [design-scope.html](../referencias/design-scope.html) | Referência visual de design: paleta, tipografia, componentes e estilos do PipeFlow |
+
+---
+
 ## Framework de PRD
 
 Para criar o seu próprio PRD antes de iniciar o projeto, use o framework:

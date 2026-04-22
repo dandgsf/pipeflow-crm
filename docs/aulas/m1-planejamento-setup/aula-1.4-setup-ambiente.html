@@ -1232,6 +1232,17 @@
             <span class="code-label">Local (.claude/skills/ do projeto)</span>
             <code>cd ~/pipeflow-crm && npx superpowers@latest install micro-saas-launcher --local</code>
           </div>
+
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Skill 6 &mdash; Senior SecOps</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">SecOps de nível sênior: varredura de vulnerabilidades, compliance e hardening de infraestrutura.</p>
+          <div class="code-block">
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx claude-code-templates@latest --skill development/senior-secops --yes</code>
+          </div>
+          <div class="code-block">
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --skill development/senior-secops --yes --local</code>
+          </div>
         </div>
 
         <!-- 6.4 — Agents do projeto -->
@@ -1252,29 +1263,22 @@
           </div>
 
           <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 2
-            &mdash; Explore</p>
-          <p class="detail" style="margin-bottom: 0.5rem;">Explorador rápido de codebases: busca arquivos, padrões,
-            endpoints e arquitetura.</p>
+            &mdash; Plan</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Arquiteto de sistemas: desenha planos de implementação, define boundaries de serviços e identifica arquivos críticos.</p>
           <div class="code-block">
             <span class="code-label">Global (~/.claude/agents/)</span>
-            <code>npx claude-code-templates@latest --agent development-team/frontend-developer --yes</code>
+            <code>npx claude-code-templates@latest --agent development-team/backend-architect --yes</code>
           </div>
           <div class="code-block">
             <span class="code-label">Local (.claude/agents/ do projeto)</span>
-            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-team/frontend-developer --yes --local</code>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-team/backend-architect --yes --local</code>
           </div>
 
-          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 3
-            &mdash; Plan</p>
-          <p class="detail" style="margin-bottom: 0.5rem;">Arquiteto que desenha planos de implementação e identifica
-            arquivos críticos.</p>
+          <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Agent 3 &mdash; Payment Integration</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Especialista em pagamentos: Stripe, checkout flows, webhooks, subscriptions e compliance PCI. Vem <strong>pré-instalado</strong> no repositório do projeto — não é necessário instalar via aitmpl após clonar o repo.</p>
           <div class="code-block">
-            <span class="code-label">Global (~/.claude/agents/)</span>
-            <code>npx claude-code-templates@latest --agent development-tools/code-reviewer --yes</code>
-          </div>
-          <div class="code-block">
-            <span class="code-label">Local (.claude/agents/ do projeto)</span>
-            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --agent development-tools/code-reviewer --yes --local</code>
+            <span class="code-label">Pré-instalado em</span>
+            <code>.claude/agents/payment-integration.md</code>
           </div>
         </div>
 
@@ -1288,25 +1292,33 @@
             automáticos.</p>
           <div class="code-block">
             <span class="code-label">Global (~/.claude/settings.json)</span>
-            <code>npx claude-code-templates@latest --mcp development/github-integration --yes</code>
+            <code>npx claude-code-templates@latest --mcp integration/github-integration --yes</code>
           </div>
           <div class="code-block">
             <span class="code-label">Local (.claude/settings.json do projeto)</span>
-            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --mcp development/github-integration --yes --local</code>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --mcp integration/github-integration --yes --local</code>
           </div>
 
           <p style="margin: 1.2rem 0 0.5rem; font-size: 0.95rem; color: var(--accent); font-weight: 600;">Plugin 2
             &mdash; Stripe</p>
-          <p class="detail" style="margin-bottom: 0.5rem;">Acesso direto à API Stripe: explica erros, test cards e best
-            practices de pagamento.</p>
+          <p class="detail" style="margin-bottom: 0.5rem;">Skill de boas práticas Stripe (checkout, webhooks, subscriptions, idempotência) + MCP oficial para acesso direto à API Stripe.</p>
+
+          <p style="margin: 0.8rem 0 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Opção A — Skill (boas práticas e padrões)</p>
           <div class="code-block">
-            <span class="code-label">Global (~/.claude/settings.json)</span>
-            <code>npx claude-code-templates@latest --mcp database/postgresql-integration --yes</code>
+            <span class="code-label">Global (~/.claude/skills/)</span>
+            <code>npx claude-code-templates@latest --skill development/stripe-integration --yes</code>
           </div>
           <div class="code-block">
-            <span class="code-label">Local (.claude/settings.json do projeto)</span>
-            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --mcp database/postgresql-integration --yes --local</code>
+            <span class="code-label">Local (.claude/skills/ do projeto)</span>
+            <code>cd ~/pipeflow-crm && npx claude-code-templates@latest --skill development/stripe-integration --yes --local</code>
           </div>
+
+          <p style="margin: 0.8rem 0 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Opção B — MCP oficial Stripe (acesso direto à API)</p>
+          <div class="code-block">
+            <span class="code-label">Terminal (requer STRIPE_SECRET_KEY)</span>
+            <code>npx @stripe/mcp --api-key YOUR_STRIPE_SECRET_KEY</code>
+          </div>
+          <p class="detail" style="margin-top: 0.4rem;">Para configuração permanente, adicione o MCP em <code>~/.claude/settings.json</code> com sua chave de API. Use a chave de <strong>teste</strong> (<code>sk_test_...</code>) durante o desenvolvimento.</p>
         </div>
 
         <!-- 6.6 — Verificação -->
