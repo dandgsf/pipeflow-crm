@@ -144,6 +144,7 @@ docs/
   PLAN.md            # Plano de execução por milestones
   migrations/        # SQL migrations numeradas
   aulas/             # Material das aulas (HTML + prompts por módulo)
+  referencias/       # Arquivos de referência visual e de design
 ```
 
 ---
@@ -156,6 +157,7 @@ docs/
 | [docs/PLAN.md](docs/PLAN.md) | Plano de execução por milestones |
 | [docs/aulas/](docs/aulas/) | Material das aulas com prompts por módulo |
 | [docs/migrations/](docs/migrations/) | SQL migrations numeradas |
+| [docs/referencias/design-scope.html](docs/referencias/design-scope.html) | Referência completa do design system (paleta, tipografia, componentes, animações) |
 | [.env.local.example](.env.local.example) | Variáveis de ambiente necessárias |
 
 ---
@@ -176,3 +178,11 @@ npm run lint     # ESLint
 - `SUPABASE_SERVICE_ROLE_KEY` é usado **apenas** server-side (webhooks/edge functions)
 - Todas as tabelas têm **Row Level Security (RLS)** habilitado
 - Dados isolados por `workspace_id` em todas as queries
+
+---
+
+## Autoria e Propriedade
+
+Projeto desenvolvido e mantido por **Danilo Fernandes** ([@dandgsf](https://github.com/dandgsf)) como material oficial do curso **Claude Code: do Zero ao SaaS**.
+
+Todo o código, material de aulas, slides e prompts deste repositório são de propriedade exclusiva do autor. Reprodução ou distribuição não autorizada é proibida.
