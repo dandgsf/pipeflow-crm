@@ -24,12 +24,17 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
   process.exit(1);
 }
 
+const TEST_EMAIL = process.env.SEED_EMAIL?.trim();
+const TEST_PASSWORD = process.env.SEED_PASSWORD;
+
+if (!TEST_EMAIL || !TEST_PASSWORD || TEST_PASSWORD.length < 16) {
+  console.error("Defina SEED_EMAIL e uma SEED_PASSWORD exclusiva de pelo menos 16 caracteres no .env.local.");
+  process.exit(1);
+}
+
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
-
-const TEST_EMAIL = "demo@pipeflow.com";
-const TEST_PASSWORD = "demo1234";
 
 function daysAgo(n) {
   const d = new Date();
@@ -78,54 +83,46 @@ async function main() {
 
   // 2. Workspace
   console.log("2/6  Criando workspace...");
-  const workspaceId = randomUUID();
-
-  // Clean existing data for this user (idempotent re-runs)
-  const { data: existingMember } = await supabase
+  const { data: existingMember, error: lookupError } = await supabase
     .from("members")
     .select("workspace_id")
     .eq("user_id", userId)
     .limit(1)
-    .single();
-
-  let wsId = workspaceId;
+    .maybeSingle();
+  if (lookupError) throw lookupError;
   if (existingMember) {
-    wsId = existingMember.workspace_id;
-    console.log("     Workspace já existe:", wsId);
-    // Clean old seed data
-    await supabase.from("activities").delete().eq("workspace_id", wsId);
-    await supabase.from("deals").delete().eq("workspace_id", wsId);
-    await supabase.from("leads").delete().eq("workspace_id", wsId);
-    console.log("     Dados antigos limpos.");
-  } else {
-    const { error } = await supabase.from("workspaces").insert({
-      id: wsId,
-      name: "Acme Corp",
-      slug: "acme-corp",
-      created_by: userId,
-    });
-    if (error && !error.message.includes("duplicate")) {
-      console.error("     Erro workspace:", error.message);
-      process.exit(1);
-    }
-
-    // Member
-    await supabase.from("members").insert({
-      workspace_id: wsId,
-      user_id: userId,
-      role: "admin",
-      email: TEST_EMAIL,
-    });
-
-    // Subscription
-    await supabase.from("subscriptions").insert({
-      workspace_id: wsId,
-      plan: "free",
-      status: "active",
-    });
-
-    console.log("     Workspace criado:", wsId);
+    console.log("A conta já pertence a um workspace. Use uma conta exclusiva para uma nova demonstração.");
+    return;
   }
+
+  const wsId = randomUUID();
+  const { error } = await supabase.from("workspaces").insert({
+    id: wsId,
+    name: "Acme Corp",
+    slug: "acme-corp",
+    created_by: userId,
+  });
+  if (error) {
+    console.error("     Erro workspace:", error.message);
+    process.exit(1);
+  }
+
+  // Member
+  await supabase.from("members").insert({
+    workspace_id: wsId,
+    user_id: userId,
+    role: "admin",
+    email: TEST_EMAIL,
+  });
+
+  // Subscription
+  await supabase.from("subscriptions").insert({
+    workspace_id: wsId,
+    plan: "free",
+    status: "active",
+  });
+
+  console.log("     Workspace criado:", wsId);
 
   // 3. Leads
   console.log("3/6  Inserindo 10 leads...");
@@ -242,8 +239,6 @@ async function main() {
 
   // 6. Done
   console.log("\n✅ Seed completo!");
-  console.log(`\n📧 Login: ${TEST_EMAIL}`);
-  console.log(`🔑 Senha: ${TEST_PASSWORD}`);
   console.log(`🏢 Workspace: Acme Corp`);
   console.log(`👥 ${insertedLeads.length} leads | 🤝 ${insertedDeals.length} deals | 📋 ${insertedActivities.length} atividades`);
 }
