@@ -165,66 +165,12 @@ export async function acceptInviteAction(token: string) {
     redirect(`/login?invite=${token}`)
   }
 
-  // Buscar convite pelo token
-  const { data: invite, error: fetchError } = await supabase
-    .from('workspace_invites')
-    .select('*')
-    .eq('token', token)
-    .is('accepted_at', null)
-    .single()
-
-  if (fetchError || !invite) {
-    return { error: 'Convite inválido ou já utilizado.' }
+  const { data: workspaceId, error } = await supabase.rpc('accept_workspace_invite', { p_token: token })
+  if (error || !workspaceId) {
+    if (error?.message === 'wrong_recipient') return { error: 'Este convite foi enviado para outro endereço de e-mail.' }
+    if (error?.message === 'member_limit') return { error: 'O workspace atingiu o limite de membros do plano.' }
+    return { error: 'Convite inválido, expirado ou já utilizado.' }
   }
-
-  // Verificar expiração
-  if (new Date(invite.expires_at) < new Date()) {
-    return { error: 'Este convite expirou.' }
-  }
-
-  // Verificar se e-mail bate (segurança)
-  if (invite.email !== user.email?.toLowerCase()) {
-    return {
-      error: 'Este convite foi enviado para outro endereço de e-mail.',
-    }
-  }
-
-  // Verificar se já é membro
-  const { data: alreadyMember } = await supabase
-    .from('workspace_members')
-    .select('id')
-    .eq('workspace_id', invite.workspace_id)
-    .eq('user_id', user.id)
-    .maybeSingle()
-
-  if (alreadyMember) {
-    // Já é membro — marcar convite como aceito e redirecionar
-    await supabase
-      .from('workspace_invites')
-      .update({ accepted_at: new Date().toISOString() })
-      .eq('id', invite.id)
-
-    redirect('/dashboard')
-  }
-
-  // Inserir como membro
-  const { error: memberError } = await supabase
-    .from('workspace_members')
-    .insert({
-      workspace_id: invite.workspace_id,
-      user_id: user.id,
-      role: invite.role,
-    })
-
-  if (memberError) {
-    return { error: 'Não foi possível aceitar o convite. Tente novamente.' }
-  }
-
-  // Marcar convite como aceito
-  await supabase
-    .from('workspace_invites')
-    .update({ accepted_at: new Date().toISOString() })
-    .eq('id', invite.id)
 
   redirect('/dashboard')
 }

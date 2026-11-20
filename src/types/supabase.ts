@@ -252,10 +252,10 @@ export interface Database {
           },
           {
             foreignKeyName: 'deals_lead_id_fkey'
-            columns: ['lead_id']
+            columns: ['workspace_id', 'lead_id']
             isOneToOne: false
             referencedRelation: 'leads'
-            referencedColumns: ['id']
+            referencedColumns: ['workspace_id', 'id']
           },
         ]
       }
@@ -348,10 +348,10 @@ export interface Database {
           },
           {
             foreignKeyName: 'activities_lead_id_fkey'
-            columns: ['lead_id']
+            columns: ['workspace_id', 'lead_id']
             isOneToOne: false
             referencedRelation: 'leads'
-            referencedColumns: ['id']
+            referencedColumns: ['workspace_id', 'id']
           },
         ]
       }
@@ -363,6 +363,14 @@ export interface Database {
     }
 
     Functions: {
+      create_workspace: {
+        Args: { p_name: string; p_slug: string }
+        Returns: { workspace_id: string; workspace_name: string; workspace_slug: string; workspace_plan: string }[]
+      }
+      accept_workspace_invite: {
+        Args: { p_token: string }
+        Returns: string
+      }
       is_workspace_member: {
         Args: { p_workspace_id: string }
         Returns: boolean

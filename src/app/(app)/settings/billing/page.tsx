@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { CheckCircle, AlertTriangle, Crown, Users, Database, BarChart3, Mail, Zap } from 'lucide-react'
 import { getSupabaseServer } from '@/lib/supabase/server'
 import { getActiveWorkspace } from '@/lib/workspace'
+import { isAdmin } from '@/lib/permissions'
 import { CheckoutButton } from '@/components/billing/checkout-button'
 import { PortalButton } from '@/components/billing/portal-button'
 
@@ -28,6 +29,8 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
   const workspace = await getActiveWorkspace()
   if (!workspace) redirect('/onboarding')
 
+  if (!(await isAdmin(workspace.id))) redirect('/dashboard')
+
   // Buscar subscription com dados do Stripe
   const { data: subscription } = await supabase
     .from('subscriptions')
@@ -38,7 +41,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
   const plan = subscription?.plan ?? workspace.plan ?? 'free'
   const isPro = plan === 'pro'
   const isPaymentFailed = plan === 'payment_failed'
-  const showSuccess = params.success === 'true'
+  const showSuccess = isPro && params.success === 'true'
 
   // Formatar data de renovação
   let renewalDate: string | null = null
@@ -121,7 +124,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
             )}
           </div>
           <div className="ml-4">
-            {isPro ? <PortalButton /> : <CheckoutButton />}
+            {plan === 'free' ? <CheckoutButton /> : <PortalButton />}
           </div>
         </div>
       </div>
@@ -176,7 +179,7 @@ export default async function BillingPage({ searchParams }: BillingPageProps) {
                 </li>
               ))}
             </ul>
-            {!isPro && (
+            {plan === 'free' && (
               <div className="mt-5">
                 <CheckoutButton />
               </div>

@@ -107,6 +107,10 @@ Execute as migrations via Supabase SQL Editor. Para ambiente limpo, use:
 docs/migrations/PRODUCTION_FULL_MIGRATION.sql
 ```
 
+Para um banco que já recebeu a migração 016, aplique [017_workspace_authorization.sql](docs/migrations/017_workspace_authorization.sql) antes de publicar a aplicação. A migração é transacional. Se houver negócios ou atividades vinculados a leads de outro workspace ou responsáveis sem filiação ao workspace, o PostgreSQL cancela a migração inteira. Reconcilie esses registros com o responsável pelos dados e execute novamente.
+
+Revise também as filiações administrativas e os convites pendentes, planos e vínculos de cobrança preexistentes com os registros da equipe e do Stripe. O portal e o checkout conferem o workspace nos metadados do cliente Stripe. Se um vínculo legado falhar nessa conferência, confirme a titularidade no Stripe antes de corrigir os metadados. Para assinaturas legadas ativas, confirme e preencha também o metadado `workspaceId` na assinatura Stripe antes da implantação. Isso preserva a identificação mesmo após a exclusão do cliente no Stripe.
+
 ### 4. Rode o servidor
 
 ```bash
