@@ -15,9 +15,8 @@ Stripe Dashboard → Developers → Webhooks → selecione o endpoint
 
 - [ ] **Vercel Dashboard** → Functions tab → `/api/webhooks/stripe`
   - Verifique que apareceu uma invocação recente
-  - Status esperado: `400` (é normal — o test event não tem metadata válido)
-  - Nos logs, deve aparecer: `[stripe-webhook] checkout.session.completed sem workspaceId no metadata`
-- [ ] Se retornou 400 com essa mensagem, o webhook está saudável (HMAC validou, código executou)
+  - Um evento assinado de teste sem cliente vinculado deve retornar `200`. Confirme que os planos continuam iguais nas tabelas.
+- [ ] Uma requisição sem assinatura deve retornar `400`. Confirme a ativação real com o checkout de teste da seção 3.
 
 ---
 
@@ -82,7 +81,7 @@ Abra `https://pipeflow-crm.vercel.app` no browser.
 
 ### Verificar no Vercel (logs do webhook)
 - [ ] Functions tab → `/api/webhooks/stripe` → invocação recente com status `200`
-- [ ] Log: `[stripe-webhook] Workspace xxx atualizado para Pro`
+- [ ] Confirme o plano nas duas tabelas após o evento assinado do Stripe.
 
 ### Verificar no Supabase Studio
 - [ ] Tabela `subscriptions` → registro com `plan = 'pro'`, `stripe_customer_id` e `stripe_subscription_id` preenchidos
@@ -125,7 +124,7 @@ Abra o Supabase Dashboard → Table Editor.
 
 ### Limites do plano Free
 - [ ] Voltar para Free (via Stripe Portal → cancelar)
-- [ ] Webhook registra: `[stripe-webhook] Workspace xxx voltou para Free`
+- [ ] Após o cancelamento efetivo, confirme o plano Free nas duas tabelas.
 - [ ] Tentar criar >50 leads → mensagem de erro de limite
 - [ ] Tentar convidar >2 membros → mensagem de erro de limite
 
