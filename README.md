@@ -102,7 +102,7 @@ As variáveis `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` são injetadas automa
 1. Crie um projeto no [Supabase](https://supabase.com)
 2. Acesse o **SQL Editor** no painel do Supabase
 3. Execute o script completo de [`docs/schema.sql`](docs/schema.sql) — ele cria todas as tabelas, índices e políticas RLS
-4. (Opcional) Execute `node scripts/seed.mjs` para popular dados de demonstração
+4. (Opcional) Para popular seu projeto de demonstração, defina `SEED_EMAIL` e uma `SEED_PASSWORD` exclusiva no `.env.local` e execute `node --env-file=.env.local scripts/seed.mjs`. Se já usou o seed antigo, troque a senha da conta de demonstração no Supabase Auth.
 
 ## Configuração do Stripe
 
