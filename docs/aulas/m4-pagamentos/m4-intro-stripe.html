@@ -334,6 +334,37 @@
     footer p { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--text-muted); }
     footer .ft-accent { color: var(--accent); }
 
+    .optional-resource {
+      max-width: 32rem;
+      margin: 0 auto 1.5rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--accent-dim);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-glow);
+      text-align: left;
+      scroll-margin-top: 5rem;
+    }
+
+    .optional-resource strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .optional-resource a {
+      color: var(--text);
+      font-size: 0.95rem;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .optional-resource a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .hero { min-height: auto; padding: 120px 24px 60px; }
@@ -632,6 +663,11 @@
   <!-- FOOTER -->
   <footer>
     <div class="container">
+      <aside class="optional-resource" id="recurso-opcional" aria-labelledby="titulo-recurso-opcional">
+        <strong id="titulo-recurso-opcional">Recurso opcional</strong>
+        <a href="https://github.com/dandgsf/pipeflow-crm/blob/main/docs/aulas/beneficios.md#asaas">Explorar cobranças com Asaas</a>
+      </aside>
+
       <div style="display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:0.8rem;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:0.4rem;">
           <div style="width:20px;height:20px;background:linear-gradient(135deg,var(--accent),#9ECC26);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.45rem;color:var(--bg);">NC</div>
