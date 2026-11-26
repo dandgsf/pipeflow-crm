@@ -759,6 +759,37 @@
       font-size: 0.85rem;
     }
 
+    .optional-resource {
+      max-width: 32rem;
+      margin: 0 auto 1.5rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--accent-dim);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      background: var(--accent-glow);
+      text-align: left;
+      scroll-margin-top: 5rem;
+    }
+
+    .optional-resource strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.85rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .optional-resource a {
+      color: var(--text);
+      font-size: 0.95rem;
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .optional-resource a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
     footer .footer-logo {
       display: inline-flex;
       align-items: center;
@@ -1693,6 +1724,11 @@
 
   <!-- ===== FOOTER ===== -->
   <footer>
+    <aside class="optional-resource" id="recurso-opcional" aria-labelledby="titulo-recurso-opcional">
+      <strong id="titulo-recurso-opcional">Recurso opcional</strong>
+      <a href="https://github.com/dandgsf/pipeflow-crm/blob/main/docs/aulas/beneficios.md#nous-portal">Explorar agentes com o Nous Portal</a>
+    </aside>
+
     <div class="footer-brands">
       <!-- NoCode StartUp -->
       <div class="footer-brand-item">

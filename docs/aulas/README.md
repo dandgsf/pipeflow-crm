@@ -16,6 +16,8 @@
 > Antes de começar qualquer aula, o Claude Code precisa ter acesso ao `CLAUDE.md` e ao `PLAN.md`
 > na raiz do projeto. Eles são o "cérebro" do agente.
 
+[Recursos e benefícios opcionais das aulas](beneficios.md)
+
 ---
 
 ## Módulos
